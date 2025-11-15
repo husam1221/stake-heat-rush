@@ -4,8 +4,8 @@ import App from "./App.jsx";
 
 import "@rainbow-me/rainbowkit/styles.css";
 import {
-  getDefaultConfig,
   RainbowKitProvider,
+  getDefaultConfig
 } from "@rainbow-me/rainbowkit";
 
 import { WagmiProvider } from "wagmi";
@@ -15,8 +15,15 @@ import "./styles.css";
 
 const config = getDefaultConfig({
   appName: "HeatRush Staking",
-  projectId: "6b05726282d5a7aa26e467d76ccfa4a3", // مؤقت، لا يؤثر ولا يسبب خطأ
+  projectId: "6b05726282d5a7aa26e467d76ccfa4a3",
   chains: [base],
+  ssr: false,
+  metadata: {
+    name: "HeatRush Staking",
+    description: "Stake ETH on Base",
+    url: "https://staking.heatrush.xyz",
+    icons: ["https://staking.heatrush.xyz/favicon.png"]
+  }
 });
 
 const queryClient = new QueryClient();
@@ -25,11 +32,10 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-    <RainbowKitProvider locale="en">
+        <RainbowKitProvider locale="en">
           <App />
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
   </React.StrictMode>
 );
-
