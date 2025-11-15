@@ -1,0 +1,1008 @@
+/* 🌑 خلفية عامة داكنة بريميوم مع لمسة نار خفيفة */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: radial-gradient(circle at top, #1b0b19 0%, #04040a 45%, #000 100%);
+  color: #f5f5f5;
+}
+
+/* جذر التطبيق */
+.app-root {
+  min-height: 100vh;
+}
+
+/* حاوية الصفحة الكاملة */
+.app-container {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 40px 16px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* كارت عام */
+.card {
+  background: radial-gradient(circle at top, rgba(255, 120, 0, 0.08), rgba(10, 10, 15, 0.96));
+  border-radius: 24px;
+  padding: 28px 24px;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  box-shadow: 0 0 40px rgba(255, 120, 0, 0.15);
+  backdrop-filter: blur(18px);
+}
+
+/* الكارت الرئيسي للستيك – أكبر من الباقي */
+.card-main {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* شعار HeatRush */
+.logo {
+  width: 86px;
+  height: 86px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto 10px auto;
+}
+
+/* الصف العلوي: عنوان + زر محفظة */
+.header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.header-text {
+  flex: 1;
+}
+
+/* عنوان ستايكنغ */
+.title {
+  margin: 0;
+  font-size: 26px;
+  letter-spacing: 0.03em;
+}
+
+/* نص تحت العنوان */
+.subtitle {
+  margin: 6px 0 0 0;
+  font-size: 13px;
+  color: rgba(240, 240, 255, 0.7);
+  line-height: 1.5;
+}
+
+/* مكان زر المحفظة */
+.wallet-connect {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+/* رصيد المستخدم */
+.balance {
+  font-size: 13px;
+  color: rgba(230, 230, 255, 0.8);
+}
+
+.balance span {
+  font-weight: 600;
+  color: #ffd27a;
+}
+
+/* صندوق الستيك */
+.stake-box {
+  margin-top: 4px;
+  padding: 20px 18px 18px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(12, 12, 18, 0.95), rgba(25, 15, 10, 0.98));
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+/* هيدر داخل صندوق الستيك */
+.stake-box-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 14px;
+}
+
+.stake-label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.stake-hint {
+  font-size: 12px;
+  color: rgba(220, 220, 255, 0.6);
+}
+
+/* صف الإدخال + MAX */
+.input-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* حقل إدخال المبلغ */
+.input {
+  flex: 1;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(120, 120, 150, 0.5);
+  background: rgba(10, 10, 16, 0.96);
+  color: #ffffff;
+  font-size: 14px;
+  outline: none;
+}
+
+/* إزالة الأسهم من input type="number" */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Placeholder واضح بس ناعم */
+.input::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* زر MAX */
+.max-btn {
+  padding: 10px 14px;
+  border-radius: 14px;
+  border: none;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  background: linear-gradient(135deg, #ffb347, #ff7b00);
+  color: #120808;
+  box-shadow: 0 0 15px rgba(255, 140, 0, 0.35);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.max-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 18px rgba(255, 160, 0, 0.5);
+}
+
+/* زر الستيك الرئيسي */
+.stake-btn {
+  margin-top: 16px;
+  width: 100%;
+  padding: 13px;
+  border-radius: 16px;
+  border: none;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  color: #1b0905;
+  background: linear-gradient(90deg, #ff8a26, #ffb347, #ff8a26);
+  background-size: 200% 100%;
+  box-shadow: 0 0 26px rgba(255, 140, 0, 0.5);
+  transition: background-position 0.3s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.stake-btn:hover:not(.loading) {
+  background-position: 100% 0;
+  transform: translateY(-1px);
+  box-shadow: 0 0 30px rgba(255, 160, 0, 0.7);
+}
+
+/* حالة اللودر */
+.stake-btn.loading {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+/* الأزرار الثانوية (Claim / Unstake) */
+.secondary-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.secondary-btn {
+  flex: 1;
+  padding: 11px;
+  border-radius: 14px;
+  border: 1px solid rgba(120, 120, 150, 0.45);
+  background: rgba(12, 12, 18, 0.95);
+  color: rgba(240, 240, 255, 0.88);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+.secondary-btn:hover {
+  background: rgba(25, 20, 30, 0.98);
+  border-color: rgba(255, 140, 0, 0.5);
+  transform: translateY(-1px);
+}
+
+/* ملاحظة تحت صندوق الستيك */
+.stake-footnote {
+  margin-top: 12px;
+  font-size: 11px;
+  color: rgba(210, 210, 240, 0.6);
+}
+
+/* شبكة الكروت التوضيحية تحت الستيك */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+/* كروت المعلومات (APR / Network / Lockup) */
+.info-card {
+  padding: 18px 18px 16px;
+  border-radius: 20px;
+  background: radial-gradient(circle at top, rgba(255, 120, 0, 0.12), rgba(10, 10, 15, 0.95));
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.info-title {
+  margin: 0 0 6px 0;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 220, 180, 0.9);
+}
+
+.info-value {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: #ffd27a;
+}
+
+.info-desc {
+  margin: 0;
+  font-size: 12px;
+  color: rgba(220, 220, 245, 0.75);
+  line-height: 1.5;
+}
+
+/* كارت التوب ستيكرز */
+.leaderboard-card {
+  margin-top: 4px !important;
+  background: radial-gradient(circle at top, rgba(255, 120, 0, 0.12), rgba(10, 10, 15, 0.95)) !important;
+  border: 1px solid rgba(255, 255, 255, 0.04) !important;
+}
+
+
+.leaderboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 10px;
+    background: radial-gradient(circle at top, rgba(255, 120, 0, 0.12), rgba(10, 10, 15, 0.95)) !important;
+}
+
+.leaderboard-title {
+  margin: 0;
+  font-size: 16px;
+}
+
+.leaderboard-tag {
+  font-size: 11px;
+  color: rgba(230, 230, 255, 0.75);
+  background: rgba(40, 40, 60, 0.8);
+  border-radius: 999px;
+  padding: 4px 10px;
+}
+
+/* صفوف الليدربورد */
+.leaderboard-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.leaderboard-row {
+  display: grid;
+  grid-template-columns: 40px 1fr auto;
+  align-items: center;
+  padding: 7px 10px;
+  border-radius: 10px;
+  background: rgba(10, 10, 18, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.02);
+  
+}
+
+.leaderboard-row .rank {
+  font-weight: 700;
+  color: #ffb347;
+}
+
+.leaderboard-row .addr {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco,
+    Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 12px;
+  color: rgba(230, 230, 255, 0.85);
+}
+
+.leaderboard-row .amount {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffd27a;
+}
+
+/* ملاحظة تحت الليدربورد */
+.leaderboard-footnote {
+  margin-top: 12px;
+  font-size: 11px;
+  color: rgba(210, 210, 240, 0.7);
+}
+
+/* Toast Notifications */
+.toast-container {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2000;
+}
+
+.toast {
+  min-width: 260px;
+  max-width: 420px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  text-align: center;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+  animation: toast-slide-in 0.25s ease-out;
+}
+
+/* ألوان مختلفة حسب نوع التوست */
+.toast-success {
+  background: linear-gradient(120deg, #1f8a4d, #34c37a);
+  color: #f2fff7;
+}
+
+.toast-error {
+  background: linear-gradient(120deg, #b3261e, #ff5a5a);
+  color: #fff5f5;
+}
+
+.toast-info {
+  background: linear-gradient(120deg, #31396b, #4b6bff);
+  color: #f4f5ff;
+}
+
+/* أنيميشن دخول التوست */
+@keyframes toast-slide-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -10px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* استجابة للموبايل */
+@media (max-width: 768px) {
+  .app-container {
+    padding: 24px 12px 60px;
+  }
+
+  .card-main {
+    padding: 22px 16px;
+  }
+
+  .header-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .wallet-connect {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* 🔶 نص بالنص */
+
+/* 🔶 لون برتقالي لكلمات معينة */
+.orange {
+  color: #ff8a26; /* برتقالي فاخر */
+}
+
+/* 🔶 تكبير عنوان HeatRush Staking */
+.title .orange {
+  font-size: 32px; /* كبر العنوان بنسبة حلوة */
+  font-weight: 900;
+  letter-spacing: 0.5px;
+}
+
+/* ========== FOOTER ========== */
+
+.footer {
+  margin-top: auto;
+  padding: 0px 15px 1px;
+  text-align: center;
+  font-size: 11px;
+  color: #999999;
+  border-top: 1px solid #1a1a1a;
+  background: radial-gradient(circle at top, rgba(255, 90, 0, 0.25) 0, #050505 60%);
+}
+
+.footer-sub {
+  margin-top: 2px;
+  font-size: 10px;
+  opacity: 0.8;
+}
+
+/* ========== Referral Section ========== */
+
+.referral-section {
+  margin: 50px auto;
+  padding: 30px;
+  width: 85%;
+  max-width: 900px;
+  background: radial-gradient(circle at top, rgba(255, 120, 0, 0.12), rgba(10, 10, 15, 0.95));
+  border-radius: 20px;
+  color: white;
+  box-shadow: 0 0 40px rgba(255, 120, 0, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.ref-title {
+  text-align: center;
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.ref-desc {
+  text-align: center;
+  font-size: 15px;
+  opacity: 0.9;
+  margin-bottom: 25px;
+}
+
+.referral-content {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+/* التعليمات */
+.referral-instructions {
+  flex: 1;
+  min-width: 260px;
+  padding: 20px;
+  border-radius: 12px;
+  line-height: 1.6;
+}
+
+/* صندوق الإدخال */
+.referral-input {
+  flex: 1;
+  min-width: 260px;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.ref-label {
+  display: block;
+  margin-bottom: 6px;
+  opacity: 0.8;
+}
+
+.ref-input-box {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  background: #222;
+  border: 1px solid #333;
+  color: white;
+  margin-bottom: 10px;
+}
+
+.ref-generate-btn,
+.copy-btn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(90deg, #ff7900, #ffae00);
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.ref-generate-btn:hover,
+.copy-btn:hover {
+  transform: scale(1.03);
+}
+
+.ref-output {
+  margin-top: 15px;
+  background: rgba(255, 153, 0, 0.1);
+  padding: 15px;
+  border-radius: 12px;
+  border-left: 3px solid #ff9a00;
+}
+
+.ref-warning {
+  text-align: center;
+  margin-top: 20px;
+  opacity: 0.7;
+}
+.copy-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(90deg, #000, #222);
+  color: #ff9800;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: 0.2s;
+}
+
+.copy-btn:hover {
+  background: #111;
+  transform: scale(1.03);
+  color: #ffb347;
+}
+.coin-image {
+  width: 120px;
+  margin: 0 auto 15px auto;
+  display: block;
+  filter: drop-shadow(0 0 12px rgba(255,120,0,0.55));
+}
+/* 🔥 Custom HeatRush Style for RainbowKit Connect Button */
+.rainbowkit-connect-button,
+[data-testid="rk-connect-button"] {
+  background: linear-gradient(90deg, #ff7a00, #ffae00) !important;
+  color: #000 !important;
+  font-weight: bold !important;
+  border-radius: 14px !important;
+  padding: 14px 22px !important;
+  font-size: 16px !important;
+  transition: 0.25s !important;
+  border: none !important;
+  box-shadow: 0 0 12px rgba(255,120,0,0.55) !important;
+}
+
+.rainbowkit-connect-button:hover,
+[data-testid="rk-connect-button"]:hover {
+  transform: scale(1.06);
+  box-shadow: 0 0 25px rgba(255,140,0,0.8) !important;
+}
+
+/* عندما يكون المستخدم متصل */
+.rainbowkit-connected-button {
+  background: #111 !important;
+  border-radius: 14px !important;
+  color: #ffffff !important;
+  padding: 12px 18px !important;
+  border: 1px solid #444 !important;
+}
+/* 🔥 Center text inside RainbowKit Button */
+.rainbowkit-connect-button,
+[data-testid="rk-connect-button"] {
+  display: flex !important;
+  align-items: center !important;   /* عمودي */
+  justify-content: center !important; /* أفقي */
+  text-align: center !important;
+}
+
+
+
+
+
+
+
+
+/* ===========================
+   🔥 HeatRush FAQ Styling
+   =========================== */
+
+.faq-accordion-section {
+  max-width: 900px;
+  margin: 10px auto;
+  padding: 0 20px;
+  background: transparent;
+}
+
+.faq-title-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 25px;
+}
+
+.faq-logo {
+  width: 45px;          /* أصغر */
+  height: auto;
+  opacity: 0.9;
+  filter: drop-shadow(0 0 10px rgba(255,120,0,0.6));
+}
+
+.faq-title {
+  font-size: 28px;
+  text-align: center;
+  color: #fff;
+  margin: 0;
+}
+
+.faq-title .orange {
+  color: #ff7b00;
+}
+
+.faq-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.faq-accordion {
+  width: 100%;
+  max-width: 650px;
+}
+
+.faq-item {
+  background: radial-gradient(circle at top, rgba(255, 120, 0, 0.12), rgba(10, 10, 15, 0.95));
+  margin-bottom: 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 120, 0, 0.3);
+  box-shadow: 0 0 10px rgba(255, 120, 0, 0.2);
+  overflow: hidden;
+  backdrop-filter: blur(6px);
+}
+
+.faq-question {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: 16px;
+  font-size: 17px;
+  font-weight: 600;
+  color: #ffa64d;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.faq-question:hover {
+  color: #ff8800;
+}
+
+.faq-icon {
+  font-size: 22px;
+}
+
+.faq-answer {
+  padding: 0 16px 16px 16px;
+  display: none;
+  color: #ddd;
+  line-height: 1.6;
+}
+
+.faq-answer.open {
+  display: block;
+}
+
+
+
+/* ============================
+   🔥 Total Stats Box
+   ============================ */
+
+.total-stats-box {
+  margin: 20px auto 10px auto;
+  width: 100%;
+  max-width: 550px;
+  padding: 18px 25px;
+  background: radial-gradient(circle at top, rgba(255, 120, 0, 0.12), rgba(10, 10, 15, 0.95));
+  border-radius: 18px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 120, 0, 0.35);
+  box-shadow: 0 0 18px rgba(255, 120, 0, 0.25);
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-item h3 {
+  font-size: 14px;
+  color: #ffb060;
+  margin: 0 0 6px 0;
+  font-weight: 600;
+}
+
+.stat-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffd28a;
+}
+
+.divider {
+  width: 1px;
+  height: 40px;
+  background: rgba(255, 140, 0, 0.3);
+  border-radius: 5px;
+}
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:  url("/coin.png");
+  background-size: 100%;
+  background-position: center;
+  opacity: 0.07;
+  pointer-events: none;
+  filter: saturate(0.7);
+  border-radius: inherit;
+}
+
+
+
+
+
+
+
+/* 🔥 خلفية عامة مدمجة بالصورة */
+.global-background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-image: url("https://heatrush.xyz/wp-content/uploads/2025/08/1-scaled.jpg");
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+
+  opacity: 0.18;              /* شفافية ناعمة */
+  filter: blur(6px) saturate(1.2);
+  pointer-events: none;       /* ما بتأثر على الموقع */
+}
+
+/* 🔥 طبقة تغميق خفيفة فوق الصورة */
+.global-background-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 0, 0, 0.1),
+    rgba(0, 0, 0, 0.9)
+  );
+  pointer-events: none;
+}
+
+
+
+
+
+
+
+.top-nav {
+  width: 100%;
+  padding: 10px 20px;
+  background: rgba(0,0,0,0.4);
+  border-bottom: 1px solid rgba(255,140,0,0.2);
+  text-align: left;
+  backdrop-filter: blur(6px);
+}
+
+.top-nav a {
+  color: #ff8a26;
+  font-size: 14px;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+
+
+
+
+
+.back-home-btn {
+  display: inline-block;
+  padding: 8px 16px;
+  background: rgba(255, 140, 0, 0.15);
+  border: 1px solid rgba(255, 140, 0, 0.4);
+  color: #ff8a26;
+  border-radius: 10px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  backdrop-filter: blur(6px);
+  transition: 0.2s ease;
+}
+
+.back-home-btn:hover {
+  background: rgba(255, 140, 0, 0.25);
+  border-color: rgba(255, 160, 0, 0.7);
+  color: #ffb347;
+}
+/* ===========================
+   🔥 Presale (Public Sale) Box
+   =========================== */
+
+.presale-card {
+  margin-top: 10px;
+}
+
+.presale-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.presale-title {
+  margin: 0;
+  font-size: 18px;
+}
+
+.presale-subtitle {
+  margin: 4px 0 0 0;
+  font-size: 13px;
+  color: rgba(230, 230, 255, 0.75);
+}
+
+/* صندوق السعر الثابت */
+.presale-rate-box {
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: rgba(20, 20, 30, 0.9);
+  border: 1px solid rgba(255, 180, 80, 0.7);
+  text-align: right;
+}
+
+.presale-rate-label {
+  display: block;
+  font-size: 11px;
+  color: rgba(230, 230, 255, 0.7);
+}
+
+.presale-rate-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffd27a;
+}
+
+/* سطر حالة سعر ETH */
+.presale-price-row {
+  margin-top: 8px;
+  font-size: 12px;
+}
+
+.presale-price-loading {
+  color: rgba(230, 230, 255, 0.7);
+}
+
+.presale-price-ok {
+  color: #9df39d;
+}
+
+.presale-price-error {
+  color: #ff8080;
+}
+
+/* صف الإدخال + الملخص */
+.presale-input-row {
+  display: flex;
+  gap: 18px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.presale-input-group {
+  flex: 1;
+  min-width: 240px;
+}
+
+.presale-label {
+  display: block;
+  font-size: 12px;
+  margin-bottom: 6px;
+  color: rgba(240, 240, 255, 0.85);
+}
+
+.presale-hints {
+  margin-top: 6px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: rgba(220, 220, 245, 0.7);
+}
+
+/* صندوق الملخص (USD + HR) */
+.presale-summary {
+  flex: 1;
+  min-width: 220px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(10, 10, 20, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.presale-summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.presale-summary-label {
+  font-size: 12px;
+  color: rgba(220, 220, 245, 0.75);
+}
+
+.presale-summary-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffd27a;
+}
+
+/* زر الـ Presale (نفس زر الستيك تقريباً) */
+.presale-btn {
+  margin-top: 16px;
+}
+
+/* نص أسفل كارت الـ Presale */
+.presale-footnote {
+  margin-top: 10px;
+  font-size: 11px;
+  color: rgba(210, 210, 240, 0.7);
+}
+
+/* موبايل */
+@media (max-width: 768px) {
+  .presale-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .presale-rate-box {
+    align-self: stretch;
+    text-align: left;
+  }
+
+  .presale-input-row {
+    flex-direction: column;
+  }
+
+  .presale-summary {
+    width: 100%;
+  }
+}
