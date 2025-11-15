@@ -476,7 +476,7 @@ const toggleFAQ = (id) => {
 
   <div className="stat-item">
     <h3>Total Users</h3>
-    <p className="stat-value">400</p>
+    <p className="stat-value">413</p>
   </div>
 
   <div className="divider"></div>

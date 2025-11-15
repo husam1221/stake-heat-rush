@@ -154,7 +154,7 @@ input[type="number"] {
 
 /* Placeholder واضح بس ناعم */
 .input::placeholder {
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.082);
 }
 
 /* زر MAX */
@@ -1005,4 +1005,9 @@ input[type="number"] {
   .presale-summary {
     width: 100%;
   }
+}
+/* تكبير عرض حقل إدخال ETH */
+.presale-input-group input {
+  width: 100% !important;
+  max-width: 480px; /* زوّد الرقم إذا بدك عرضه أكبر */
 }
