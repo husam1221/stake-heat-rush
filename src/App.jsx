@@ -469,21 +469,21 @@ const toggleFAQ = (id) => {
 <div className="total-stats-box">
   <div className="stat-item">
     <h3>Total Deposited</h3>
-    <p className="stat-value">16.25 ETH</p>
+    <p className="stat-value">17.35 ETH</p>
   </div>
 
   <div className="divider"></div>
 
   <div className="stat-item">
     <h3>Total Users</h3>
-    <p className="stat-value">422</p>
+    <p className="stat-value">426</p>
   </div>
 
   <div className="divider"></div>
 
   <div className="stat-item">
     <h3>Total Transactions</h3>
-    <p className="stat-value">617</p>
+    <p className="stat-value">635</p>
   </div>
 </div>
 
