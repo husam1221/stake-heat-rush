@@ -114,7 +114,7 @@ body {
 }
 
 .stake-label {
-  font-size: 14px;
+  font-size: 24px;
   font-weight: 600;
 }
 
@@ -276,78 +276,150 @@ input[type="number"] {
   line-height: 1.5;
 }
 
-/* كارت التوب ستيكرز */
+/* ============== HEATRUSH LEADERBOARD — النسخة النارية الواضحة ============== */
+
 .leaderboard-card {
   margin-top: 4px !important;
-  background: radial-gradient(circle at top, rgba(255, 120, 0, 0.12), rgba(10, 10, 15, 0.95)) !important;
-  border: 1px solid rgba(255, 255, 255, 0.04) !important;
+  background: 
+    radial-gradient(circle at top left, rgba(255, 90, 0, 0.22), transparent 60%),
+    linear-gradient(135deg, rgba(25, 12, 8, 0.85) 0%, rgba(18, 10, 22, 0.95) 100%);
+  border: 1.5px solid rgba(255, 110, 30, 0.5) !important;
+  border-top: 2px solid #ff6200 !important;
+  border-radius: 16px;
+  box-shadow: 
+    0 10px 30px rgba(255, 80, 0, 0.18),
+    0 0 25px rgba(255, 120, 40, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  position: relative;
+  overflow: hidden;
+  padding: 20px;
 }
 
+/* خط علوي متوهج */
+.leaderboard-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #ff4500, #ff8c00, #ff4500, transparent);
+  box-shadow: 0 0 15px #ff6200;
+}
 
+/* الهيدر */
 .leaderboard-header {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
-  gap: 10px;
-  margin-bottom: 10px;
-    background: radial-gradient(circle at top, rgba(255, 120, 0, 0.12), rgba(10, 10, 15, 0.95)) !important;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed rgba(255, 120, 50, 0.3);
 }
 
 .leaderboard-title {
   margin: 0;
-  font-size: 16px;
+  font-size: 18px;
+  font-weight: 800;
+  color: #ff9500;
+  text-shadow: 0 0 10px rgba(255, 149, 0, 0.5);
+  letter-spacing: 0.5px;
 }
 
 .leaderboard-tag {
   font-size: 11px;
-  color: rgba(230, 230, 255, 0.75);
-  background: rgba(40, 40, 60, 0.8);
+  font-weight: 600;
+  color: #ffd0a0;
+  background: linear-gradient(90deg, rgba(255, 80, 0, 0.3), rgba(255, 140, 0, 0.2));
+  border: 1px solid rgba(255, 140, 0, 0.4);
   border-radius: 999px;
-  padding: 4px 10px;
+  padding: 5px 12px;
+  backdrop-filter: blur(5px);
+  box-shadow: 0 0 10px rgba(255, 100, 0, 0.2);
 }
 
-/* صفوف الليدربورد */
+/* قائمة اللاعبين */
 .leaderboard-list {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-top: 6px;
+  gap: 8px;
+  margin-top: 8px;
 }
 
 .leaderboard-row {
   display: grid;
-  grid-template-columns: 40px 1fr auto;
+  grid-template-columns: 50px 1fr auto;
   align-items: center;
-  padding: 7px 10px;
-  border-radius: 10px;
-  background: rgba(10, 10, 18, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.02);
-  
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: radial-gradient(circle at top, rgba(255, 120, 0, 0.12), rgba(10, 10, 15, 0.95));
+  border: 1px solid rgba(255, 120, 50, 0.35);
+  transition: all 0.35s ease;
+  position: relative;
+  overflow: hidden;
 }
 
+.leaderboard-row::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(to bottom, #ff6200, #ff9a00);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.leaderboard-row:hover {
+  transform: translateY(-3px);
+  background: linear-gradient(90deg, rgba(255, 80, 0, 0.18), rgba(255, 120, 40, 0.12));
+  border-color: #ff8400;
+  box-shadow: 0 10px 25px rgba(255, 100, 0, 0.25);
+}
+
+.leaderboard-row:hover::before {
+  opacity: 1;
+}
+
+/* الرتبة */
 .leaderboard-row .rank {
-  font-weight: 700;
-  color: #ffb347;
+  font-weight: 900;
+  font-size: 18px;
+  color: #ffaa00;
+  text-shadow: 
+    0 0 10px #e6ded97c,
+    0 0 20px #f8f7f762;
 }
 
+/* العنوان (المحفظة) */
 .leaderboard-row .addr {
-  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco,
-    Consolas, "Liberation Mono", "Courier New", monospace;
-  font-size: 12px;
-  color: rgba(230, 230, 255, 0.85);
+  font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 15px;
+  color: #ffffff;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.5px;
 }
 
+/* الكمية */
 .leaderboard-row .amount {
-  font-size: 13px;
-  font-weight: 600;
-  color: #ffd27a;
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffaa00;
+  text-shadow: 0 0 12px rgba(255, 170, 0, 0.6);
 }
 
-/* ملاحظة تحت الليدربورد */
+/* التذييل */
 .leaderboard-footnote {
-  margin-top: 12px;
-  font-size: 11px;
-  color: rgba(210, 210, 240, 0.7);
+  margin-top: 16px;
+  font-size: 11.5px;
+  color: rgba(255, 180, 100, 0.8);
+  text-align: center;
+  text-shadow: 0 0 8px rgba(255, 140, 0, 0.3);
+  padding: 8px;
+  background: rgba(255, 80, 0, 0.08);
+  border-radius: 8px;
+  border: 1px dashed rgba(255, 120, 50, 0.3);
 }
 
 /* Toast Notifications */
@@ -432,7 +504,7 @@ input[type="number"] {
 /* 🔶 تكبير عنوان HeatRush Staking */
 .title .orange {
   font-size: 32px; /* كبر العنوان بنسبة حلوة */
-  font-weight: 900;
+  font-weight: 750;
   letter-spacing: 0.5px;
 }
 
@@ -528,7 +600,7 @@ input[type="number"] {
   margin-top: 10px;
   border-radius: 10px;
   border: none;
-  background: linear-gradient(90deg, #ff7900, #ffae00);
+  background: linear-gradient(90deg, #ff8a26, #ffb347, #ff8a26);
   color: black;
   font-weight: bold;
   cursor: pointer;
@@ -537,7 +609,8 @@ input[type="number"] {
 
 .ref-generate-btn:hover,
 .copy-btn:hover {
-  transform: scale(1.03);
+  transform: translateY(-1px);
+  box-shadow: 0 0 18px rgba(255, 160, 0, 0.5);
 }
 
 .ref-output {
@@ -920,13 +993,13 @@ input[type="number"] {
 .presale-input-row {
   display: flex;
   gap: 18px;
-  margin-top: 16px;
+  margin-top: 6px;
   flex-wrap: wrap;
 }
 
 .presale-input-group {
   flex: 1;
-  min-width: 240px;
+  min-width: 440px;
 }
 
 .presale-label {
@@ -946,16 +1019,23 @@ input[type="number"] {
 
 /* صندوق الملخص (USD + HR) */
 .presale-summary {
-  flex: 1;
-  min-width: 220px;
-  padding: 12px 14px;
-  border-radius: 14px;
+  flex: none;                /* يمنع التمدد */
+  width: 380px;              /* تصغير العرض */
+  padding: 8px 10px;         /* تصغير المساحة الداخلية */
+  min-width: 0;              /* السماح بالتصغير */
+  border-radius: 10px;       /* زوايا أصغر */
   background: rgba(10, 10, 20, 0.95);
   border: 1px solid rgba(255, 255, 255, 0.06);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 5px;                
 }
+.presale-input-group .input-row .input {
+  flex: 1 !important;
+  width: 100% !important;
+  max-width: none !important;
+}
+
 
 .presale-summary-item {
   display: flex;
@@ -972,6 +1052,14 @@ input[type="number"] {
   font-size: 13px;
   font-weight: 600;
   color: #ffd27a;
+}
+.presale-summary-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: #ff9d2b; /* برتقالي ناري */
+  text-align: right;   /* ← يخلي النص للجهة اليمين */
+  display: block;
+  min-width: 70px;     /* حتى يظل محاذى لليمين */
 }
 
 /* زر الـ Presale (نفس زر الستيك تقريباً) */
@@ -1010,4 +1098,159 @@ input[type="number"] {
 .presale-input-group input {
   width: 100% !important;
   max-width: 480px; /* زوّد الرقم إذا بدك عرضه أكبر */
+}
+
+
+
+
+
+/* === HEATRUSH TOTAL STATS - FULL WIDTH BOX === */
+.hr-total-stats-standalone {
+  all: unset;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  gap: 50px;
+  background: rgba(13,13,13,0.8);
+  backdrop-filter: blur(16px);
+  padding: 40px 60px;
+  border-radius: 24px;
+  border: 1.5px solid rgba(226,125,41,0.4);
+  box-shadow: 0 0 40px rgba(226,125,41,0.25);
+  margin: 30px auto;
+  max-width: 1400px;
+  flex-wrap: wrap;
+  font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.hr-stat-item {
+  all: unset;
+  text-align: center;
+  min-width: 180px;
+}
+
+.hr-stat-item .hr-icon {
+  font-size: 2.0rem;
+  margin-bottom: 8px;
+  filter: drop-shadow(0 0 12px #E27D29);
+}
+
+.hr-stat-item h3 {
+  all: unset;
+  color: #aaa;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.hr-value {
+  all: unset;
+  font-size: 1.3rem;
+  font-weight: 900;
+  background: linear-gradient(45deg, #E27D29, #ff9f1c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 20px rgba(226,125,41,0.7);
+  display: block;
+  margin: 4px 0;
+}
+
+.hr-change {
+  all: unset;
+  font-size: 0.7rem;
+  color: #4ade80;
+  display: block;
+}
+
+.hr-divider {
+  all: unset;
+  width: 1px;
+  height: 80px;
+  background: linear-gradient(transparent, #E27D29, transparent);
+  box-shadow: 0 0 15px #E27D29;
+  opacity: 0.6;
+}
+
+/* === HEATRUSH 3 INFO CARDS === */
+.hr-info-cards-wrapper {
+  all: unset;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 28px;
+  max-width: 1400px;
+  margin: 0px auto;
+  padding: 0 20px;
+  font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.hr-info-card {
+  all: unset;
+  background: rgba(13,13,13,0.8);
+  border: 1px solid rgba(226,125,41,0.3);
+  border-radius: 18px;
+  padding: 32px 24px;
+  text-align: center;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.hr-info-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(45deg, transparent, rgba(226,125,41,0.06));
+  pointer-events: none;
+}
+
+.hr-info-card:hover {
+  transform: translateY(-10px);
+  border-color: #E27D29;
+  box-shadow: 0 20px 40px rgba(226,125,41,0.25);
+}
+
+.hr-flame {
+  font-size: 2rem;
+  margin-bottom: 12px;
+  filter: drop-shadow(0 0 15px #E27D29);
+}
+
+.hr-info-card h3 {
+  all: unset;
+  color: #ccc;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin: 8px 0;
+  display: block;
+}
+
+.hr-big-value {
+  all: unset;
+  font-size: 1.9rem;
+  font-weight: 900;
+  background: linear-gradient(45deg, #E27D29, #ff9f1c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 30px rgba(226,125,41,0.6);
+  display: block;
+  margin: 12px 0;
+}
+
+.hr-info-card p {
+  all: unset;
+  color: #999;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  margin: 16px 0 0;
+  display: block;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hr-total-stats-standalone { gap: 30px; padding: 30px 20px; }
+  .hr-divider { display: none; }
 }
