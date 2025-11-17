@@ -334,7 +334,7 @@ const App = () => {
   <div className="hr-total-stats-standalone">
     <div className="hr-stat-item">
       <div className="hr-icon">Total Deposited</div>
-      <p className="hr-value">19.47 ETH</p>
+      <p className="hr-value">19.49 ETH</p>
     </div>
     <div className="hr-divider"></div>
     <div className="hr-stat-item">
@@ -344,7 +344,7 @@ const App = () => {
     <div className="hr-divider"></div>
     <div className="hr-stat-item">
       <div className="hr-icon">Total Transactions</div>
-      <p className="hr-value">715</p>
+      <p className="hr-value">716</p>
     </div>
   </div>
 
@@ -588,10 +588,11 @@ const App = () => {
           ))}
         </div>
 
+      
+      </div>
         <footer className="footer">
           <p>🔥 HeatRush Staking — Built for Base.</p>
         </footer>
-      </div>
     </div>
   );
 };
