@@ -334,20 +334,17 @@ const App = () => {
   <div className="hr-total-stats-standalone">
     <div className="hr-stat-item">
       <div className="hr-icon">Total Deposited</div>
-      <p className="hr-value">17.35 ETH</p>
-      <span className="hr-change">+2.4 ETH today</span>
+      <p className="hr-value">19.47 ETH</p>
     </div>
     <div className="hr-divider"></div>
     <div className="hr-stat-item">
       <div className="hr-icon">Total Users</div>
-      <p className="hr-value">426</p>
-      <span className="hr-change">+28 this week</span>
+      <p className="hr-value">435</p>
     </div>
     <div className="hr-divider"></div>
     <div className="hr-stat-item">
       <div className="hr-icon">Total Transactions</div>
-      <p className="hr-value">635</p>
-      <span className="hr-change">+89 today</span>
+      <p className="hr-value">715</p>
     </div>
   </div>
 

@@ -1250,7 +1250,9 @@ input[type="number"] {
 }
 
 /* Responsive */
-@media (max-width: 768px) {
-  .hr-total-stats-standalone { gap: 30px; padding: 30px 20px; }
-  .hr-divider { display: none; }
+/* MOBILE FIX – force cards to stack */
+@media (max-width: 600px) {
+  .hr-info-cards-wrapper {
+    grid-template-columns: 1fr !important;
+  }
 }
