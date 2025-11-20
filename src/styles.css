@@ -1244,3 +1244,275 @@ body {
     min-width: 100px;
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.airdrop-box {
+  margin-top: 14px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  background: rgba(255, 140, 0, 0.08);
+  border: 1px solid rgba(255, 140, 0, 0.2);
+  backdrop-filter: blur(6px);
+}
+
+.airdrop-msg {
+  margin: 6px 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.airdrop-msg.neutral {
+  color: #ffb067;
+}
+
+.airdrop-msg.loading {
+  color: #ffd27a;
+}
+
+.airdrop-msg.error {
+  color: #ff6b6b;
+}
+
+.airdrop-msg.info {
+  color: #f0f0f0;
+}
+
+.airdrop-msg.hint {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #ffc78a;
+  opacity: 0.8;
+}
+
+
+
+
+
+
+
+
+
+
+
+/* 🔥 Airdrop Card */
+.airdrop-card {
+  margin-top: 8px;
+}
+
+.airdrop-title {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+}
+
+.airdrop-loading {
+  font-size: 13px;
+  color: rgba(230, 230, 255, 0.8);
+}
+
+.airdrop-error {
+  font-size: 13px;
+  color: #ff7777;
+}
+
+.airdrop-main-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.airdrop-main-item {
+  flex: 1;
+  min-width: 140px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(10, 10, 18, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.airdrop-label {
+  display: block;
+  font-size: 11px;
+  color: rgba(220, 220, 245, 0.7);
+  margin-bottom: 4px;
+}
+
+.airdrop-value {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.airdrop-note {
+  font-size: 11px;
+  color: rgba(210, 210, 240, 0.7);
+  margin-top: 4px;
+}
+
+/* Tiers Grid */
+.airdrop-tiers-grid {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.airdrop-tier-card {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(10, 10, 18, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.airdrop-tier-card.tier-diamond {
+  border-color: rgba(255, 180, 80, 0.9);
+  box-shadow: 0 0 25px rgba(255, 160, 60, 0.45);
+  background: radial-gradient(circle at top, rgba(255, 140, 0, 0.2), rgba(10, 10, 18, 0.95));
+}
+
+.tier-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+
+.tier-name {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.tier-min {
+  font-size: 11px;
+  color: rgba(230, 230, 255, 0.7);
+}
+
+.tier-bonus {
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffd27a;
+  margin-bottom: 4px;
+}
+
+.tier-tag {
+  font-size: 11px;
+  color: #ffedbf;
+  margin-bottom: 4px;
+}
+
+.tier-desc {
+  font-size: 11px;
+  color: rgba(215, 215, 240, 0.8);
+  margin: 0;
+}
+
+/* موبايل */
+@media (max-width: 768px) {
+  .airdrop-main-row {
+    flex-direction: column;
+  }
+}
+
+
+
+
+
+
+
+/* ================================
+   🔥 Claim Button With Lock Effect
+   ================================ */
+
+.claim-animated-btn {
+  position: relative;
+  width: 100%;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  transition: 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* 🔒 حالة الإغلاق */
+.claim-animated-btn.locked {
+  background: rgba(80, 80, 100, 0.35);
+  color: #ffaa66;
+  border: 1px solid rgba(255, 170, 80, 0.35);
+  cursor: not-allowed;
+}
+
+/* 🔓 حالة الفتح */
+.claim-animated-btn.unlocked {
+  background: linear-gradient(90deg, #ff8a26, #ffb347, #ff8a26);
+  color: #1b0905;
+  box-shadow: 0 0 22px rgba(255, 145, 0, 0.55);
+}
+
+/* ✨ وميض تمريري لما يكون مقفول */
+.claim-animated-btn.locked::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255, 180, 80, 0.18),
+    transparent
+  );
+  animation: claimLockedShine 2.8s infinite;
+  pointer-events: none;
+}
+
+@keyframes claimLockedShine {
+  0% {
+    transform: translateX(-120%);
+  }
+  60% {
+    transform: translateX(120%);
+  }
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+/* 🔒 أيقونة القفل */
+.lock-icon {
+  font-size: 20px;
+  animation: lockPulse 1.8s infinite;
+}
+
+@keyframes lockPulse {
+  0% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.22); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.7; }
+}
+
+/* 🔓 عند فتح القفل */
+.claim-animated-btn.unlocked .lock-icon {
+  animation: unlockWiggle 0.7s ease;
+}
+
+@keyframes unlockWiggle {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(12deg); }
+  50% { transform: rotate(-12deg); }
+  75% { transform: rotate(6deg); }
+  100% { transform: rotate(0deg); }
+}
