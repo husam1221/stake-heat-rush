@@ -57,7 +57,8 @@ body {
 /* الصف العلوي: عنوان + زر محفظة */
 .header-row {
   display: flex;
-  align-items: center;
+   text-align: left; /* 🔥 يخلي النص بالكامل على اليسار */
+
   justify-content: space-between;
   gap: 18px;
   width: 100%; /* 🔥 يمنع التمدد */
@@ -96,12 +97,13 @@ body {
 /* رصيد المستخدم */
 .balance {
   font-size: 13px;
+  text-align: left; /* 🔥 يخلي النص بالكامل على اليسار */
   color: rgba(230, 230, 255, 0.8);
 }
 
 .balance span {
   font-weight: 600;
-  color: #ffd27a;
+  color: #9df39d;
 }
 
 /* صندوق الستيك */
@@ -207,6 +209,7 @@ body {
 .presale-btn:hover {
   transform: translateY(-1px);
   box-shadow: 0 0 18px rgba(255, 160, 0, 0.5);
+  
 }
 
 
@@ -441,6 +444,7 @@ body {
 /* 🔶 لون برتقالي لكلمات معينة */
 .orange {
   color: #ff8a26; /* برتقالي فاخر */
+  
 }
 
 /* 🔶 تكبير عنوان HeatRush Staking */
@@ -448,6 +452,7 @@ body {
   font-size: 32px; /* كبر العنوان بنسبة حلوة */
   font-weight: 750;
   letter-spacing: 0.5px;
+
 }
 
 /* ========== FOOTER ========== */
@@ -468,6 +473,11 @@ body {
   opacity: 0.8;
 }
 
+
+
+
+
+
 /* ========== Referral Section ========== */
 
 .referral-section {
@@ -480,6 +490,7 @@ body {
   color: white;
   box-shadow: 0 0 40px rgba(255, 120, 0, 0.3);
   backdrop-filter: blur(10px);
+  box-sizing: border-box;
 }
 
 .ref-title {
@@ -509,6 +520,9 @@ body {
   padding: 20px;
   border-radius: 12px;
   line-height: 1.6;
+  box-sizing: border-box;
+ text-align: left; /* 🔥 يخلي النص بالكامل على اليسار */
+
 }
 
 /* صندوق الإدخال */
@@ -517,6 +531,7 @@ body {
   min-width: 260px;
   padding: 20px;
   border-radius: 12px;
+  box-sizing: border-box;
 }
 
 .ref-label {
@@ -533,6 +548,7 @@ body {
   border: 1px solid #333;
   color: white;
   margin-bottom: 10px;
+  box-sizing: border-box;
 }
 
 .ref-generate-btn,
@@ -568,6 +584,7 @@ body {
   margin-top: 20px;
   opacity: 0.7;
 }
+
 .copy-btn {
   width: 100%;
   padding: 12px;
@@ -586,12 +603,66 @@ body {
   transform: scale(1.03);
   color: #ffb347;
 }
+
 .coin-image {
   width: 120px;
   margin: 0 auto 15px auto;
   display: block;
   filter: drop-shadow(0 0 12px rgba(255,120,0,0.55));
 }
+
+
+/* =========================================
+   📱🔥 تحسينات كاملة للموبايل (Responsive)
+   ========================================= */
+@media (max-width: 480px) {
+  .referral-section {
+    padding: 20px;
+    width: 95%;
+  }
+
+  .ref-title {
+    font-size: 26px;
+  }
+
+  .ref-desc {
+    font-size: 14px;
+  }
+
+  .referral-content {
+    flex-direction: column;
+  }
+
+  .referral-input,
+  .referral-instructions {
+    min-width: 100%;
+    padding: 16px;
+  }
+
+  .ref-input-box {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .ref-generate-btn,
+  .copy-btn {
+    font-size: 14px;
+    padding: 11px;
+  }
+
+  .coin-image {
+    width: 90px;
+  }
+}
+
+
+
+
+
+
+
+
+
 /* 🔥 Custom HeatRush Style for RainbowKit Connect Button */
 .rainbowkit-connect-button,
 [data-testid="rk-connect-button"] {
@@ -671,6 +742,7 @@ body {
 
 .faq-title .orange {
   color: #ff7b00;
+  
 }
 
 .faq-wrapper {
@@ -930,6 +1002,7 @@ body {
 .presale-price-row {
   margin-top: 8px;
   font-size: 12px;
+  text-align: left; /* 🔥 يخلي النص بالكامل على اليسار */
 }
 
 .presale-price-loading {
@@ -938,6 +1011,7 @@ body {
 
 .presale-price-ok {
   color: #9df39d;
+  
 }
 
 .presale-price-error {
@@ -965,6 +1039,7 @@ body {
   font-size: 12px;
   margin-bottom: 6px;
   color: rgba(240, 240, 255, 0.85);
+  text-align: left; /* 🔥 يخلي النص بالكامل على اليسار */
 }
 
 .presale-hints {
@@ -1426,12 +1501,9 @@ body {
 
 
 
-
-
-
-
 /* ================================
    🔥 Claim Button With Lock Effect
+   optimized for mobile
    ================================ */
 
 .claim-animated-btn {
@@ -1448,9 +1520,13 @@ body {
   align-items: center;
   justify-content: center;
   gap: 10px;
+
+  /* تحسينات للموبايل */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* 🔒 حالة الإغلاق */
+/* 🔒 Locked */
 .claim-animated-btn.locked {
   background: rgba(80, 80, 100, 0.35);
   color: #ffaa66;
@@ -1458,14 +1534,13 @@ body {
   cursor: not-allowed;
 }
 
-/* 🔓 حالة الفتح */
 .claim-animated-btn.unlocked {
   background: linear-gradient(90deg, #ff8a26, #ffb347, #ff8a26);
   color: #1b0905;
   box-shadow: 0 0 22px rgba(255, 145, 0, 0.55);
 }
 
-/* ✨ وميض تمريري لما يكون مقفول */
+/* ✨ Shine effect */
 .claim-animated-btn.locked::after {
   content: "";
   position: absolute;
@@ -1481,18 +1556,12 @@ body {
 }
 
 @keyframes claimLockedShine {
-  0% {
-    transform: translateX(-120%);
-  }
-  60% {
-    transform: translateX(120%);
-  }
-  100% {
-    transform: translateX(120%);
-  }
+  0% { transform: translateX(-120%); }
+  60% { transform: translateX(120%); }
+  100% { transform: translateX(120%); }
 }
 
-/* 🔒 أيقونة القفل */
+/* 🔒 Lock icon */
 .lock-icon {
   font-size: 20px;
   animation: lockPulse 1.8s infinite;
@@ -1504,7 +1573,7 @@ body {
   100% { transform: scale(1); opacity: 0.7; }
 }
 
-/* 🔓 عند فتح القفل */
+/* 🔓 Unlock wiggle */
 .claim-animated-btn.unlocked .lock-icon {
   animation: unlockWiggle 0.7s ease;
 }
@@ -1515,4 +1584,110 @@ body {
   50% { transform: rotate(-12deg); }
   75% { transform: rotate(6deg); }
   100% { transform: rotate(0deg); }
+}
+
+/* =====================================
+   📱 Media Query — تحسينات إضافية للهاتف
+   ===================================== */
+@media (max-width: 480px) {
+
+  .claim-animated-btn {
+    padding: 12px;
+    font-size: 14px;
+    gap: 8px;
+  }
+
+  .lock-icon {
+    font-size: 18px;
+  }
+}
+
+
+
+/* === HR Claim Card === */
+
+.claim-card {
+  padding: 20px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #0e0e0e 0%, #1a1a1a 100%);
+  border: 1px solid #222;
+  box-shadow: 0 0 20px rgba(0,0,0,0.35);
+  margin-top: 15px;
+}
+
+.claim-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: #fff;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+.claim-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #161616;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #222;
+  color: #ddd;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+.claim-row strong {
+  color: #00c26f;
+  font-size: 17px;
+}
+
+.claim-box {
+  background: #141414;
+  padding: 15px;
+  border-radius: 12px;
+  border: 1px solid #222;
+}
+
+.claim-note {
+  margin: 0;
+  color: #ccc;
+  line-height: 1.7;
+  font-size: 15px;
+}
+
+.claim-note strong {
+  color: #00c26f;
+}
+
+
+
+.twitter-share-btn {
+  width: 100%;
+  margin-top: 18px;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+
+  background: linear-gradient(90deg, #194058 0%, #07171f 100%);
+  color: white;
+  transition: 0.25s ease;
+}
+
+.twitter-share-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(228, 130, 19, 0.4);
+}
+
+.tw-icon {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0) invert(1);
 }

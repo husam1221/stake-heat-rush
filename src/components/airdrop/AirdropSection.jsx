@@ -147,24 +147,51 @@ const AirdropSection = () => {
         )}
       </div>
 
-      {/* HR UNLOCK CARD */}
-      {isConnected && !airdropLoading && !airdropError && isEligible && (
-        <div className="card claim-card">
-          <h3 className="claim-title">$HR Unlock Schedule</h3>
+{/* HR UNLOCK CARD */}
+{isConnected && !airdropLoading && !airdropError && isEligible && (
+  <div className="claim-card">
+    <h3 className="claim-title">🔓 $HR Unlock Schedule</h3>
 
-          <div className="claim-row">
-            <span>Total Allocation:</span>
-            <strong>{hrBase} HR</strong>
-          </div>
+    <div className="claim-row">
+      <span>Total Allocation:</span>
+      <strong>{hrBase} HR</strong>
+    </div>
 
-        
+    <div className="claim-box">
+      <p className="claim-note">
+        Your HR unlocks gradually:
+        <br />• <strong>60%</strong> over the first 3 months
+        <br />• <strong>40%</strong> over the next 6 months
+      </p>
+    </div>
 
+<button
+  className="twitter-share-btn"
+  onClick={() => {
+    const tweetText = encodeURIComponent(
+      `Are you eligible for the $HR Airdrop ? 🔥
 
-          <p className="claim-note">
-            Your HR will unlock gradually:
-            <br />• 60% over the first 3 months
-            <br />• 40% over the next 6 months
-          </p>
+Great news Your personalized airdrop allocation is now live  
+Check your rewards, unlock schedule, and full breakdown instantly .
+
+🔓 60% unlock in the first 3 months  
+🔓 40% unlock over the next 6 months  
+
+Don’t miss your chance - verify your eligibility now 👇  
+https://stake.heatrush.xyz
+
+#HeatRush #Airdrop #Base #Crypto #HR #Web3
+`
+    );
+
+    const tweetUrl = `https://x.com/intent/tweet?text=${tweetText}`;
+    window.open(tweetUrl, "_blank");
+  }}
+>
+  
+  Share on X
+</button>
+
 
          <button
   className="stake-btn disabled-btn"

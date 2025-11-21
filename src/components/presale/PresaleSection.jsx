@@ -261,16 +261,17 @@ const PresaleSection = ({ showToast }) => {
         disabled={!claimable || claimable <= 0 || isClaimLoading}
         style={{ marginTop: "18px" }}
       >
-        <span className="lock-icon">
-          {claimable > 0 ? "🔓" : "🔒"}
-        </span>
+       <span className="lock-icon">🔓</span>
+
         {claimable > 0
           ? `Claim ${claimable.toLocaleString("en-US")} HR`
-          : "Claim (Locked)"}
+          : "Claim HR"}
       </button>
 
       <p className="presale-footnote">
-        HR tokens are claimable instantly from the presale contract.
+           You need to buy HR in the presale before you can claim.
+             <br /><br />
+           HR tokens are claimable instantly from the presale contract.
       </p>
     </div>
   );
