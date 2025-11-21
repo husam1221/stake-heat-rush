@@ -97,7 +97,7 @@ const AirdropSection = () => {
                   </div>
 
                   <div className="airdrop-main-item">
-                    <span className="airdrop-label">Min Stake Required</span>
+                    <span className="airdrop-label">power-Up StakeEth</span>
                     <span className="airdrop-value">
                       {requiredStake} ETH
                     </span>
