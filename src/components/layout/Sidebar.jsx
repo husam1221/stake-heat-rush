@@ -9,7 +9,6 @@ export default function Sidebar({ isOpen, toggle }) {
     if (path === "/") return location.pathname === "/";
     return location.pathname.startsWith(path);
   };
-
   return (
     <aside className={`sidebar ${isOpen ? "open" : ""}`}>
       <div className="logo-area">
