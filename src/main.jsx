@@ -13,13 +13,23 @@ import { base } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // 👇 بدل styles.css بهذه الاستايلات الموجودة فعليًا عندك
+// Global styles
 import "./index.css";
 import "./App.css";
+
+// Page/layout styles
 import "./styles/layout.css";
+import "./styles/dashboard.css";
 import "./styles/profile.css";
 import "./styles/staking.css";
 import "./styles/presale.css";
 import "./styles/airdrop.css";
+import "./styles/referral.css";
+import "./styles/tasks.css";
+import "./styles/nodes.css";
+import "./styles/faq.css";
+
+
 
 const config = getDefaultConfig({
   appName: "HeatRush Staking",
