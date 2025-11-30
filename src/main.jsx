@@ -11,7 +11,15 @@ import {
 import { WagmiProvider } from "wagmi";
 import { base } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import "./styles.css";
+
+// 👇 بدل styles.css بهذه الاستايلات الموجودة فعليًا عندك
+import "./index.css";
+import "./App.css";
+import "./styles/layout.css";
+import "./styles/profile.css";
+import "./styles/staking.css";
+import "./styles/presale.css";
+import "./styles/airdrop.css";
 
 const config = getDefaultConfig({
   appName: "HeatRush Staking",

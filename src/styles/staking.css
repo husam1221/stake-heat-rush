@@ -1,0 +1,627 @@
+/* ====== صفحة Staking - توزيع البطاقات (FULL WIDTH) ====== */
+
+.staking-page {
+  width: 100%;
+  padding-top: 0.5rem;
+  padding-bottom: 2rem;
+ 
+  box-sizing: border-box;
+}
+
+.staking-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: 1.4rem;
+  align-items: stretch;
+}
+
+/* أي كرت داخل الستيكينغ */
+.staking-card {
+  text-align: left;
+}
+
+/* أول كرت (الهيرو) ياخذ عرض كامل بالسطر الأول */
+.staking-hero {
+  grid-column: 1 / -1;
+}
+
+/* آخر كرت (الليدر بورد) ياخذ برضه عرض كامل */
+/* ====== Top 10 Leaderboard Card ====== */
+/* ====== Leaderboard Card - Full width, clean rows ====== */
+
+/* ====== Leaderboard Card - Full width, clean rows ====== */
+
+/* يخلي الكرت عريض وعلى سطر لحاله */
+.leaderboard-card {
+  grid-column: 1 / -1;
+  margin-top: 1.6rem;
+}
+
+/* الهيدر */
+.leaderboard-header {
+  margin-bottom: 0.8rem;
+}
+
+.leaderboard-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin-bottom: 0.25rem;
+}
+
+.leaderboard-header h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.leaderboard-pill {
+  font-size: 0.75rem;
+  padding: 0.22rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: radial-gradient(
+    circle at top left,
+    rgba(37, 99, 235, 0.35),
+    rgba(15, 23, 42, 0.96)
+  );
+}
+
+.leaderboard-header p {
+  margin: 0;
+  font-size: 0.87rem;
+  color: var(--hr-text-muted);
+}
+
+/* حالات اللودينغ / الخطأ / مافي داتا */
+.leaderboard-status {
+  font-size: 0.9rem;
+  color: var(--hr-text-muted);
+  margin: 0.4rem 0 0;
+}
+
+.leaderboard-status.error {
+  color: #fecaca;
+}
+
+/* ====== القائمة ====== */
+
+.leaderboard-list {
+  margin-top: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* صف واحد في الليست */
+.leaderboard-row {
+  display: grid;
+  grid-template-columns: 70px minmax(0, 1fr) auto;
+  align-items: center;
+  padding: 0.6rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid rgb(87, 45, 8);
+}
+
+/* هوفر خفيف */
+.leaderboard-row:hover {
+  border-color: rgba(148, 163, 184, 0.7);
+}
+
+/* الرانك */
+.leaderboard-rank {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.rank-badge {
+  min-width: 54px;
+  text-align: center;
+  padding: 0.3rem 0.4rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+}
+
+/* تمييز التوب 1–3 شوي */
+.rank-1 {
+  border-color: rgba(255, 215, 0, 0.8);
+  box-shadow: 0 0 14px rgba(250, 204, 21, 0.75);
+}
+
+.rank-2 {
+  border-color: rgba(148, 163, 184, 0.9);
+}
+
+.rank-3 {
+  border-color: rgba(249, 115, 22, 0.9);
+}
+
+/* العنوان (الأدريس) */
+.leaderboard-address {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.addr-main {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  font-size: 0.9rem;
+}
+
+.addr-label {
+  font-size: 0.78rem;
+  color: var(--hr-text-muted);
+}
+
+/* المبلغ */
+.leaderboard-amount {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.05rem;
+}
+
+.amount-value {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.amount-unit {
+  font-size: 0.78rem;
+  color: var(--hr-text-muted);
+}
+
+
+
+/* ====== بطاقة 1: Hero ====== */
+
+.staking-hero-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.1rem;
+}
+
+.hero-logo-link .logo {
+  width: 54px;
+  height: 54px;
+  border-radius: 999px;
+  box-shadow: 0 0 24px rgba(255, 138, 38, 0.7);
+  object-fit: cover;
+}
+
+.hero-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.hero-title {
+  font-size: 1.5rem;
+  margin: 0;
+  letter-spacing: 0.04em;
+}
+
+.hero-title-highlight {
+  color: var(--hr-primary);
+}
+
+.hero-subtitle {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--hr-text-muted);
+}
+
+.hero-tags-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 0.9rem;
+}
+
+.hero-pill {
+  font-size: 0.78rem;
+  padding: 0.28rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: radial-gradient(
+    circle at top left,
+    rgba(255, 138, 38, 0.15),
+    rgba(5, 5, 9, 0.96)
+  );
+}
+
+.hero-pill.accent {
+  border-color: rgba(255, 138, 38, 0.9);
+  color: var(--hr-soft-gold);
+}
+
+.hero-pill.subtle {
+  opacity: 0.8;
+}
+
+.hero-note {
+  margin: 0.4rem 0 0;
+  font-size: 0.9rem;
+  color: var(--hr-text-muted);
+}
+
+/* ====== بطاقة 2: Wallet Status / Snapshot ====== */
+
+.staking-status .card-title,
+.staking-action .card-title,
+.staking-xp-info .card-title,
+.staking-why .card-title {
+  font-size: 1.05rem;
+  margin-top: 0;
+  margin-bottom: 0.6rem;
+}
+
+.staking-status .status-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.45rem;
+  font-size: 0.9rem;
+}
+
+.status-label {
+  color: var(--hr-text-muted);
+}
+
+.status-value {
+  font-weight: 500;
+}
+
+.status-value.highlight {
+  color: var(--hr-soft-gold);
+}
+
+.status-unit {
+  font-size: 0.8rem;
+  opacity: 0.9;
+}
+
+.status-chip {
+  padding: 0.22rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  background: radial-gradient(
+    circle at top left,
+    rgba(37, 99, 235, 0.35),
+    rgba(15, 23, 42, 0.95)
+  );
+}
+
+.status-note {
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--hr-text-muted);
+}
+
+/* ====== بطاقة 3: Stake Action ====== */
+
+.card-subtitle {
+  margin: 0 0 0.9rem;
+  font-size: 0.9rem;
+  color: var(--hr-text-muted);
+}
+
+.stake-input-block {
+  margin-bottom: 0.9rem;
+}
+
+.stake-input-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.35rem; 
+}
+
+.stake-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.stake-hint {
+  font-size: 0.78rem;
+  color: var(--hr-text-muted);
+}
+
+/* هذول لازم يكونوا متعريفين عندك أصلاً من قبل:
+   .input-row, .input, .max-btn, .stake-btn, .secondary-actions, .secondary-btn, .stake-footnote
+   فمش راح أغير عليهم عشان ما أضرب الألوان الحالية */
+
+/* مسافة فخمة بين الأزرار الثلاثة */
+.staking-action .secondary-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;           /* هنا المسافة اللي تبيها (1rem = حوالي 16px) */
+  margin-top: 1.1rem;  /* مسافة من زر Stake ETH من فوق */
+}
+
+
+
+
+/* نضيف بس مسافة بسيطة للفوت نوت */
+.stake-footnote {
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+  color: var(--hr-text-muted);
+}
+
+/* ====== بطاقة 4: XP Info ====== */
+
+.xp-intro {
+  margin: 0 0 0.7rem;
+  font-size: 0.88rem;
+  color: var(--hr-text-muted);
+}
+
+.xp-formula-box {
+  border-radius: var(--hr-radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.7rem 0.75rem;
+  background: radial-gradient(
+    circle at top left,
+    rgba(255, 138, 38, 0.18),
+    rgba(33, 33, 46, 0.98)
+  );
+  margin-bottom: 0.8rem;
+}
+
+.xp-formula-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  opacity: 0.75;
+  margin-bottom: 0.3rem;
+}
+
+.xp-formula-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  font-size: 1.4rem;
+  margin-bottom: 0.35rem;
+  color: rgb(35, 179, 131);
+}
+
+.xp-formula-note {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--hr-text-muted);
+}
+
+.xp-levels-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.45rem;
+}
+
+.xp-level-card {
+  border-radius: var(--hr-radius-md);
+  padding: 0.55rem 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.85rem;
+}
+
+.xp-level-title {
+  font-weight: 600;
+  margin-bottom: 0.1rem;
+}
+
+.xp-level-threshold {
+  font-size: 0.8rem;
+  color: var(--hr-soft-gold);
+  margin-bottom: 0.3rem;
+}
+
+.xp-level-desc {
+  margin: 0;
+  color: var(--hr-text-muted);
+  font-size: 0.8rem;
+}
+
+.xp-level-card.bronze {
+  border-color: rgba(255, 183, 71, 0.35);
+}
+
+.xp-level-card.silver {
+  border-color: rgba(148, 163, 184, 0.7);
+}
+
+.xp-level-card.gold {
+  border-color: rgba(255, 138, 38, 0.9);
+}
+
+/* ====== بطاقة 5: Why Stake ====== */
+
+.why-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  font-size: 0.87rem;
+}
+
+.why-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+}
+
+.why-list .dot {
+  width: 6px;
+  height: 6px;
+  margin-top: 0.3rem;
+  border-radius: 999px;
+  background: linear-gradient(
+    135deg,
+    var(--hr-primary-hot),
+    var(--hr-primary-soft)
+  );
+  box-shadow: 0 0 10px rgba(255, 138, 38, 0.7);
+}
+
+.why-footnote {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--hr-text-muted);
+}
+.staking-why {
+  grid-column: 1 / -1; /* من أول كولمن لآخر كولمن */
+}
+
+/* ====== ريسبونسيف ====== */
+
+@media (max-width: 1024px) {
+  .staking-page {
+    max-width: 100%;
+    padding: 1.6rem 1rem 2.2rem;
+  }
+
+  .staking-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .staking-page {
+    padding: 1.4rem 0.9rem 2rem;
+  }
+
+  .staking-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .staking-hero-header {
+    align-items: flex-start;
+  }
+
+  .hero-subtitle {
+    font-size: 0.88rem;
+  }
+}
+
+
+
+
+
+/* ===== Verification / Identity card ===== */
+/* ===== Mobile layout tweaks ===== */
+
+@media (max-width: 900px) {
+  .profile-page {
+    padding: 1.25rem 1.1rem 2.2rem;
+  }
+
+  .profile-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .profile-title {
+    font-size: 1.3rem;
+  }
+
+  .profile-subtitle {
+    font-size: 0.85rem;
+  }
+
+  .profile-tag-group {
+    margin-top: 0.25rem;
+    align-self: stretch;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    flex-wrap: wrap;              /* ✅ خليه يلف وما يطلع برا */
+  }
+
+  .profile-tag-address {
+    max-width: 100%;              /* ✅ استغل عرض الكرت كامل */
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .profile-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-top: 1.4rem;
+  }
+
+  .profile-card {
+    padding: 1.15rem 1.05rem 1.3rem;
+    overflow: hidden;             /* ✅ أي شي زايد ينقص داخل الكرت */
+  }
+
+  .profile-card-header h2 {
+    font-size: 1rem;
+  }
+
+  .profile-card-note {
+    font-size: 0.8rem;
+  }
+
+  .profile-stat-row {
+    font-size: 0.82rem;
+    gap: 0.4rem;
+    flex-wrap: wrap;              /* ✅ لو النص طويل، ينزل سطر */
+  }
+
+  .profile-stat-label {
+    max-width: 100%;
+  }
+
+  .profile-stat-value {
+    max-width: 100%;
+    word-break: break-word;       /* ✅ لو رقم / نص طويل يكسر سطر */
+  }
+}
+
+/* ===== Mobile tweaks: Verify card specifically ===== */
+
+@media (max-width: 900px) {
+  .verify-card {
+    margin-bottom: 0.4rem;
+    overflow: hidden;             /* ✅ لا يطلع شي برا الكرت */
+  }
+
+  .verify-metrics {
+    gap: 0.45rem;
+  }
+
+  .verify-metric-row {
+    flex-direction: column;       /* ✅ العناصر تحت بعض على الموبايل */
+    align-items: flex-start;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+  }
+
+  .verify-pill {
+    width: 100%;                  /* ✅ البادج تاخد عرض كامل */
+    justify-content: flex-start;
+    text-align: left;
+    max-width: 100%;
+  }
+
+  .verify-btn {
+    margin-top: 0.6rem;
+    width: 100%;                  /* زر تأكيد التحقق عَ كامل الكرت */
+  }
+
+  .verify-result {
+    font-size: 0.78rem;
+    max-width: 100%;
+    word-break: break-word;
+  }
+}

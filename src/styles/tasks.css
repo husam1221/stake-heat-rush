@@ -1,0 +1,442 @@
+/* src/styles/tasks.css */
+
+.tasks-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+}
+
+.tasks-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.tasks-title {
+  font-size: 1.6rem;
+  margin: 0 0 0.35rem;
+}
+
+.tasks-subtitle {
+  margin: 0;
+  font-size: 0.96rem;
+  color: var(--hr-text-muted);
+  max-width: 520px;
+}
+
+.tasks-summary-card {
+  min-width: 260px;
+  max-width: 340px;
+  border-radius: var(--hr-radius-lg);
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--hr-border-subtle);
+  background: radial-gradient(
+      circle at top left,
+      rgba(255, 138, 38, 0.25),
+      transparent 65%
+    ),
+    #050509;
+  box-shadow: var(--hr-shadow-card);
+}
+
+.tasks-summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 0.9rem;
+  margin-bottom: 0.28rem;
+}
+
+.tasks-summary-label {
+  opacity: 0.75;
+}
+
+.tasks-summary-value {
+  font-weight: 600;
+}
+
+.tasks-progress-bar {
+  margin-top: 0.7rem;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.2);
+  overflow: hidden;
+}
+
+.tasks-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background-image: linear-gradient(
+    90deg,
+    var(--hr-primary-hot),
+    var(--hr-primary),
+    var(--hr-primary-soft)
+  );
+}
+
+/* GRID */
+
+.tasks-grid {
+  display: grid;
+  gap: 1.1rem;
+}
+
+@media (min-width: 960px) {
+  .tasks-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* TASK CARD */
+
+.task-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.task-card-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.task-title {
+  margin: 0 0 0.25rem;
+  font-size: 1.02rem;
+}
+
+.task-description {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--hr-text-muted);
+}
+
+.task-reward-pill {
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 183, 71, 0.7);
+  background: radial-gradient(
+    circle at top,
+    rgba(255, 183, 71, 0.25),
+    rgba(5, 5, 9, 0.95)
+  );
+  font-size: 0.78rem;
+  color: var(--hr-soft-gold);
+  white-space: nowrap;
+}
+
+.task-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+}
+
+.task-tag {
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  opacity: 0.9;
+}
+
+.task-link {
+  color: var(--hr-soft-gold);
+  text-decoration: none;
+  opacity: 0.9;
+}
+
+.task-link:hover {
+  text-decoration: underline;
+}
+
+/* BUTTON */
+
+.task-btn {
+  margin-top: 0.55rem;
+}
+
+.task-btn-done {
+  border-color: rgba(34, 197, 94, 0.8);
+  background: linear-gradient(
+    135deg,
+    rgba(22, 163, 74, 0.25),
+    rgba(5, 46, 22, 0.9)
+  );
+}
+
+/* FOOTNOTE */
+
+.tasks-footnote {
+  font-size: 0.85rem;
+  color: var(--hr-text-muted);
+  margin: 0.2rem 0 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ===== Daily Fuel Tank Card ===== */
+
+.daily-tank-card {
+  margin-bottom: 1.75rem;
+  padding: 1.6rem 1.6rem 1.4rem;
+}
+
+.daily-tank-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.daily-tank-title {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.daily-tank-subtitle {
+  margin: 0.35rem 0 0;
+  font-size: 0.86rem;
+  line-height: 1.5;
+  opacity: 0.8;
+}
+
+.daily-tank-pill {
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  font-size: 0.72rem;
+  white-space: nowrap;
+  background: radial-gradient(
+    circle at top left,
+    rgba(255, 183, 71, 0.12),
+    rgba(5, 5, 12, 0.96)
+  );
+}
+
+/* جسم الخزان */
+
+.daily-tank-body {
+  display: flex;
+  align-items: stretch;
+  gap: 1.8rem;
+  margin-bottom: 1.3rem;
+  flex-wrap: wrap;
+}
+
+/* شكل الخزان */
+
+.tank-visual {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.tank-shell {
+  position: relative;
+  width: 88px;
+  height: 170px;
+  border-radius: 999px;
+  padding: 3px;
+  background: radial-gradient(circle at top, #2b1c10, #050509);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.05),
+    0 20px 45px rgba(0, 0, 0, 0.95);
+}
+/* نقاط صغيرة تلمع وتطلع مع السائل */
+.tank-fill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.85) 0, transparent 55%),
+    radial-gradient(circle, rgba(255, 240, 200, 0.8) 0, transparent 60%),
+    radial-gradient(circle, rgba(255, 210, 120, 0.9) 0, transparent 55%);
+  background-size: 6px 6px, 7px 7px, 5px 5px;
+  background-repeat: no-repeat;
+  background-position:
+    20% 80%,
+    70% 60%,
+    40% 30%;
+  mix-blend-mode: screen;
+  opacity: 0.85;
+  animation: tankBubbles 4s infinite linear;
+}
+
+@keyframes tankBubbles {
+  0% {
+    background-position:
+      20% 85%,
+      70% 70%,
+      40% 40%;
+    opacity: 0.3;
+  }
+  40% {
+    background-position:
+      22% 60%,
+      68% 45%,
+      43% 25%;
+    opacity: 0.9;
+  }
+  100% {
+    background-position:
+      25% 15%,
+      65% 10%,
+      46% 5%;
+    opacity: 0.1;
+  }
+}
+
+.tank-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  overflow: hidden;
+  background: radial-gradient(circle at top, #050509, #020209);
+}
+
+.tank-fill {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: var(--fill, 0%);
+  background: linear-gradient(
+    180deg,
+    var(--hr-primary-soft),
+    var(--hr-primary),
+    var(--hr-primary-deep)
+  );
+  box-shadow: 0 -10px 30px rgba(255, 170, 0, 0.8);
+  transition: height 0.8s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* موجات و بابل داخل الخزان */
+.tank-fill::before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  background:
+    radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.45), transparent 60%),
+    radial-gradient(circle at 80% 10%, rgba(255, 230, 180, 0.35), transparent 55%),
+    radial-gradient(circle at 30% 80%, rgba(255, 255, 255, 0.45), transparent 60%);
+  mix-blend-mode: screen;
+  opacity: 0.9;
+  animation: tankWaves 7s infinite linear;
+}
+
+.tank-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 10%,
+    rgba(255, 255, 255, 0.18),
+    transparent 60%
+  );
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+@keyframes tankWaves {
+  from {
+    transform: translate3d(-10%, 0, 0);
+  }
+  to {
+    transform: translate3d(10%, 0, 0);
+  }
+}
+
+.tank-percent {
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.tank-caption {
+  font-size: 0.75rem;
+  opacity: 0.8;
+  text-align: center;
+  max-width: 180px;
+}
+
+/* معلومات النص */
+
+.tank-info {
+  flex: 1 1 220px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.tank-info-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.86rem;
+}
+
+.tank-info-label {
+  opacity: 0.75;
+}
+
+.tank-info-value {
+  font-weight: 500;
+}
+
+.tank-info-value.highlight {
+  color: var(--hr-soft-gold);
+}
+
+.tank-note {
+  margin-top: 0.6rem;
+  font-size: 0.78rem;
+  opacity: 0.72;
+}
+
+/* زر الكليم */
+
+.daily-tank-btn {
+  margin-top: 0.3rem;
+}
+
+/* موبايل */
+
+@media (max-width: 768px) {
+  .daily-tank-body {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .tank-visual {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .tank-info {
+    flex: 1 1 100%;
+  }
+
+  .tank-caption {
+    max-width: 100%;
+  }
+}

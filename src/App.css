@@ -1,42 +1,452 @@
+:root {
+  /* ========== COLORS ========== */
+  --hr-bg: #050509;
+  --hr-bg-alt: #080814;
+
+  --hr-card: #050509;
+  --hr-card-soft: #0d0d1c;
+
+  --hr-border-subtle: rgba(255, 255, 255, 0.04);
+  --hr-border-strong: rgba(255, 255, 255, 0.14);
+
+  --hr-primary: #ff8a26;      /* Primary Orange */
+  --hr-primary-soft: #ffb347; /* Light Orange */
+  --hr-primary-hot: #ff7b00;  /* Hot Orange */
+  --hr-primary-deep: #ff6200; /* Deep Orange */
+  --hr-gold: #ffaa00;         /* Golden Glow */
+  --hr-soft-gold: #ffe0a3;    /* Soft Gold تقريبية */
+
+  --hr-text-main: #f9fafb;
+  --hr-text-muted: #9ca3af;
+
+  --hr-radius-lg: 22px;
+  --hr-radius-md: 14px;
+  --hr-radius-pill: 999px;
+
+  --hr-shadow-card: 0 18px 45px rgba(0, 0, 0, 0.9);
+}
+
+/* ========== GLOBAL ========== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Inter", "Segoe UI", sans-serif;
+  /* خلفية عامة قريبة من الواجهة القديمة */
+  background:
+    radial-gradient(circle at top, #3b1a03 0%, #12040b 32%, #050509 60%, #020309 100%);
+  color: var(--hr-text-main);
+}
+
+/* مهم: يخلي التطبيق ياخذ عرض الشاشة كامل */
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  width: 100%;
+  min-height: 100vh;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* ========== TYPOGRAPHY صغيرة عامة (اختيارية) ========== */
+
+.title {
+  font-size: 1.4rem;
+  font-weight: 650;
+  letter-spacing: 0.02em;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.subtitle {
+  font-size: 0.9rem;
+  color: var(--hr-text-muted);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
+/* ========== CARDS ========== */
 
 .card {
-  padding: 2em;
+  background:
+    radial-gradient(circle at top left, rgba(255, 138, 38, 0.22), transparent 60%),
+    radial-gradient(circle at bottom right, rgba(0, 0, 0, 0.8), #050509);
+  border-radius: var(--hr-radius-lg);
+  border: 1px solid var(--hr-border-subtle);
+  box-shadow: var(--hr-shadow-card);
+  padding: 1.6rem 1.5rem 1.8rem;
 }
 
-.read-the-docs {
-  color: #888;
+/* ========== INPUTS ========== */
+
+.input {
+  width: 100%;
+  padding: 0.78rem 0.95rem;
+  border-radius: var(--hr-radius-md);
+  border: 1px solid var(--hr-border-strong);
+  background: radial-gradient(circle at top, #050309, #020107);
+  color: var(--hr-text-main);
+  font-size: 0.95rem;
+  outline: none;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    background 0.18s ease,
+    transform 0.1s ease;
+}
+
+.input::placeholder {
+  color: rgba(148, 163, 184, 0.7);
+}
+
+.input:focus {
+  border-color: var(--hr-primary-soft);
+  box-shadow:
+    0 0 0 1px rgba(255, 138, 38, 0.9),
+    0 0 28px rgba(255, 138, 38, 0.55);
+  background: radial-gradient(circle at top, #070313, #020107);
+  transform: translateY(-1px);
+}
+
+/* داخل صف واحد مع زر MAX */
+.input-row {
+  display: flex;
+  align-items: center;
+}
+
+/* ========== MAIN CTA BUTTON (Stake / Buy / Claim قوي) ========== */
+
+.stake-btn,
+.primary-btn {
+  width: 100%;
+  border: none;
+  border-radius: var(--hr-radius-md);
+  padding: 0.9rem 1rem;
+  font-size: 0.96rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  background-image: linear-gradient(
+    135deg,
+    var(--hr-primary-hot),
+    var(--hr-primary),
+    var(--hr-primary-soft)
+  );
+  color: #050509;
+  box-shadow:
+    0 12px 30px rgba(255, 98, 0, 0.65),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease,
+    filter 0.12s ease;
+}
+
+.stake-btn:hover,
+.primary-btn:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 18px 40px rgba(255, 98, 0, 0.9),
+    0 0 0 1px rgba(255, 255, 255, 0.08);
+  filter: brightness(1.06);
+}
+
+.stake-btn:active,
+.primary-btn:active {
+  transform: translateY(0);
+  box-shadow:
+    0 8px 20px rgba(255, 98, 0, 0.7),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.stake-btn.loading {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+/* ========== DISABLED STATE ========== */
+
+.disabled-btn {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+}
+
+/* ========== MAX BUTTON ========== */
+
+.max-btn {
+  border-radius: var(--hr-radius-pill);
+  padding: 0.42rem 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: radial-gradient(
+      circle at top,
+      rgba(255, 183, 71, 0.25),
+      rgba(0, 0, 0, 0.96)
+    );
+  color: var(--hr-soft-gold);
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-left: 0.45rem;
+  white-space: nowrap;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.1s ease,
+    box-shadow 0.1s ease;
+}
+
+.max-btn:hover {
+  border-color: rgba(255, 183, 71, 0.95);
+  background: radial-gradient(
+      circle at top,
+      rgba(255, 183, 71, 0.36),
+      rgba(0, 0, 0, 0.96)
+    );
+  box-shadow: 0 10px 24px rgba(255, 183, 71, 0.55);
+  transform: translateY(-0.5px);
+}
+
+/* ========== SECONDARY BUTTONS (Claim Rewards, Unstake, Share on X) ========== */
+
+.secondary-btn,
+.twitter-share-btn {
+  width: 100%;
+  border-radius: var(--hr-radius-md);
+  padding: 0.78rem 0.95rem;
+  font-size: 0.9rem;
+  border: 1px solid rgba(148, 163, 184, 0.36);
+  background: linear-gradient(
+    135deg,
+    rgba(15, 23, 42, 0.98),
+    rgba(15, 23, 42, 0.88)
+  );
+  color: var(--hr-text-main);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    transform 0.1s ease,
+    box-shadow 0.1s ease;
+}
+
+.secondary-btn:hover,
+.twitter-share-btn:hover {
+  border-color: rgba(249, 250, 251, 0.98);
+  background: linear-gradient(
+    135deg,
+    rgba(31, 41, 55, 0.99),
+    rgba(15, 23, 42, 0.94)
+  );
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.85);
+}
+
+/* ========== PRESALE CLAIM BUTTON (مع القفل) ========== */
+
+.claim-animated-btn {
+  margin-top: 0.4rem;
+  border-radius: var(--hr-radius-md);
+  border: 1px solid transparent;
+  padding: 0.9rem 1rem;
+  font-size: 0.94rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  width: 100%;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(circle at top left, #151515, #050509);
+  color: var(--hr-text-main);
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.12s ease,
+    background 0.18s ease,
+    filter 0.12s ease;
+}
+
+.claim-animated-btn .lock-icon {
+  font-size: 1rem;
+}
+
+.claim-animated-btn.unlocked {
+  border-color: rgba(255, 138, 38, 0.98);
+  background-image: linear-gradient(
+    120deg,
+    rgba(255, 98, 0, 0.35),
+    rgba(255, 138, 38, 0.12),
+    rgba(255, 183, 71, 0.25)
+  );
+  box-shadow:
+    0 14px 34px rgba(255, 138, 38, 0.7),
+    0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.claim-animated-btn.unlocked::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 0% 0%,
+    rgba(255, 255, 255, 0.5),
+    transparent 55%
+  );
+  opacity: 0;
+  transform: translateX(-40%);
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+}
+
+.claim-animated-btn.unlocked:hover::before {
+  opacity: 1;
+  transform: translateX(10%);
+}
+
+.claim-animated-btn.unlocked:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.04);
+}
+
+.claim-animated-btn.locked {
+  opacity: 0.6;
+  border-color: rgba(148, 163, 184, 0.5);
+  cursor: not-allowed;
+}
+
+/* ========== نصوص مساعدة ========== */
+
+.balance span,
+.presale-summary-value,
+.claim-row strong {
+  color: var(--hr-soft-gold);
+}
+
+
+
+
+
+
+/* ===================================================== */
+/* تأثير الفضاء الأسطوري – فوق الخلفية الأصلية بدون ما أغير ولا شيء */
+/* ===================================================== */
+
+/* نجوم تومض بطبقات خفيفة جدًا */
+html::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background-image:
+    radial-gradient(1px 1px at 15vw 25vh, #ffffff, transparent 70%),
+    radial-gradient(1px 1px at 35vw 80vh, #ffffff, transparent 70%),
+    radial-gradient(2px 2px at 75vw 15vh, #ffaa00, transparent 70%),
+    radial-gradient(1px 1px at 90vw 60vh, #ffffff, transparent 70%),
+    radial-gradient(1px 1px at 50vw 95vh, #ffffff, transparent 70%),
+    radial-gradient(2px 2px at 20vw 50vh, #ff8a26, transparent 70%),
+    radial-gradient(1px 1px at 65vw 40vh, #ffffff, transparent 70%);
+  background-repeat: repeat;
+  background-size: 200px 200px, 300px 300px, 400px 400px, 250px 250px, 350px 350px, 280px 280px, 320px 320px;
+  animation: starsTwinkle 14s ease-in-out infinite;
+  opacity: 0.6;
+}
+
+/* سحب كونية خفيفة جدًا (خطوط مطعوجة برتقالي/بنفسجي) */
+html::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 15% 30%, #ff7a18, transparent 65%),
+    radial-gradient(circle at 85% 70%, #8b5cf6, transparent 70%),
+    radial-gradient(circle at 45% 85%, #ffaa00, transparent 60%);
+  background-size: 900px 900px, 1100px 1100px, 800px 800px;
+  background-position: -200px -300px, -300px 100px, 100px -200px;
+  background-repeat: no-repeat;
+  filter: blur(110px);
+  opacity: 0.14;
+  mix-blend-mode: screen;
+  animation: nebulaMove 50s linear infinite;
+}
+
+/* نيازك تمر كل 10–15 ثانية (خفيفة وما تطغى) */
+html body::before {
+  content: "";
+  position: fixed;
+  top: 12%;
+  left: -20%;
+  width: 3px;
+  height: 3px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 14px 3px #ff8a26;
+  z-index: 0;
+  animation: meteor1 11s linear infinite;
+}
+
+html body::after {
+  content: "";
+  position: fixed;
+  top: 45%;
+  left: -20%;
+  width: 2px;
+  height: 2px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 12px 3px #ffaa00;
+  z-index: 0;
+  animation: meteor2 13s linear infinite;
+}
+
+/* ذيل النيزك */
+html body::before::after,
+html body::after::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: -160px;
+  width: 160px;
+  height: 1.5px;
+  background: linear-gradient(90deg, transparent, #ffffff, #ff8a26);
+  transform: translateY(-50%) rotate(-38deg);
+}
+
+/* الحركات */
+@keyframes starsTwinkle {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes nebulaMove {
+  0%   { transform: translate(0, 0) rotate(0deg); }
+  50%  { transform: translate(70px, -50px) rotate(4deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+@keyframes meteor1 {
+  0%   { opacity: 0; transform: translateX(0) translateY(0); }
+  6%   { opacity: 1; }
+  100% { opacity: 0; transform: translateX(140vw) translateY(100vh); }
+}
+
+@keyframes meteor2 {
+  0%   { opacity: 0; transform: translateX(0) translateY(0); }
+  8%   { opacity: 1; }
+  100% { opacity: 0; transform: translateX(160vw) translateY(110vh); }
 }

@@ -1,0 +1,340 @@
+/* src/styles/nodes.css */
+
+.nodes-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ========== HERO CARD ========== */
+
+.nodes-hero-card {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1.4fr);
+  gap: 1.5rem;
+}
+
+.nodes-title {
+  font-size: 1.6rem;
+  margin: 0 0 0.5rem;
+}
+
+.nodes-subtitle {
+  margin: 0 0 0.9rem;
+  font-size: 0.95rem;
+  color: var(--hr-text-muted);
+}
+
+.nodes-hero-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+  color: var(--hr-text-muted);
+}
+
+.nodes-hero-right {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.nodes-hero-pill {
+  display: flex;
+  flex-direction: column;
+  padding: 0.55rem 0.8rem;
+  border-radius: var(--hr-radius-md);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  background: radial-gradient(
+      circle at top left,
+      rgba(255, 138, 38, 0.12),
+      transparent 60%
+    ),
+    rgba(5, 5, 16, 0.9);
+}
+
+.nodes-hero-pill.outline {
+  background: rgba(5, 5, 16, 0.9);
+}
+
+.pill-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  opacity: 0.7;
+}
+
+.pill-value {
+  font-size: 0.9rem;
+  margin-top: 0.1rem;
+}
+
+.nodes-hero-note {
+  margin: 0.3rem 0 0;
+  font-size: 0.8rem;
+  color: var(--hr-text-muted);
+}
+
+/* ========== NODES GRID ========== */
+
+.nodes-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.4fr);
+  gap: 1.1rem;
+}
+
+.node-card {
+  position: relative;
+  padding: 1.4rem 1.3rem 1.4rem;
+}
+
+.node-free {
+  background:
+    radial-gradient(circle at top left, rgba(255, 183, 71, 0.16), transparent 55%),
+    linear-gradient(145deg, #050509, #050509, #050509);
+}
+
+.node-paid {
+  background:
+    radial-gradient(circle at top left, rgba(255, 98, 0, 0.2), transparent 55%),
+    linear-gradient(145deg, #050509, #050509, #050509);
+}
+
+.node-paid.strong {
+  box-shadow:
+    0 18px 40px rgba(255, 98, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.02);
+}
+
+.node-paid.ultra {
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.12), transparent 55%),
+    linear-gradient(145deg, #050509, #050509, #050509);
+}
+
+/* HEADER */
+
+.node-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.node-name {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.node-tagline {
+  margin: 0.25rem 0 0;
+  font-size: 0.85rem;
+  color: var(--hr-text-muted);
+}
+
+.node-badge {
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  white-space: nowrap;
+}
+
+.node-badge.free {
+  background: rgba(255, 183, 71, 0.1);
+  color: #ffd48a;
+}
+
+.node-badge.tier1 {
+  background: rgba(37, 197, 94, 0.12);
+  color: #6ee7b7;
+}
+
+.node-badge.tier2 {
+  background: rgba(96, 165, 250, 0.15);
+  color: #bfdbfe;
+}
+
+.node-badge.tier3 {
+  background: rgba(248, 113, 113, 0.15);
+  color: #fecaca;
+}
+
+/* META ROW */
+
+.node-meta-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 0.9rem;
+}
+
+.node-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.node-meta-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  opacity: 0.7;
+}
+
+.node-meta-value {
+  font-size: 0.9rem;
+}
+
+/* BENEFITS */
+
+.node-benefits {
+  margin: 0 0 0.9rem;
+  padding-left: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.86rem;
+  color: var(--hr-text-muted);
+}
+
+/* CTA BUTTON */
+
+.node-cta-btn {
+  width: 100%;
+  border-radius: var(--hr-radius-md);
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  padding: 0.8rem 0.95rem;
+  font-size: 0.88rem;
+  background: linear-gradient(
+    135deg,
+    rgba(15, 23, 42, 0.96),
+    rgba(15, 23, 42, 0.85)
+  );
+  color: var(--hr-text-main);
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    transform 0.1s ease,
+    box-shadow 0.1s ease;
+}
+
+.node-cta-btn:hover {
+  border-color: rgba(249, 250, 251, 0.85);
+  background: linear-gradient(
+    135deg,
+    rgba(31, 41, 55, 0.98),
+    rgba(15, 23, 42, 0.92)
+  );
+  transform: translateY(-1px);
+  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.75);
+}
+
+.node-cta-btn.disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* FOOTNOTE */
+
+.node-footnote {
+  margin-top: 0.6rem;
+  font-size: 0.78rem;
+  color: var(--hr-text-muted);
+}
+
+/* ========== INFO CARD ========== */
+
+.nodes-info-card {
+  margin-top: 0.25rem;
+}
+
+.nodes-info-title {
+  margin: 0 0 0.6rem;
+  font-size: 1.1rem;
+}
+
+.nodes-info-text {
+  margin: 0 0 0.6rem;
+  font-size: 0.9rem;
+  color: var(--hr-text-muted);
+}
+
+.nodes-info-list {
+  margin: 0 0 0.6rem;
+  padding-left: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.88rem;
+}
+
+/* ========== RESPONSIVE ========== */
+
+@media (max-width: 960px) {
+  .nodes-hero-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .nodes-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .node-meta-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .node-meta-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+
+
+
+
+
+/* 💡 لمعة هادية على الـ Status pill */
+.nodes-hero-pill.outline.pulse {
+  position: relative;
+  overflow: hidden;
+  animation: hrPillPulse 1.8s ease-in-out infinite;
+}
+
+/* نخلي النص نفسه يلمع شوي */
+.nodes-hero-pill.outline.pulse .pill-value {
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+/* الأنيميشن الأساسية */
+@keyframes hrPillPulse {
+  0% {
+    border-color: rgba(148, 163, 184, 0.45);
+    box-shadow: 0 0 0 rgba(248, 181, 71, 0);
+    background: rgba(15, 23, 42, 0.85);
+    color: #e5e7eb;
+  }
+  50% {
+    border-color: rgba(248, 181, 71, 0.9);
+    box-shadow: 0 0 18px rgba(248, 181, 71, 0.7);
+    background: radial-gradient(
+      circle at top,
+      rgba(248, 181, 71, 0.22),
+      rgba(15, 23, 42, 0.98)
+    );
+    color: #fefce8;
+  }
+  100% {
+    border-color: rgba(148, 163, 184, 0.45);
+    box-shadow: 0 0 0 rgba(248, 181, 71, 0);
+    background: rgba(15, 23, 42, 0.85);
+    color: #e5e7eb;
+  }
+}
