@@ -251,9 +251,7 @@ const StakingPage = ({ showToast }) => {
         {/* ===== Hero Card ===== */}
         <div className="card staking-card staking-hero">
           <div className="staking-hero-header">
-            <a href="https://heatrush.xyz" className="hero-logo-link">
-              <img src="/logo.PNG" className="logo" alt="HeatRush Logo" />
-            </a>
+
 
             <div className="hero-title-wrap">
               <h1 className="hero-title">

@@ -26,17 +26,20 @@ const AppShell = ({ children }) => {
     <div className="app-wrapper">
       {/* SIDEBAR */}
       <aside className={`sidebar ${menuOpen ? "open" : ""}`}>
-        <div className="logo-area">
-<img
-  src={SidebarLogo}
-  className="side-logo"
-  alt="HeatRush Sidebar Logo"
-/>
-          <div className="logo-text">
-            <h2>HeatRush</h2>
-            <span className="logo-sub">On Base Network</span>
-          </div>
-        </div>
+       <div className="logo-area">
+  <div className="logo-circle">
+    <img
+      src={SidebarLogo}
+      className="side-logo"
+      alt="HeatRush Sidebar Logo"
+    />
+  </div>
+
+  <div className="logo-text">
+    <h2>HeatRush</h2>
+    <div className="logo-sub">Staking • Airdrop • XP</div>
+  </div>
+</div>
 
         <nav className="side-nav">
   <Link
