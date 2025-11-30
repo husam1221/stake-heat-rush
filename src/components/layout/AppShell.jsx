@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "../../styles/layout.css";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import SidebarLogo from "../../assets/sidebar-log.png";
 
 const AppShell = ({ children }) => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -26,7 +27,11 @@ const AppShell = ({ children }) => {
       {/* SIDEBAR */}
       <aside className={`sidebar ${menuOpen ? "open" : ""}`}>
         <div className="logo-area">
-          <img src="/logo.png" className="side-logo" alt="HeatRush Logo" />
+<img
+  src={SidebarLogo}
+  className="side-logo"
+  alt="HeatRush Sidebar Logo"
+/>
           <div className="logo-text">
             <h2>HeatRush</h2>
             <span className="logo-sub">On Base Network</span>
