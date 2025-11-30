@@ -1,7 +1,11 @@
 // src/components/layout/Sidebar.jsx
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
+<<<<<<< HEAD
 import SideLogo from "../../assets/Sidebar-logo.png";
+=======
+
+>>>>>>> 4b9aa2a (update)
 export default function Sidebar({ isOpen, toggle }) {
   const location = useLocation();
 
@@ -12,13 +16,14 @@ export default function Sidebar({ isOpen, toggle }) {
 
   return (
     <aside className={`sidebar ${isOpen ? "open" : ""}`}>
-     <div className="logo-area">
-  <img src={SideLogo} className="side-logo" alt="HeatRush" />
+<div className="logo-area">
+  <img src="/favicon.ico" className="side-logo" alt="HeatRush" />
   <div className="logo-text">
     <h2>HeatRush</h2>
     <div className="logo-sub">Staking • Airdrop • XP</div>
   </div>
 </div>
+
 
  
       <nav className="side-nav">
