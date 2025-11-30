@@ -11,13 +11,14 @@ export default function Sidebar({ isOpen, toggle }) {
   };
   return (
     <aside className={`sidebar ${isOpen ? "open" : ""}`}>
-      <div className="logo-area">
-        <img src="/logo.PNG" className="side-logo" alt="HeatRush" />
-        <div className="logo-text">
-          <h2>HeatRush</h2>
-          <div className="logo-sub">Staking • Airdrop • XP</div>
-        </div>
-      </div>
+     <div className="logo-area">
+  <img src="/favicon.ico" className="side-logo" alt="HeatRush" />
+  <div className="logo-text">
+    <h2>HeatRush</h2>
+    <div className="logo-sub">Staking • Airdrop • XP</div>
+  </div>
+</div>
+
 
       <nav className="side-nav">
         <Link
