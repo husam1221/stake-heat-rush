@@ -1,7 +1,7 @@
 // src/components/layout/Sidebar.jsx
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
- import SideLogo from "../../assets/sidebar-logo.png";
+import SideLogo from "../../assets/Sidebar-logo.png";
 export default function Sidebar({ isOpen, toggle }) {
   const location = useLocation();
 
