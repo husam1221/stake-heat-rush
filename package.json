@@ -19,7 +19,8 @@
     "react-router-dom": "^7.9.6",
     "recharts": "^3.5.1",
     "viem": "^2.39.0",
-    "wagmi": "^2.19.4"
+    "wagmi": "^2.19.4",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
