@@ -29,8 +29,8 @@ const config = getDefaultConfig({
   metadata: {
     name: "HeatRush Staking",
     description: "Stake ETH on Base",
-    url: "https://staking.heatrush.xyz",
-    icons: ["https://staking.heatrush.xyz/favicon.png"]
+    url: "https://heatrush.xyz",
+  icons: ["https://heatrush.xyz/favicon.ico"],
   }
 });
 
