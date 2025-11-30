@@ -1,9 +1,7 @@
+// src/components/layout/Sidebar.jsx
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-
-// 👈 أهم خطوة: استيراد الأيقونة من public
-import favicon from "/favicon.ico";
-
+ import SideLogo from "../../assets/sidebar-logo.png";
 export default function Sidebar({ isOpen, toggle }) {
   const location = useLocation();
 
@@ -14,16 +12,15 @@ export default function Sidebar({ isOpen, toggle }) {
 
   return (
     <aside className={`sidebar ${isOpen ? "open" : ""}`}>
-      <div className="logo-area">
-        {/* استخدمنا متغير favicon بدل /logo.PNG */}
-        <img src={favicon} className="side-logo" alt="HeatRush" />
-        <div className="logo-text">
-          <h2>HeatRush</h2>
-          <div className="logo-sub">Staking • Airdrop • XP</div>
-        </div>
-      </div>
+     <div className="logo-area">
+  <img src={SideLogo} className="side-logo" alt="HeatRush" />
+  <div className="logo-text">
+    <h2>HeatRush</h2>
+    <div className="logo-sub">Staking • Airdrop • XP</div>
+  </div>
+</div>
 
-
+ 
       <nav className="side-nav">
         <Link
           to="/dashboard"
