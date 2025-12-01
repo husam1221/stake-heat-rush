@@ -432,3 +432,10 @@
     grid-template-columns: 1fr;
   }
 }
+.claim-stake-impact {
+  margin-top: 16px;          /* موجود inline بس نخليها هون لو حاب */
+}
+
+.claim-stake-impact .claim-metric + .claim-metric {
+  margin-top: 8px;           /* مسافة بين الصندوق الأول والثاني */
+}

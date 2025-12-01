@@ -8,8 +8,9 @@ import {
 
 import { useAirdrop } from "../../hooks/useAirdrop.js";
 import { useCountdown } from "../../hooks/useCountdown.js";
-import { TGE_TIMESTAMP } from "../../lib/constants.js";
+import { TGE_TIMESTAMP, STAKING_CONTRACT_ADDRESS } from "../../lib/constants.js";
 import { CLAIM_ABI, CLAIM_ADDRESS } from "../../lib/claim.js";
+import { STAKING_ABI } from "../../lib/staking.js";
 import { formatUnits } from "viem";
 
 import "../../styles/airdrop.css"; // 👈 ستايل خاص بالصفحة
@@ -115,9 +116,6 @@ const AirdropPage = () => {
     ? BigInt(merkleEntry.totalAllocationWei)
     : 0n;
 
-
-
-    
   // ========== ON-CHAIN (HRClaim) ==========
   const { data: unlockedData } = useReadContract({
     abi: CLAIM_ABI,
@@ -133,10 +131,6 @@ const AirdropPage = () => {
     args: [address || ZERO_ADDRESS, totalAllocationWei],
   });
 
-
-
-
-
   const totalHr =
     totalAllocationWei > 0n ? formatUnits(totalAllocationWei, 18) : "0";
   const unlockedHr =
@@ -147,53 +141,20 @@ const AirdropPage = () => {
       : "0";
 
   const totalHrNumber = Number(totalHr);
+  const unlockedHrNumber = Number(unlockedHr);
   const claimableHrNumber = Number(claimableHr);
 
-  // تقدير كمية اللي تمّ مطالبتها (للعرض فقط)
-  const claimedSoFar = Math.max(totalHrNumber - claimableHrNumber, 0);
+  // ✅ إجمالي الكمية اللي تمّ مطالبتها فعليًا (unlocked - claimable)
+  const claimedSoFar = Math.max(unlockedHrNumber - claimableHrNumber, 0);
 
-  const [liveUnlockedHr, setLiveUnlockedHr] = useState(
-    totalHrNumber ? totalHrNumber - claimedSoFar : 0
-  );
+  // قيم العرض الحيّة، متزامنة مع اللي جاي من العقد
+  const [liveUnlockedHr, setLiveUnlockedHr] = useState(unlockedHrNumber);
   const [liveClaimableHr, setLiveClaimableHr] = useState(claimableHrNumber);
 
   useEffect(() => {
-    if (!isEligible || !totalHrNumber) return;
-
-    const PHASE1_SECONDS = 90 * 24 * 60 * 60;
-    const PHASE2_SECONDS = 180 * 24 * 60 * 60;
-
-    const phase1Portion = totalHrNumber * 0.6;
-    const phase2Portion = totalHrNumber - phase1Portion;
-
-    function computeUnlocked(nowMs) {
-      const diffSec = (nowMs - TGE_TIMESTAMP) / 1000;
-
-      if (diffSec <= 0) return 0;
-      if (diffSec >= PHASE1_SECONDS + PHASE2_SECONDS) return totalHrNumber;
-
-      if (diffSec <= PHASE1_SECONDS) {
-        return phase1Portion * (diffSec / PHASE1_SECONDS);
-      } else {
-        const afterPhase1 = diffSec - PHASE1_SECONDS;
-        return (
-          phase1Portion +
-          phase2Portion * (afterPhase1 / PHASE2_SECONDS)
-        );
-      }
-    }
-
-    const interval = setInterval(() => {
-      const nowMs = Date.now();
-      const unlocked = computeUnlocked(nowMs);
-      const claimable = Math.max(unlocked - claimedSoFar, 0);
-
-      setLiveUnlockedHr(unlocked);
-      setLiveClaimableHr(claimable);
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [isEligible, totalHrNumber, claimedSoFar]);
+    setLiveUnlockedHr(unlockedHrNumber);
+    setLiveClaimableHr(claimableHrNumber);
+  }, [unlockedHrNumber, claimableHrNumber]);
 
   const claimableBig = claimableData ?? 0n;
 
@@ -205,6 +166,53 @@ const AirdropPage = () => {
     claimableBig > 0n;
 
   const [isClaiming, setIsClaiming] = useState(false);
+  const [hasShared, setHasShared] = useState(false); // 👈 مرحلة الشير قبل الكليم
+
+  const hasAllocation =
+    isConnected && isEligible && totalHrNumber > 0;
+
+  const alreadyClaimedDisplay =
+    liveUnlockedHr > liveClaimableHr
+      ? (liveUnlockedHr - liveClaimableHr).toFixed(5)
+      : "0.00000";
+
+  const isBeforeTGE = Date.now() < TGE_TIMESTAMP;
+
+  // ========== STAKING: كم ETH عامل ستيكنغ؟ ==========
+  const { data: stakedData } = useReadContract({
+    abi: STAKING_ABI,
+    address: STAKING_CONTRACT_ADDRESS,
+    functionName: "userStaked",
+    args: [address || ZERO_ADDRESS],
+  });
+
+  const stakedEthNumber =
+    stakedData && stakedData > 0n
+      ? Number(formatUnits(stakedData, 18))
+      : 0;
+
+  let stakeBonusPercent = 0;
+  let stakeImpactLabel = "No boost yet";
+
+  if (stakedEthNumber >= 2) {
+    stakeBonusPercent = 100;
+    stakeImpactLabel = "Max boost — full unlock";
+  } else if (stakedEthNumber >= 1.5) {
+    stakeBonusPercent = 70;
+    stakeImpactLabel = "Diamond tier";
+  } else if (stakedEthNumber >= 1) {
+    stakeBonusPercent = 40;
+    stakeImpactLabel = "Platinum tier";
+  } else if (stakedEthNumber >= 0.5) {
+    stakeBonusPercent = 20;
+    stakeImpactLabel = "Gold tier";
+  } else if (stakedEthNumber >= 0.3) {
+    stakeBonusPercent = 10;
+    stakeImpactLabel = "Silver tier";
+  } else if (stakedEthNumber >= 0.1) {
+    stakeBonusPercent = 5;
+    stakeImpactLabel = "Bronze tier";
+  }
 
   const handleClaim = async () => {
     if (!isConnected) {
@@ -222,6 +230,38 @@ const AirdropPage = () => {
       return;
     }
 
+    // 👇 أول ضغطة: شير على X، ثاني ضغطة: Claim فعلي
+    if (!hasShared) {
+      const totalDisplay = totalHrNumber.toFixed(5);
+      const unlockedDisplay = liveUnlockedHr.toFixed(5);
+      const claimableDisplay = liveClaimableHr.toFixed(5);
+      const alreadyDisplay = alreadyClaimedDisplay;
+
+      const tweetText = encodeURIComponent(
+`Just checked my $HR airdrop on HeatRush! 🔥
+
+Total allocation: ${totalDisplay} HR
+Unlocked so far: ${unlockedDisplay} HR
+Already claimed: ${alreadyDisplay} HR
+Currently claimable: ${claimableDisplay} HR
+
+@Rush_finance
+
+Claim & track your airdrop here 👇
+https://heatrush.xyz
+
+
+
+#HeatRush #Airdrop #Base #Crypto #HR #Web3`
+      );
+
+      const tweetUrl = `https://x.com/intent/tweet?text=${tweetText}`;
+      window.open(tweetUrl, "_blank");
+      setHasShared(true);
+      return;
+    }
+
+    // 👇 هنا المرحلة الثانية: تنفيذ الكليم على العقد
     try {
       setIsClaiming(true);
 
@@ -242,16 +282,6 @@ const AirdropPage = () => {
     }
   };
 
-  const hasAllocation =
-    isConnected && isEligible && totalHrNumber > 0;
-
-  const alreadyClaimedDisplay =
-    liveUnlockedHr > liveClaimableHr
-      ? (liveUnlockedHr - liveClaimableHr).toFixed(5)
-      : "0.00000";
-
-  const isBeforeTGE = Date.now() < TGE_TIMESTAMP;
-
   return (
     <div className="airdrop-page">
       {/* ===== Hero Card أعلى الصفحة ===== */}
@@ -261,7 +291,7 @@ const AirdropPage = () => {
             <h1 className="airdrop-hero-title">$HR Airdrop Center</h1>
             <p className="airdrop-hero-subtitle">
               Track your personal allocation, unlock schedule, and claim status
-              — all in one place.
+              - all in one place.
             </p>
           </div>
 
@@ -422,7 +452,7 @@ const AirdropPage = () => {
               <h3 className="airdrop-subtitle">Unlock schedule overview</h3>
               <p className="vesting-text">
                 Your airdropped HR unlocks gradually after TGE. You can claim
-                any unlocked balance at any time — no deadlines, no penalties.
+                any unlocked balance at any time - no deadlines, no penalties.
               </p>
 
               <div className="vesting-steps">
@@ -442,7 +472,7 @@ const AirdropPage = () => {
                   <span className="vs-title">Stake boost</span>
                   <span className="vs-sub">
                     Staking more ETH on HeatRush can speed up how fast your HR
-                    unlocks — up to <strong>100% instantly</strong> for the top tier.
+                    unlocks - up to <strong>100% instantly</strong> for the top tier.
                   </span>
                 </div>
               </div>
@@ -470,7 +500,13 @@ const AirdropPage = () => {
                   </span>
                 </div>
 
-         
+                <div className="claim-metric">
+                  <span className="claim-label">Unlocked so far</span>
+                  <span className="claim-value">
+                    {liveUnlockedHr.toFixed(5)}{" "}
+                    <span className="claim-unit">HR</span>
+                  </span>
+                </div>
 
                 <div className="claim-metric">
                   <span className="claim-label">Claimable now</span>
@@ -480,34 +516,36 @@ const AirdropPage = () => {
                   </span>
                 </div>
 
-
+                <div className="claim-metric">
+                  <span className="claim-label">Already claimed</span>
+                  <span className="claim-value">
+                    {alreadyClaimedDisplay}{" "}
+                    <span className="claim-unit">HR</span>
+                  </span>
+                </div>
               </div>
 
-              <button
-                className="twitter-share-btn"
-                onClick={() => {
-                  const tweetText = encodeURIComponent(
-`Are you eligible for the $HR Airdrop ? 🔥
+              {/* 👇 تأثير الستيك */}
+              <div className="claim-stake-impact" style={{ marginTop: "16px" }}>
+                <div className="claim-metric">
+                  <span className="claim-label">Your staked ETH</span>
+                  <span className="claim-value">
+                    {stakedEthNumber.toFixed(4)}{" "}
+                    <span className="claim-unit">ETH</span>
+                  </span>
+                </div>
 
-Great news! Your personalized airdrop allocation is now live.
-Check your rewards, unlock schedule, and full breakdown instantly.
+                <div className="claim-metric">
+                  <span className="claim-label">Stake impact</span>
+                  <span className="claim-value">
+                    {stakeBonusPercent > 0
+                      ? `+${stakeBonusPercent}% unlock boost · ${stakeImpactLabel}`
+                      : "No boost yet - stake more ETH to power up your tier and reach up to 100% instant unlock"}
+                  </span>
+                </div>
+              </div>
 
-🔓 60% unlock in the first 3 months
-🔓 40% unlock over the next 6 months
-
-Don’t miss your chance - verify your eligibility now 👇
-https://heatrush.xyz/airdrop
-
-#HeatRush #Airdrop #Base #Crypto #HR #Web3`
-                  );
-
-                  const tweetUrl = `https://x.com/intent/tweet?text=${tweetText}`;
-                  window.open(tweetUrl, "_blank");
-                }}
-              >
-                Share on X
-              </button>
-
+              {/* زر واحد فقط: أول ضغطة شير، ثاني ضغطة Claim */}
               <button
                 className={`stake-btn ${
                   !canClaim || isClaiming ? "disabled-btn" : ""
@@ -518,9 +556,9 @@ https://heatrush.xyz/airdrop
               >
                 {isClaiming
                   ? "Processing..."
-                  : canClaim
-                  ? `Claim ${claimableHr} HR`
-                  : "Nothing to claim yet"}
+                  : !hasShared
+                  ? "Share & unlock claim"
+                  : `Claim ${claimableHr} HR`}
               </button>
 
               <p className="claim-note" style={{ marginTop: "12px" }}>
