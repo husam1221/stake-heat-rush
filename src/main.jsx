@@ -32,7 +32,7 @@ import "./styles/faq.css";
 
 
 const config = getDefaultConfig({
-  appName: "HeatRush Staking",
+  appName: "HeatRush",
   projectId: "b4a9deb03fa34b25139f708d290ba1b3",
   chains: [base],
   ssr: false,
