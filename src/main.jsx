@@ -33,7 +33,7 @@ import "./styles/faq.css";
 
 const config = getDefaultConfig({
   appName: "HeatRush Staking",
-  projectId: "6b05726282d5a7aa26e467d76ccfa4a3",
+  projectId: "b4a9deb03fa34b25139f708d290ba1b3",
   chains: [base],
   ssr: false,
   metadata: {
