@@ -470,13 +470,7 @@ const AirdropPage = () => {
                   </span>
                 </div>
 
-                <div className="claim-metric">
-                  <span className="claim-label">Unlocked so far</span>
-                  <span className="claim-value">
-                    {liveUnlockedHr.toFixed(5)}{" "}
-                    <span className="claim-unit">HR</span>
-                  </span>
-                </div>
+         
 
                 <div className="claim-metric">
                   <span className="claim-label">Claimable now</span>
@@ -486,13 +480,7 @@ const AirdropPage = () => {
                   </span>
                 </div>
 
-                <div className="claim-metric">
-                  <span className="claim-label">Already claimed</span>
-                  <span className="claim-value">
-                    {alreadyClaimedDisplay}{" "}
-                    <span className="claim-unit">HR</span>
-                  </span>
-                </div>
+
               </div>
 
               <button
@@ -508,7 +496,7 @@ Check your rewards, unlock schedule, and full breakdown instantly.
 🔓 40% unlock over the next 6 months
 
 Don’t miss your chance - verify your eligibility now 👇
-https://stake.heatrush.xyz
+https://heatrush.xyz/airdrop
 
 #HeatRush #Airdrop #Base #Crypto #HR #Web3`
                   );
@@ -541,7 +529,7 @@ https://stake.heatrush.xyz
                 <br />• <strong>40%</strong> over the next 6 months
                 <br />
                 Staking more ETH on HeatRush can accelerate this unlock through
-                bonus tiers — higher tiers unlock a larger portion earlier.
+                bonus tiers - higher tiers unlock a larger portion earlier.
               </p>
             </div>
           </div>
