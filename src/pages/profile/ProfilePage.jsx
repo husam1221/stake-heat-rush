@@ -350,8 +350,16 @@ const ProfilePage = () => {
   return (
     <div className="profile-page">
       {/* Header */}
+          {/* Season 2 banner */}
+          <div className="profile-season-banner">
+            <div className="profile-season-pill">SEASON 2</div>
+            <div className="profile-season-title">
+              Season 2 is live now 
+            </div>
+          </div>
       <div className="profile-header">
         <div>
+          
           <h1 className="profile-title">My HeatRush Profile</h1>
           <p className="profile-subtitle">
             Track your staking progress, airdrop snapshot, presale position, referrals and
@@ -376,12 +384,18 @@ const ProfilePage = () => {
       {/* TOP SUMMARY */}
       <div className="profile-top-summary">
         <div className="card profile-card profile-summary-card">
+
+      
+
           <div className="profile-stat-row">
             <span className="profile-stat-label">Total Points</span>
             <span className="profile-stat-value">
-              {xpLoading ? "Loading..." : `${formatNumber(offchainPoints, 0)} pts`}
+              {xpLoading
+                ? "Loading..."
+                : `${formatNumber(offchainPoints, 0)} pts`}
             </span>
           </div>
+
 
           <div className="profile-stat-row">
             <span className="profile-stat-label">Total XP (global)</span>

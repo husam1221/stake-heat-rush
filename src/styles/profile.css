@@ -778,3 +778,41 @@
   );
   cursor: pointer;
 }
+
+
+
+
+
+.profile-season-banner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+  text-align: center;
+  gap: 4px;
+}
+
+.profile-season-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.6);
+  color: #bbf7d0;
+}
+
+.profile-season-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, #22c55e, #a3e635, #facc15);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 14px rgba(34, 197, 94, 0.4);
+}

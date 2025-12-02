@@ -298,3 +298,43 @@
   flex-direction: column;
   gap: 1.5rem;
 }
+
+
+
+
+
+
+.side-nav a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.side-nav-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.side-nav-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.side-nav-label {
+  font-size: 0.9rem;
+}
+
+.side-nav a.active .side-nav-icon {
+  background: radial-gradient(circle at top, #f97316, #facc15);
+  border-color: rgba(248, 181, 71, 0.9);
+  color: #0b1020;
+  box-shadow: 0 0 16px rgba(248, 181, 71, 0.6);
+}
+
+.side-nav a:hover .side-nav-icon {
+  border-color: rgba(248, 181, 71, 0.7);
+}

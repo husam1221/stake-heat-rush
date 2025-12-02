@@ -13,6 +13,7 @@
     "@rainbow-me/rainbowkit": "^2.2.9",
     "@tanstack/react-query": "^5.90.9",
     "@tsparticles/slim": "^3.9.1",
+    "lucide-react": "^0.555.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-hot-toast": "^2.6.0",

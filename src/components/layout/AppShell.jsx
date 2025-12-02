@@ -4,6 +4,17 @@ import { Link, useLocation } from "react-router-dom";
 import "../../styles/layout.css";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import SidebarLogo from "../../assets/sidebar-log.png";
+import {
+  LayoutDashboard,
+  User,
+  Users,
+  CheckSquare,
+  Flame,
+  Gift,
+  Coins,
+  Share2,
+  HelpCircle,
+} from "lucide-react";
 
 const AppShell = ({ children }) => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -26,108 +37,124 @@ const AppShell = ({ children }) => {
     <div className="app-wrapper">
       {/* SIDEBAR */}
       <aside className={`sidebar ${menuOpen ? "open" : ""}`}>
-       <div className="logo-area">
-  <div className="logo-circle">
-    <img
-      src={SidebarLogo}
-      className="side-logo"
-      alt="HeatRush Sidebar Logo"
-    />
-  </div>
+        <div className="logo-area">
+          <div className="logo-circle">
+            <img
+              src={SidebarLogo}
+              className="side-logo"
+              alt="HeatRush Sidebar Logo"
+            />
+          </div>
 
-  <div className="logo-text">
-    <h2>HeatRush</h2>
-    <div className="logo-sub">Staking • Airdrop • XP</div>
-  </div>
-</div>
+          <div className="logo-text">
+            <h2>HeatRush</h2>
+            <div className="profile-season-banner">
+              <div className="profile-season-pill">SEASON 2</div>
+            </div>
+          </div>
+        </div>
+        {/* Season 2 banner */}
 
         <nav className="side-nav">
-  <Link
-    to="/dashboard"
-    className={location.pathname === "/dashboard" ? "active" : ""}
-    onClick={() => setMenuOpen(false)}
-  >
-    Dashboard
-  </Link>
+          <Link
+            to="/dashboard"
+            className={location.pathname === "/dashboard" ? "active" : ""}
+            onClick={() => setMenuOpen(false)}
+          >
+            <span className="side-nav-icon">
+              <LayoutDashboard size={16} />
+            </span>
+            <span className="side-nav-label">Dashboard</span>
+          </Link>
 
+          <Link
+            to="/profile"
+            className={location.pathname === "/profile" ? "active" : ""}
+            onClick={() => setMenuOpen(false)}
+          >
+            <span className="side-nav-icon">
+              <User size={16} />
+            </span>
+            <span className="side-nav-label">Profile</span>
+          </Link>
 
+          <Link
+            to="/referral"
+            className={location.pathname === "/referral" ? "active" : ""}
+            onClick={() => setMenuOpen(false)}
+          >
+            <span className="side-nav-icon">
+              <Users size={16} />
+            </span>
+            <span className="side-nav-label">Referral</span>
+          </Link>
 
-  <Link
-    to="/profile"
-    className={location.pathname === "/profile" ? "active" : ""}
-    onClick={() => setMenuOpen(false)}
-  >
-   Profile
-  </Link>
+          <Link
+            to="/tasks"
+            className={location.pathname === "/tasks" ? "active" : ""}
+            onClick={() => setMenuOpen(false)}
+          >
+            <span className="side-nav-icon">
+              <CheckSquare size={16} />
+            </span>
+            <span className="side-nav-label">Tasks</span>
+          </Link>
 
+          <Link
+            to="/staking"
+            className={location.pathname === "/staking" ? "active" : ""}
+            onClick={() => setMenuOpen(false)}
+          >
+            <span className="side-nav-icon">
+              <Flame size={16} />
+            </span>
+            <span className="side-nav-label">Staking</span>
+          </Link>
 
-    <Link
-    to="/referral"
-    className={location.pathname === "/referral" ? "active" : ""}
-    onClick={() => setMenuOpen(false)}
-  >
-   Referral
-  </Link>
+          <Link
+            to="/airdrop"
+            className={location.pathname === "/airdrop" ? "active" : ""}
+            onClick={() => setMenuOpen(false)}
+          >
+            <span className="side-nav-icon">
+              <Gift size={16} />
+            </span>
+            <span className="side-nav-label">Airdrop S1</span>
+          </Link>
 
+          <Link
+            to="/presale"
+            className={location.pathname === "/presale" ? "active" : ""}
+            onClick={() => setMenuOpen(false)}
+          >
+            <span className="side-nav-icon">
+              <Coins size={16} />
+            </span>
+            <span className="side-nav-label">Presale</span>
+          </Link>
 
-    <Link
-    to="/tasks"
-    className={location.pathname === "/tasks" ? "active" : ""}
-    onClick={() => setMenuOpen(false)}
-  >
-   Tasks
-  </Link>
+          <Link
+            to="/nodes"
+            className={location.pathname === "/nodes" ? "active" : ""}
+            onClick={() => setMenuOpen(false)}
+          >
+            <span className="side-nav-icon">
+              <Share2 size={16} />
+            </span>
+            <span className="side-nav-label">Nodes</span>
+          </Link>
 
-
-
-  <Link
-    to="/staking"
-    className={location.pathname === "/staking" ? "active" : ""}
-    onClick={() => setMenuOpen(false)}
-  >
-    Staking
-  </Link>
-
-
-
-  <Link
-    to="/airdrop"
-    className={location.pathname === "/airdrop" ? "active" : ""}
-    onClick={() => setMenuOpen(false)}
-  >
-    Airdrop S1
-  </Link>
-
-
-
-  <Link
-    to="/presale"
-    className={location.pathname === "/presale" ? "active" : ""}
-    onClick={() => setMenuOpen(false)}
-  >
-    Presale
-  </Link>
-
-
-    <Link
-    to="/nodes"
-    className={location.pathname === "/nodes" ? "active" : ""}
-    onClick={() => setMenuOpen(false)}
-  >
-    Nodes
-  </Link>
-
-  <Link
-    to="/faq"
-    className={location.pathname === "/faq" ? "active" : ""}
-    onClick={() => setMenuOpen(false)}
-  >
-    FAQ
-  </Link>
-
-
-</nav>
-
+          <Link
+            to="/faq"
+            className={location.pathname === "/faq" ? "active" : ""}
+            onClick={() => setMenuOpen(false)}
+          >
+            <span className="side-nav-icon">
+              <HelpCircle size={16} />
+            </span>
+            <span className="side-nav-label">FAQ</span>
+          </Link>
+        </nav>
 
         <div className="side-footer">
           <span className="network-pill">● Base Mainnet</span>
