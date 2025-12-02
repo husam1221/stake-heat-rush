@@ -95,7 +95,7 @@ const AppShell = ({ children }) => {
     className={location.pathname === "/airdrop" ? "active" : ""}
     onClick={() => setMenuOpen(false)}
   >
-    Airdrop
+    Airdrop S1
   </Link>
 
 

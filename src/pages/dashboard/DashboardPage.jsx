@@ -59,6 +59,8 @@ const tvlHistory = [
    { day: "Week 3", tvl: 13700 },
   { day: "Now", tvl: 20900 },
     { day: "Now", tvl: 25850 },
+        { day: "Now", tvl: 25900 },
+                { day: "Now", tvl: 29920 },
 ];
 
 // APY History (جماليات)
@@ -177,7 +179,7 @@ const DashboardPage = () => {
 
 
 
-            <span className="mega-value">25,850 ETH</span>
+            <span className="mega-value">29,920 ETH</span>
 
 
 

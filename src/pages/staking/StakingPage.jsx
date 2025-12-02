@@ -185,55 +185,48 @@ const StakingPage = ({ showToast }) => {
     }
   };
 
-
-
   const handleStake = async () => {
-  if (!isConnected) {
-    showToast?.("error", "Please connect your wallet first.");
-    return;
-  }
-
-  const ethValue = Number(amount);
-  if (!ethValue || ethValue <= 0) {
-    showToast?.("error", "Enter a valid ETH amount.");
-    return;
-  }
-
-  try {
-    setIsLoading(true);
-
-    const tx = await sendTransactionAsync({
-      to: STAKING_CONTRACT_ADDRESS,
-      value: parseEther(amount),
-    });
-
-    setIsLoading(false);
-    setAmount("");
-
-    showToast?.("success", "Transaction sent successfully!");
-    window.open(`https://basescan.org/tx/${tx}`, "_blank");
-
-    // 👇 هون نفعل الإحالة عن طريق الستايكنغ (stake)
-    try {
-      if (address) {
-        qualifyReferral(address.toLowerCase(), "stake").catch((err) => {
-          console.error("Failed to qualify referral via stake:", err);
-        });
-      }
-    } catch (e) {
-      console.error("Local qualifyReferral(stake) error:", e);
+    if (!isConnected) {
+      showToast?.("error", "Please connect your wallet first.");
+      return;
     }
-  } catch (error) {
-    console.error(error);
-    setIsLoading(false);
-    showToast?.("error", error.shortMessage || error.message);
-  }
-};
 
+    const ethValue = Number(amount);
+    if (!ethValue || ethValue <= 0) {
+      showToast?.("error", "Enter a valid ETH amount.");
+      return;
+    }
 
+    try {
+      setIsLoading(true);
 
+      const tx = await sendTransactionAsync({
+        to: STAKING_CONTRACT_ADDRESS,
+        value: parseEther(amount),
+      });
 
+      setIsLoading(false);
+      setAmount("");
 
+      showToast?.("success", "Transaction sent successfully!");
+      window.open(`https://basescan.org/tx/${tx}`, "_blank");
+
+      // 👇 هون نفعل الإحالة عن طريق الستايكنغ (stake)
+      try {
+        if (address) {
+          qualifyReferral(address.toLowerCase(), "stake").catch((err) => {
+            console.error("Failed to qualify referral via stake:", err);
+          });
+        }
+      } catch (e) {
+        console.error("Local qualifyReferral(stake) error:", e);
+      }
+    } catch (error) {
+      console.error(error);
+      setIsLoading(false);
+      showToast?.("error", error.shortMessage || error.message);
+    }
+  };
 
   const formatXP = (value) => {
     const num = Number(value || 0);
@@ -251,8 +244,6 @@ const StakingPage = ({ showToast }) => {
         {/* ===== Hero Card ===== */}
         <div className="card staking-card staking-hero">
           <div className="staking-hero-header">
-
-
             <div className="hero-title-wrap">
               <h1 className="hero-title">
                 <span className="hero-title-highlight">HeatRush Staking</span>
@@ -289,13 +280,7 @@ const StakingPage = ({ showToast }) => {
         <div className="card staking-card staking-status">
           <h2 className="card-title">Your Staking Snapshot</h2>
 
-          <div className="status-row">
-            <span className="status-label">Total Value Locked</span>
-            <span className="status-value">
-              {formatEth(tvlEth)}{" "}
-              <span className="status-unit">ETH</span>
-            </span>
-          </div>
+      
 
           <div className="status-row">
             <span className="status-label">You Staked</span>
@@ -486,9 +471,75 @@ const StakingPage = ({ showToast }) => {
             </li>
           </ul>
         </div>
+ </div>
+        {/* ===== Top Stakers Leaderboard ===== */}
+        <div className="card staking-card staking-leaderboard">
+          <h2 className="card-title">Top Stakers</h2>
+          <p className="card-subtitle">
+            Addresses with the highest total ETH staked into HeatRush.
+          </p>
 
-      
+          {leaderboardLoading && (
+            <p className="staking-leaderboard-note">Loading leaderboard...</p>
+          )}
 
+          {leaderboardError && !leaderboardLoading && (
+            <p className="staking-leaderboard-error">{leaderboardError}</p>
+          )}
+
+          {!leaderboardLoading &&
+            !leaderboardError &&
+            leaderboard.length === 0 && (
+              <p className="staking-leaderboard-note">
+                No staking activity yet. Be the first to appear on the
+                leaderboard.
+              </p>
+            )}
+
+          {!leaderboardLoading &&
+            !leaderboardError &&
+            leaderboard.length > 0 && (
+              <ul className="staking-leaderboard-list">
+                {leaderboard.map((row, index) => {
+                  const isYou =
+                    address &&
+                    row.address &&
+                    row.address.toLowerCase() === address.toLowerCase();
+
+                  return (
+                    <li
+                      key={row.address}
+                      className={`staking-leaderboard-row ${
+                        isYou ? "staking-leaderboard-row-you" : ""
+                      }`}
+                    >
+                      <span className="staking-leader-rank">
+                        #{index + 1}
+                      </span>
+
+                      <span className="staking-leader-address">
+                        <span className="staking-leader-wallet">
+                          {formatShortAddress(row.address)}
+                        </span>
+                        {isYou && (
+                          <span className="staking-leader-you-pill">
+                            YOU
+                          </span>
+                        )}
+                      </span>
+
+                      <span className="staking-leader-amount">
+                        {formatEth(row.amountEth)}{" "}
+                        <span className="status-unit">ETH</span>
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+     
+
+       
       </div>
     </div>
   );

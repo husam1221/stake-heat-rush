@@ -625,3 +625,155 @@
     word-break: break-word;
   }
 }
+
+
+
+
+
+
+
+/* ===== Staking Leaderboard – Same vibe as profile leaderboard ===== */
+
+/* الكارد نفسه */
+.staking-leaderboard {
+  margin-top: 20px;
+}
+
+/* عنوان الكارد (نعطيه نفس الستايل الناري) */
+.staking-leaderboard .card-title {
+  width: 100%;
+  text-align: center;
+  font-size: 1.1rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: linear-gradient(90deg, #f97316, #facc15, #fb923c);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 12px rgba(248, 181, 71, 0.35);
+  margin-bottom: 4px;
+}
+
+/* سطر الوصف تحت العنوان */
+.staking-leaderboard .card-subtitle {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #9ca3af;
+  margin-bottom: 10px;
+}
+
+/* ملاحظات / Error / Empty state */
+.staking-leaderboard-note,
+.staking-leaderboard-error {
+  margin-top: 8px;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.staking-leaderboard-error {
+  color: #fca5a5;
+}
+
+/* قائمة اللاعبين */
+.staking-leaderboard-list {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* كل سطر في الليدربورد */
+.staking-leaderboard-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  transition: transform 0.15s ease-out, box-shadow 0.15s ease-out,
+    border-color 0.15s ease-out, background 0.15s ease-out;
+}
+
+/* بادج الترتيب (#1, #2,...) */
+.staking-leader-rank {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: radial-gradient(circle at top, #fbbf24, #f97316);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #0b1020;
+  flex-shrink: 0;
+}
+
+/* العنوان + القيمة */
+.staking-leader-address {
+  flex: 1;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  font-size: 0.85rem;
+  color: #e5e7eb;
+}
+
+/* كمية الستيكنغ */
+.staking-leader-amount {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #facc15;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* وحدة ETH داخل القيمة (نفس ستايل status-unit) */
+.staking-leader-amount .status-unit {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #9ca3af;
+}
+
+/* Hover effect نفس إحساس البروفايل */
+.staking-leaderboard-row:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(189, 115, 3, 0.9);
+  border-color: rgba(248, 181, 71, 0.8);
+  background: radial-gradient(
+    circle at top left,
+    rgba(248, 181, 71, 0.25),
+    rgba(15, 23, 42, 0.95)
+  );
+  cursor: pointer;
+}
+/* تمييز صف محفظتك أنت */
+.staking-leaderboard-row-you {
+  background: radial-gradient(circle at top, rgba(56, 189, 248, 0.25), #020617);
+  border-color: rgba(56, 189, 248, 0.9);
+}
+
+/* داخل العنوان: المحفظة + YOU pill */
+.staking-leader-address {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.staking-leader-wallet {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  font-size: 0.85rem;
+}
+
+/* بادج YOU زي تبعت البروفايل */
+.staking-leader-you-pill {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: rgba(56, 189, 248, 0.18);
+  color: #7dd3fc;
+  border: 1px solid rgba(56, 189, 248, 0.7);
+}
