@@ -150,7 +150,6 @@ const handlePresaleBuy = async () => {
 
     setPresaleAmount("");
     showToast?.("success", "Purchase successful!");
-    window.open(`https://basescan.org/tx/${tx}`, "_blank");
 
     // 👇 تأهيل الإحالة عن طريق الـ presale
     try {
@@ -171,35 +170,35 @@ const handlePresaleBuy = async () => {
 };
 
   // ========== CLAIM HR ==========
-  const handleClaim = async () => {
-    if (!isConnected) {
-      showToast?.("error", "Connect your wallet first.");
-      return;
-    }
+const handleClaim = async () => {
+  if (!isConnected) {
+    showToast?.("error", "Connect your wallet first.");
+    return;
+  }
 
-    if (!claimable || claimable <= 0) {
-      showToast?.("error", "Nothing to claim yet.");
-      return;
-    }
+  if (!claimable || claimable <= 0) {
+    showToast?.("error", "Nothing to claim yet.");
+    return;
+  }
 
-    try {
-      setIsClaimLoading(true);
+  try {
+    setIsClaimLoading(true);
 
-      const tx = await writeContractAsync({
-        abi: PRESALE_ABI,
-        address: PRESALE_ADDRESS,
-        functionName: "claim",
-      });
+    await writeContractAsync({
+      abi: PRESALE_ABI,
+      address: PRESALE_ADDRESS,
+      functionName: "claim",
+    });
 
-      showToast?.("success", "Claim transaction sent!");
-      window.open(`https://basescan.org/tx/${tx}`, "_blank");
-    } catch (err) {
-      console.error(err);
-      showToast?.("error", err.shortMessage || err.message);
-    } finally {
-      setIsClaimLoading(false);
-    }
-  };
+    showToast?.("success", "Claim transaction sent!");
+  } catch (err) {
+    console.error(err);
+    showToast?.("error", err.shortMessage || err.message);
+  } finally {
+    setIsClaimLoading(false);
+  }
+};
+
 
   // ========== CALCULATIONS FOR ESTIMATE ==========
   const presaleEthValue = parseFloat(presaleAmount) || 0;

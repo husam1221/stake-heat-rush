@@ -209,7 +209,6 @@ const StakingPage = ({ showToast }) => {
       setAmount("");
 
       showToast?.("success", "Transaction sent successfully!");
-      window.open(`https://basescan.org/tx/${tx}`, "_blank");
 
       // 👇 هون نفعل الإحالة عن طريق الستايكنغ (stake)
       try {

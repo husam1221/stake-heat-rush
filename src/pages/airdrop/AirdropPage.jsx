@@ -265,21 +265,21 @@ https://heatrush.xyz
     try {
       setIsClaiming(true);
 
-      const tx = await writeContractAsync({
+      await writeContractAsync({
         abi: CLAIM_ABI,
         address: CLAIM_ADDRESS,
         functionName: "claim",
         args: [totalAllocationWei, merkleEntry.proof || []],
       });
 
-      alert("Claim transaction sent! Opening BaseScan…");
-      window.open(`https://basescan.org/tx/${tx}`, "_blank");
+      alert("Claim transaction sent!");
     } catch (err) {
       console.error(err);
       alert(err.shortMessage || err.message || "Failed to send claim tx");
     } finally {
       setIsClaiming(false);
     }
+
   };
 
   return (
