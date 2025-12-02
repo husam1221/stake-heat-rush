@@ -13,6 +13,15 @@ import { PRESALE_ABI, PRESALE_ADDRESS } from "../../lib/presale.js";
 import { completeTaskApi, fetchXpOverview } from "../../lib/xpApi.js";
 
 import "../../styles/tasks.css";
+import {
+  Flame,
+  Target,
+  Coins,
+  Twitter,
+  Send,
+  LayoutDashboard,
+  Sparkles,
+} from "lucide-react";
 
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
@@ -33,6 +42,25 @@ const STAKING_ABI = [
     outputs: [{ type: "uint256" }],
   },
 ];
+
+const getTaskIcon = (task) => {
+  if (task.type === "onchain") {
+    if (task.id && task.id.startsWith("stake_")) return <Flame size={16} />;
+    if (task.id && task.id.startsWith("join_presale")) return <Coins size={16} />;
+    return <Target size={16} />;
+  }
+
+  if (task.type === "social") {
+    if (task.id && task.id.includes("telegram")) return <Send size={16} />;
+    return <Twitter size={16} />;
+  }
+
+  if (task.type === "system") {
+    return <LayoutDashboard size={16} />;
+  }
+
+  return <Sparkles size={16} />;
+};
 
 const TasksPage = ({ showToast }) => {
   const { address, isConnected } = useAccount();
@@ -594,6 +622,9 @@ const TasksPage = ({ showToast }) => {
               return (
                 <div key={task.id} className="card task-card">
                   <div className="task-card-header">
+                    <div className="task-icon-circle">
+                      {getTaskIcon(task)}
+                    </div>
                     <div>
                       <h2 className="task-title">{task.title}</h2>
                       <p className="task-description">{task.description}</p>
@@ -676,6 +707,9 @@ const TasksPage = ({ showToast }) => {
               return (
                 <div key={task.id} className="card task-card">
                   <div className="task-card-header">
+                    <div className="task-icon-circle">
+                      {getTaskIcon(task)}
+                    </div>
                     <div>
                       <h2 className="task-title">{task.title}</h2>
                       <p className="task-description">{task.description}</p>
@@ -753,6 +787,9 @@ const TasksPage = ({ showToast }) => {
               return (
                 <div key={task.id} className="card task-card">
                   <div className="task-card-header">
+                    <div className="task-icon-circle">
+                      {getTaskIcon(task)}
+                    </div>
                     <div>
                       <h2 className="task-title">{task.title}</h2>
                       <p className="task-description">{task.description}</p>

@@ -514,7 +514,7 @@ const StakingPage = ({ showToast }) => {
                       }`}
                     >
                       <span className="staking-leader-rank">
-                        #{index + 1}
+                        {index + 1}
                       </span>
 
                       <span className="staking-leader-address">

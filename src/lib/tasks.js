@@ -7,50 +7,65 @@
 //  - "min_profile_xp"  → يحتاج XP من البروفايل (off-chain XP من /xp/profile)
 //  - "none"            → بدون شرط (بس لازم المحفظة تكون متصلة)
 
-
 export const TASKS = [
-
   // 1 ) XP MILESTONE ////////////////
-  
-  // الشرط: 10 XP من/ xp/
-{
-  id: "xp_10_onchain",
-  title: "Reach 10 profile XP",
-  description:
-    "Reach at least 10 XP in your HeatRush profile from daily tank, tasks and referrals.",
-  points: 5,
-  xp: 1,
-  tag: "Profile • Milestone",
-  type: "onchain",
-  requirement: {
-    kind: "min_profile_xp",
-    minXp: 10, // الشرط: 10 XP من /xp/profile
+
+  // الشرط: 10 XP من /xp/
+  {
+    id: "xp_10_onchain",
+    title: "Reach 10 profile XP",
+    description:
+      "Reach at least 10 XP in your HeatRush profile from daily tank, tasks and referrals.",
+    points: 5,
+    xp: 1,
+    tag: "Profile • Milestone",
+    type: "onchain",
+    requirement: {
+      kind: "min_profile_xp",
+      minXp: 10, // الشرط: 10 XP من /xp/profile
+    },
+    link: "/profile",
+    icon: "target",
   },
-  link: "/profile",
-},
 
-  // الشرط: 30 XP من /xp /
-{
-  id: "xp_30_onchain",
-  title: "Reach 30 profile XP",
-  description:
-    "Reach at least 30 XP in your HeatRush profile from daily tank, tasks and referrals.",
-  points: 25,
-  xp: 2,
-  tag: "Profile • Milestone",
-  type: "onchain",
-  requirement: {
-    kind: "min_profile_xp",
-    minXp: 30, // الشرط: 30 XP من /xp/profile
+  // الشرط: 30 XP من /xp/
+  {
+    id: "xp_30_onchain",
+    title: "Reach 30 profile XP",
+    description:
+      "Reach at least 30 XP in your HeatRush profile from daily tank, tasks and referrals.",
+    points: 25,
+    xp: 2,
+    tag: "Profile • Milestone",
+    type: "onchain",
+    requirement: {
+      kind: "min_profile_xp",
+      minXp: 30, // الشرط: 30 XP من /xp/profile
+    },
+    link: "/profile",
+    icon: "target",
   },
-  link: "/profile",
-},
 
+  // الشرط: 300 XP من /xp/
+  {
+    id: "xp_300_onchain",
+    title: "Reach 300 profile XP",
+    description:
+      "Reach at least 300 XP in your HeatRush profile from daily tank, tasks and referrals.",
+    points: 50,
+    xp: 4,
+    tag: "Profile • Milestone",
+    type: "onchain",
+    requirement: {
+      kind: "min_profile_xp",
+      minXp: 300, // الشرط: 300 XP من /xp/profile
+    },
+    link: "/profile",
+    icon: "target",
+  },
 
+  // 2) ON-CHAIN ////////////////////
 
-
- // 2) ON-CHAIN ////////////////////
- 
   //  STAKING 0.0001 ETH
   {
     id: "stake_0_0001_eth",
@@ -66,6 +81,25 @@ export const TASKS = [
       valueEth: 0.0001,
     },
     link: "/staking",
+    icon: "flame",
+  },
+
+  //  STAKING 0.001 ETH
+  {
+    id: "stake_0_001_eth",
+    title: "Stake at least 0.0001 ETH",
+    description:
+      "Lock 0.001 ETH or more into HeatRush staking on Base to prove real on-chain commitment.",
+    points: 400,
+    xp: 14,
+    tag: "On-chain • Staking",
+    type: "onchain",
+    requirement: {
+      kind: "min_stake",
+      valueEth: 0.001,
+    },
+    link: "/staking",
+    icon: "flame",
   },
 
   // • STAKING 0.1 ETH
@@ -83,6 +117,7 @@ export const TASKS = [
       valueEth: 0.1,
     },
     link: "/staking",
+    icon: "flame",
   },
 
   //  • PRESALE 1 HR
@@ -100,6 +135,7 @@ export const TASKS = [
       minHr: 10, // يعني لازم totalHrFor >= 1 HR (رقم رمزي بسيط)
     },
     link: "/presale",
+    icon: "coins",
   },
 
   //  • PRESALE 50 HR
@@ -117,20 +153,17 @@ export const TASKS = [
       minHr: 100, // يعني لازم totalHrFor >= 50 HR (رقم رمزي بسيط)
     },
     link: "/presale",
+    icon: "coins",
   },
 
+  // 3) SOCIAL / COMMUNITY ////////////////
 
-
-
-
-// 3) SOCIAL / COMMUNITY ////////////////
-
-// follow_x_
+  // follow_x_
   {
     id: "follow_x_main",
     title: "Follow HeatRush on X",
     description:
-        "Follow the official HeatRush account on X to stay ahead of drops, updates, and ecosystem news.",
+      "Follow the official HeatRush account on X to stay ahead of drops, updates, and ecosystem news.",
     points: 50,
     xp: 1,
     tag: "Community • Social",
@@ -138,15 +171,16 @@ export const TASKS = [
     requirement: {
       kind: "none",
     },
-    link: "https://x.com/Rush_finance", // عدّل الرابط لما يكون جاهز
+    link: "https://x.com/Rush_finance",
+    icon: "twitter",
   },
 
-//  join_telegram
+  //  join_telegram
   {
     id: "join_telegram",
-    title: "Follow HeatRush on X",
+    title: "Join the official HeatRush Telegram",
     description:
-    "Join the official HeatRush Telegram channel to stay on top of announcements.",
+      "Join the official HeatRush Telegram channel to stay on top of announcements.",
     points: 50,
     xp: 1,
     tag: "Community • Social",
@@ -154,15 +188,16 @@ export const TASKS = [
     requirement: {
       kind: "none",
     },
-    link: "https://web.telegram.org/k/#@Heat_rush", // عدّل الرابط لما يكون جاهز
+    link: "https://web.telegram.org/k/#@Heat_rush",
+    icon: "telegram",
   },
 
-//  follow_and_retweet_x
+  //  follow_and_retweet_x (الأول)
   {
     id: "follow_and_retweet_x",
-    title: "follow_and_retweet_x",
+    title: "Like & retweet",
     description:
-    "Follow the official HeatRush account on X and retweet the main campaign post to boost the signal.",
+      "Follow the official HeatRush account on X and retweet the main campaign post to boost the signal.",
     points: 50,
     xp: 1,
     tag: "Community • Social",
@@ -170,16 +205,30 @@ export const TASKS = [
     requirement: {
       kind: "none",
     },
-    link: "https://x.com/Rush_finance/status/1992886251905520074?s=20", // عدّل الرابط لما يكون جاهز
+    link: "https://x.com/Rush_finance/status/1992886251905520074?s=20",
+    icon: "x",
   },
 
+  //  follow_and_retweet_x (الثاني – للتويتة الجديدة)
+  {
+    id: "Like & Retweet HeatRush on X",
+    title: "Like & Retweet",
+    description:
+      "Like and retweet the latest HeatRush campaign post on X to boost the signal and support the ecosystem.",
+    points: 50,
+    xp: 1,
+    tag: "Community • Social",
+    type: "social",
+    requirement: {
+      kind: "none",
+    },
+    link: "https://x.com/Rush_finance/status/1995578533389979668?s=20",
+    icon: "twitter",
+  },
 
+  // 4 ) SYSTEM / OFF-CHAIN ////////////////
 
-
-
-// 4 ) SYSTEM / OFF-CHAIN ////////////////
-
-// • READ FULL DASHBOARD
+  // • READ FULL DASHBOARD
   {
     id: "read_full_dashboard",
     title: "Explore your full dashboard",
@@ -193,10 +242,6 @@ export const TASKS = [
       kind: "none",
     },
     link: "/dashboard",
+    icon: "dashboard",
   },
-
-
-
-
-
 ];
