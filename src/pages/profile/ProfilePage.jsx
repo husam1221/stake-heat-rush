@@ -383,13 +383,10 @@ const ProfilePage = () => {
 
       {/* TOP SUMMARY */}
       <div className="profile-top-summary">
-        <div className="card profile-card profile-summary-card">
-
-      
-
+ 
           <div className="profile-stat-row">
-            <span className="profile-stat-label">Total Points</span>
-            <span className="profile-stat-value">
+            <span className="profile-title">Total Points</span>
+            <span className="profile-tag-address">
               {xpLoading
                 ? "Loading..."
                 : `${formatNumber(offchainPoints, 0)} pts`}
@@ -398,12 +395,12 @@ const ProfilePage = () => {
 
 
           <div className="profile-stat-row">
-            <span className="profile-stat-label">Total XP (global)</span>
-            <span className="profile-stat-value">
+            <span className="profile-title">Total XP ( global )</span>
+            <span className="profile-tag-address">
               {xpLoading ? "Loading..." : `${formatNumber(globalXp, 2)} XP`}
             </span>
           </div>
-        </div>
+      
       </div>
 
       {/* GRID */}
@@ -793,15 +790,16 @@ const ProfilePage = () => {
                 })}
               </div>
 
-              {xpLb.user && !xpLb.user.inTop && (
-                <p className="profile-leaderboard-you-note">
-                  {" "}
-                  <strong>#{xpLb.user.rank}</strong>{" "}
-                  You are currently ranked globally with <strong>{xpLb.user.xp} XP</strong> and{" "}
-                  <strong>{xpLb.user.points} pts</strong>. Keep grinding to
-                  break into the top 10.
-                </p>
-              )}
+{xpLb.user && !xpLb.user.inTop && (
+  <p className="profile-leaderboard-you-note">
+    <strong>#{xpLb.user.rank}</strong>{" "}
+    You are currently ranked globally with{" "}
+    <strong>{globalXp} XP</strong> and{" "}
+    <strong>{xpLb.user.points} pts</strong>. Keep grinding to
+    break into the top 10.
+  </p>
+)}
+
 
               {xpLb.user && xpLb.user.inTop && (
                 <p className="profile-leaderboard-you-note">

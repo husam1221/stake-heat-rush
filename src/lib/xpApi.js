@@ -177,3 +177,52 @@ export async function fetchXpLeaderboard(wallet) {
 }
 
 
+// 🧡 Sync on-chain staking XP into XP backend
+export async function syncOnchainXpApi(walletAddress, xpOnchain) {
+  if (!walletAddress) {
+    throw new Error("Missing wallet address");
+  }
+
+  const cleanWallet = walletAddress.toLowerCase();
+  const cleanXp = Math.max(0, Math.floor(Number(xpOnchain || 0)));
+
+  const res = await fetch(`${XP_API_BASE}/sync-onchain`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      wallet: cleanWallet,
+      xp_onchain: cleanXp,
+    }),
+  });
+
+  const text = await res.text();
+  let json;
+  try {
+    json = JSON.parse(text);
+  } catch (err) {
+    console.error("XP API invalid JSON for /sync-onchain:", text);
+    throw new Error("XP API /sync-onchain returned invalid JSON");
+  }
+
+  if (!res.ok || json.ok === false) {
+    throw new Error(
+      json.error || `XP API /sync-onchain error (${res.status})`
+    );
+  }
+
+  // الشكل المتوقع:
+  // {
+  //   ok: true,
+  //   wallet: "0x...",
+  //   xp_onchain: 200,
+  //   totals: {
+  //     xp_offchain: ...,
+  //     xp_onchain: ...,
+  //     xp_global: ...
+  //   }
+  // }
+
+  return json;
+}

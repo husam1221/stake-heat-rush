@@ -14,6 +14,7 @@ import {
 } from "../../lib/constants.js";
 import { STAKING_ABI } from "../../lib/staking.js";
 import { qualifyReferral } from "../../lib/referralApi.js";
+import { syncOnchainXpApi } from "../../lib/xpApi.js";
 
 import "../../styles/staking.css";
 
@@ -96,6 +97,20 @@ const StakingPage = ({ showToast }) => {
   });
 
   const userXP = totalXPData ? Number(totalXPData) : 0;
+
+
+  // 🔄 مزامنة XP من عقد الستيك مع الـ XP backend (leaderboard / profile)
+  useEffect(() => {
+    if (!address || !isConnected) return;
+
+    const xpNumber = Number(userXP);
+    if (!Number.isFinite(xpNumber) || xpNumber < 0) return;
+
+    syncOnchainXpApi(address, xpNumber).catch((err) => {
+      console.error("Failed to sync on-chain XP:", err);
+    });
+  }, [address, isConnected, userXP]);
+
 
   const { data: levelData } = useReadContract({
     abi: STAKING_ABI,

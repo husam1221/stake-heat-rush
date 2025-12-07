@@ -78,7 +78,7 @@ const TasksPage = ({ showToast }) => {
 
   const stakedEth = stakedWei ? Number(formatEther(stakedWei)) : 0;
 
-  // On-chain XP
+  // On-chain XP (من عقد الستيك)
   const { data: onchainXpData } = useReadContract({
     abi: STAKING_ABI,
     address: STAKING_CONTRACT_ADDRESS,
@@ -107,13 +107,16 @@ const TasksPage = ({ showToast }) => {
   const [completed, setCompleted] = useState(new Set());
   const [savingTaskId, setSavingTaskId] = useState(null); // أي تاسك قيد الحفظ الآن
 
-  // 👇 XP تبع البروفايل من /xp/profile
+  // 👇 XP تبع البروفايل من /xp/profile (off-chain)
   const [profileXp, setProfileXp] = useState(0);
 
   const storageKey = useMemo(() => {
     if (!address) return null;
     return `hr_tasks_${address.toLowerCase()}`;
   }, [address]);
+
+  // ✅ Global profile XP = on-chain XP + off-chain profile XP
+  const profileGlobalXp = profileXp + onchainXp;
 
   // تحميل حالة المهام من localStorage فقط
   useEffect(() => {
@@ -200,7 +203,7 @@ const TasksPage = ({ showToast }) => {
       try {
         const data = await fetchXpOverview(address.toLowerCase());
         const serverCompleted = data?.completedTasks || [];
-        const xpOffchain = data?.totals?.xp_offchain ?? 0; // 👈 XP من البروفايل
+        const xpOffchain = data?.totals?.xp_offchain ?? 0; // 👈 XP من البروفايل (off-chain)
 
         if (cancelled) return;
 
@@ -283,7 +286,7 @@ const TasksPage = ({ showToast }) => {
 
     const req = task.requirement || { kind: "none" };
 
-    // نوع المهمة: ON-CHAIN (نفسه، بس ضفنا min_profile_xp)
+    // نوع المهمة: ON-CHAIN
     if (task.type === "onchain") {
       if (req.kind === "min_stake") {
         const needed = req.valueEth || 0;
@@ -343,15 +346,15 @@ const TasksPage = ({ showToast }) => {
         };
       }
 
-      // 👇 الشرط الجديد: XP من البروفايل (off-chain)
+      // 👇 الآن min_profile_xp تستخدم Global XP (on-chain + off-chain)
       if (req.kind === "min_profile_xp") {
         const minXp = req.minXp || 0;
-        if (profileXp < minXp) {
+        if (profileGlobalXp < minXp) {
           return {
             isLocked: true,
             isCompleted: false,
             canComplete: false,
-            reason: `You need at least ${minXp} profile XP ( you have ${profileXp} XP ).`,
+            reason: `You need at least ${minXp} global profile XP ( you have ${profileGlobalXp} XP from staking + tasks ).`,
           };
         }
         return {
@@ -560,17 +563,16 @@ const TasksPage = ({ showToast }) => {
         </div>
       </div>
 
-        {/* ====== DAILY FUEL TANK ====== */}
-        <DailyTankCard
-          showToast={showToast}
-          onClaim={(earnedToday, newTotalFromTank, gainedXpToday) => {
-            showToast?.(
-              "success",
-              `Daily tank claimed: +${earnedToday} points, +${gainedXpToday} XP`
-            );
-          }}
-        />
-
+      {/* ====== DAILY FUEL TANK ====== */}
+      <DailyTankCard
+        showToast={showToast}
+        onClaim={(earnedToday, newTotalFromTank, gainedXpToday) => {
+          showToast?.(
+            "success",
+            `Daily tank claimed: +${earnedToday} points, +${gainedXpToday} XP`
+          );
+        }}
+      />
 
       {/* ====== ON-CHAIN QUESTS ====== */}
       {onchainTasks.length > 0 && (
@@ -606,7 +608,8 @@ const TasksPage = ({ showToast }) => {
               } else if (task.requirement?.kind === "min_onchain_xp") {
                 requirementText = `Requires ≥ ${task.requirement.minXp} on-chain XP`;
               } else if (task.requirement?.kind === "min_profile_xp") {
-                requirementText = `Requires ≥ ${task.requirement.minXp} profile XP`;
+                // 👇 توضيح إنها Global profile XP
+                requirementText = `Requires ≥ ${task.requirement.minXp} global profile XP (on-chain + off-chain)`;
               }
 
               // نص الزر حسب الحالة + visited
