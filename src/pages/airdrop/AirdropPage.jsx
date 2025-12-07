@@ -23,7 +23,7 @@ const safeFormat = (num) =>
 
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
-const AirdropPage = () => {
+const AirdropPage = ({ showToast }) => {
   const { address, isConnected } = useAccount();
   const { writeContractAsync } = useWriteContract();
 
@@ -216,17 +216,17 @@ const AirdropPage = () => {
 
   const handleClaim = async () => {
     if (!isConnected) {
-      alert("Please connect your wallet first.");
+      showToast?.("error", "Please connect your wallet first.");
       return;
     }
 
     if (!merkleEntry || totalAllocationWei === 0n) {
-      alert("No allocation found for this wallet.");
+      showToast?.("error", "No allocation found for this wallet.");
       return;
     }
 
     if (!claimableBig || claimableBig === 0n) {
-      alert("Nothing to claim at this time.");
+      showToast?.("error", "Nothing to claim at this time.");
       return;
     }
 
@@ -272,14 +272,17 @@ https://heatrush.xyz
         args: [totalAllocationWei, merkleEntry.proof || []],
       });
 
-      alert("Claim transaction sent!");
+      // ✅ إشعار جميل من نفس نظام التوست عندك
+      showToast?.("success", "Claim transaction sent!");
     } catch (err) {
       console.error(err);
-      alert(err.shortMessage || err.message || "Failed to send claim tx");
+      showToast?.(
+        "error",
+        err?.shortMessage || err?.message || "Failed to send claim tx"
+      );
     } finally {
       setIsClaiming(false);
     }
-
   };
 
   return (

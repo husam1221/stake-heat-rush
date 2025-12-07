@@ -19,7 +19,7 @@ const formatCountdown = (ms) => {
   )}:${String(s).padStart(2, "0")}`;
 };
 
-const DailyTankCard = ({ onClaim }) => {
+const DailyTankCard = ({ onClaim, showToast }) => {
   const { address } = useAccount();
   const storageKey = address
     ? `hr_daily_tank_v1_${address.toLowerCase()}`
@@ -67,7 +67,7 @@ const DailyTankCard = ({ onClaim }) => {
 
   const handleClaim = async () => {
     if (!address) {
-      alert("Connect your wallet to claim your daily reward.");
+      showToast?.("error", "Connect your wallet to claim your daily reward.");
       return;
     }
     if (!isReady || isClaiming) {
@@ -104,11 +104,12 @@ const DailyTankCard = ({ onClaim }) => {
           totals.xp_offchain ?? null
         );
       }
-
-
     } catch (err) {
       console.error("Daily tank claim failed:", err);
-      alert(err.message || "Failed to claim daily tank reward.");
+      showToast?.(
+        "error",
+        err?.message || "Failed to claim daily tank reward."
+      );
     } finally {
       setIsClaiming(false);
     }

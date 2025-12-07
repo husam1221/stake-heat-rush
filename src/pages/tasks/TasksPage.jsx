@@ -560,15 +560,17 @@ const TasksPage = ({ showToast }) => {
         </div>
       </div>
 
-      {/* ====== DAILY FUEL TANK ====== */}
-      <DailyTankCard
-        onClaim={(earnedToday, newTotalFromTank, gainedXpToday) => {
-          showToast?.(
-            "success",
-            `Daily tank claimed: +${earnedToday} points, +${gainedXpToday} XP`
-          );
-        }}
-      />
+        {/* ====== DAILY FUEL TANK ====== */}
+        <DailyTankCard
+          showToast={showToast}
+          onClaim={(earnedToday, newTotalFromTank, gainedXpToday) => {
+            showToast?.(
+              "success",
+              `Daily tank claimed: +${earnedToday} points, +${gainedXpToday} XP`
+            );
+          }}
+        />
+
 
       {/* ====== ON-CHAIN QUESTS ====== */}
       {onchainTasks.length > 0 && (

@@ -61,6 +61,7 @@ const tvlHistory = [
     { day: "Now", tvl: 25850 },
         { day: "Now", tvl: 25900 },
                 { day: "Now", tvl: 29920 },
+                                { day: "Now", tvl: 31110 },
 ];
 
 // APY History (جماليات)
@@ -179,7 +180,7 @@ const DashboardPage = () => {
 
 
 
-            <span className="mega-value">29,920 ETH</span>
+            <span className="mega-value">31,110 ETH</span>
 
 
 
@@ -204,7 +205,7 @@ const DashboardPage = () => {
         <div className="card dash-mega-card apy-card">
           <div className="mega-card-header">
             <h3>Current Staking APY</h3>
-            <span className="mega-value insane">693%</span>
+            <span className="mega-value insane">695%</span>
           </div>
           <ResponsiveContainer width="100%" height={140}>
             <BarChart data={apyHistory}>

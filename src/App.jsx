@@ -55,7 +55,10 @@ function App() {
             element={<StakingPage showToast={showToast} />}
           />
 
-          <Route path="/airdrop" element={<AirdropPage />} />
+<Route
+  path="/airdrop"
+  element={<AirdropPage showToast={showToast} />}
+/>
 
           <Route
             path="/presale"

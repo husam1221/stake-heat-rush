@@ -64,6 +64,11 @@ export const TASKS = [
     icon: "target",
   },
 
+
+
+
+
+
   // 2) ON-CHAIN ////////////////////
 
   //  STAKING 0.0001 ETH
@@ -120,6 +125,24 @@ export const TASKS = [
     icon: "flame",
   },
 
+  // • STAKING 0.2 ETH
+  {
+    id: "stake_0_2_eth",
+    title: "Stake at least 0.2 ETH",
+    description:
+      "Lock 0.2 ETH or more into HeatRush staking on Base to prove real on-chain commitment.",
+    points: 2000,
+    xp: 200,
+    tag: "On-chain • Staking",
+    type: "onchain",
+    requirement: {
+      kind: "min_stake",
+      valueEth: 0.2,
+    },
+    link: "/staking",
+    icon: "flame",
+  },
+
   //  • PRESALE 1 HR
   {
     id: "join_presale_once10",
@@ -155,6 +178,9 @@ export const TASKS = [
     link: "/presale",
     icon: "coins",
   },
+
+
+
 
   // 3) SOCIAL / COMMUNITY ////////////////
 
@@ -225,6 +251,10 @@ export const TASKS = [
     link: "https://x.com/Rush_finance/status/1995578533389979668?s=20",
     icon: "twitter",
   },
+
+
+
+
 
   // 4 ) SYSTEM / OFF-CHAIN ////////////////
 

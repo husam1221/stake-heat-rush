@@ -283,7 +283,7 @@ const StakingPage = ({ showToast }) => {
 
           <div className="status-row">
             <span className="status-label">You Staked</span>
-            <span className="status-value highlight">
+            <span className="status-chip">
               {formatEth(userStakedEth)}{" "}
               <span className="status-unit">ETH</span>
             </span>
@@ -291,7 +291,7 @@ const StakingPage = ({ showToast }) => {
 
           <div className="status-row">
             <span className="status-label">Your Total XP</span>
-            <span className="status-value">
+            <span className="status-chip">
               {formatXP(userXP)}
             </span>
           </div>
@@ -305,7 +305,7 @@ const StakingPage = ({ showToast }) => {
 
           <div className="status-row">
             <span className="status-label">Wallet Balance (Base)</span>
-            <span className="status-value">
+            <span className="status-chip">
               {userBalance} <span className="status-unit">ETH</span>
             </span>
           </div>
