@@ -366,19 +366,6 @@ const ProfilePage = () => {
             both on-chain & off-chain XP inside the HeatRush ecosystem.
           </p>
         </div>
-
-        <div className="profile-tag-group">
-          <span className="profile-tag-pill">
-            Live on <span>Base</span>
-          </span>
-          {isConnected ? (
-            <span className="profile-tag-address">{shortAddress}</span>
-          ) : (
-            <span className="profile-tag-address muted">
-              Connect wallet to see full profile
-            </span>
-          )}
-        </div>
       </div>
 
       {/* TOP SUMMARY */}
@@ -386,7 +373,7 @@ const ProfilePage = () => {
  
           <div className="profile-stat-row">
             <span className="profile-title">Total Points</span>
-            <span className="profile-tag-address">
+            <span className="profile-tag-pill">
               {xpLoading
                 ? "Loading..."
                 : `${formatNumber(offchainPoints, 0)} pts`}
@@ -732,7 +719,7 @@ const ProfilePage = () => {
         <div className="card profile-card profile-leaderboard-card">
           <div className="profile-card-header">
 <h2 className="leaderboard-title">Global XP Leaderboard</h2>
-            <span className="profile-chip orange">on-chain & off-chain</span>
+            <span className="profile-chip orange">on-chain</span>
           </div>
 
           <p className="profile-card-note">

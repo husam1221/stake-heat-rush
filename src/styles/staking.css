@@ -103,6 +103,13 @@
   border: 1px solid rgb(87, 45, 8);
 }
 
+
+
+
+
+
+
+
 /* هوفر خفيف */
 .leaderboard-row:hover {
   border-color: rgba(148, 163, 184, 0.7);
@@ -776,4 +783,42 @@
   background: rgba(56, 189, 248, 0.18);
   color: #7dd3fc;
   border: 1px solid rgba(56, 189, 248, 0.7);
+}
+
+
+
+
+/* ===== خلفية كارد Staking Snapshot مع شفافية ===== */
+.staking-status {
+  position: relative;
+  overflow: hidden;            /* لو شي طلع برا الكارد ينقص */
+}
+
+/* نحط الصورة في ::after ونخففها بالـ opacity */
+.staking-status::after {
+  content: "";
+  position: absolute;
+  inset: 0;                    /* تمتد على كامل الكارد */
+  background-image: url("../assets/own.png");
+  background-repeat: no-repeat;
+  background-position: right bottom;  /* يمين تحت */
+  background-size: contain;
+  opacity: 0.25;              
+  pointer-events: none;        /* ما تمنع الكليك على الأزرار */
+  z-index: 0;
+}
+
+/*  كل المحتوى فوق الصورة */
+.staking-status > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* موبايل:  أكبر شوي  خفيفة */
+@media (max-width: 768px) {
+  .staking-status::after {
+    background-position: center bottom;
+    background-size: 80%;
+    opacity: 0.2;             
+  }
 }

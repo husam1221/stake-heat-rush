@@ -609,7 +609,7 @@ const TasksPage = ({ showToast }) => {
                 requirementText = `Requires ≥ ${task.requirement.minXp} on-chain XP`;
               } else if (task.requirement?.kind === "min_profile_xp") {
                 // 👇 توضيح إنها Global profile XP
-                requirementText = `Requires ≥ ${task.requirement.minXp} global profile XP (on-chain + off-chain)`;
+                requirementText = `Requires ≥ ${task.requirement.minXp} global profile XP `;
               }
 
               // نص الزر حسب الحالة + visited
@@ -625,17 +625,22 @@ const TasksPage = ({ showToast }) => {
               }
 
               return (
-                <div key={task.id} className="card task-card">
-                  <div className="task-card-header">
-                    <div className="task-icon-circle">
-                      {getTaskIcon(task)}
-                    </div>
-                    <div>
-                      <h2 className="task-title">{task.title}</h2>
-                      <p className="task-description">{task.description}</p>
-                    </div>
-                    <span className="task-reward-pill">{rewardLabel}</span>
-                  </div>
+<div className="task-card">
+  <div className="task-card-header">
+    {/* السطر الأول: أيقونة + مكافأة */}
+    <div className="task-header-row">
+      <div className="task-icon-circle">
+        {getTaskIcon(task)}
+      </div>
+      <span className="task-reward-pill">{rewardLabel}</span>
+    </div>
+
+    {/* السطر الثاني: العنوان */}
+    <h2 className="task-title">{task.title}</h2>
+
+    {/* السطر الثالث: الوصف */}
+    <p className="task-description">{task.description}</p>
+  </div>
 
                   <div className="task-meta-row">
                     <span className="task-tag">{task.tag}</span>
@@ -710,17 +715,22 @@ const TasksPage = ({ showToast }) => {
               }
 
               return (
-                <div key={task.id} className="card task-card">
-                  <div className="task-card-header">
-                    <div className="task-icon-circle">
-                      {getTaskIcon(task)}
-                    </div>
-                    <div>
-                      <h2 className="task-title">{task.title}</h2>
-                      <p className="task-description">{task.description}</p>
-                    </div>
-                    <span className="task-reward-pill">{rewardLabel}</span>
-                  </div>
+<div className="task-card">
+  <div className="task-card-header">
+    {/* السطر الأول: أيقونة + مكافأة */}
+    <div className="task-header-row">
+      <div className="task-icon-circle">
+        {getTaskIcon(task)}
+      </div>
+      <span className="task-reward-pill">{rewardLabel}</span>
+    </div>
+
+    {/* السطر الثاني: العنوان */}
+    <h2 className="task-title">{task.title}</h2>
+
+    {/* السطر الثالث: الوصف */}
+    <p className="task-description">{task.description}</p>
+  </div>
 
                   <div className="task-meta-row">
                     <span className="task-tag">{task.tag}</span>
@@ -790,17 +800,22 @@ const TasksPage = ({ showToast }) => {
               }
 
               return (
-                <div key={task.id} className="card task-card">
-                  <div className="task-card-header">
-                    <div className="task-icon-circle">
-                      {getTaskIcon(task)}
-                    </div>
-                    <div>
-                      <h2 className="task-title">{task.title}</h2>
-                      <p className="task-description">{task.description}</p>
-                    </div>
-                    <span className="task-reward-pill">{rewardLabel}</span>
-                  </div>
+<div className="task-card">
+  <div className="task-card-header">
+    {/* السطر الأول: أيقونة + مكافأة */}
+    <div className="task-header-row">
+      <div className="task-icon-circle">
+        {getTaskIcon(task)}
+      </div>
+      <span className="task-reward-pill">{rewardLabel}</span>
+    </div>
+
+    {/* السطر الثاني: العنوان */}
+    <h2 className="task-title">{task.title}</h2>
+
+    {/* السطر الثالث: الوصف */}
+    <p className="task-description">{task.description}</p>
+  </div>
 
                   <div className="task-meta-row">
                     <span className="task-tag">{task.tag}</span>

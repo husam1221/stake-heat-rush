@@ -77,6 +77,13 @@
   opacity: 0.7;
 }
 
+@media (max-width: 768px) {
+  .profile-tag-group {
+    margin-left: auto;  /* يدزه لأقصى يمين الكونتينر */
+  }
+}
+
+
 /* GRID of cards */
 .profile-grid {
   display: grid;
@@ -111,6 +118,8 @@
   padding: 0.18rem 0.7rem;
   border-radius: 999px;
   border: 1px solid rgba(148, 163, 184, 0.45);
+    white-space: nowrap;   
+  display: inline-block; 
 }
 
 .profile-chip.neutral {

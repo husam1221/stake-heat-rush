@@ -121,15 +121,7 @@ const DailyTankCard = ({ onClaim, showToast }) => {
         <div>
           <h2 className="daily-tank-title">Daily Fuel Tank</h2>
           <p className="daily-tank-subtitle">
-            Claim&nbsp;
-            <span className="orange">
-              {DAILY_REWARD_POINTS} points
-            </span>{" "}
-            +{" "}
-            <span className="orange">
-              {DAILY_REWARD_XP} XP
-            </span>{" "}
-            every 24 hours. The tank refills gradually after each claim.
+         The tank refills gradually after each claim.
           </p>
         </div>
 
@@ -192,11 +184,6 @@ const DailyTankCard = ({ onClaim, showToast }) => {
               24h between each claim
             </span>
           </div>
-
-          <p className="tank-note">
-            Tank rewards are stored in the HeatRush XP backend and show up in
-            your global off-chain XP & points on the Profile page.
-          </p>
         </div>
       </div>
 
