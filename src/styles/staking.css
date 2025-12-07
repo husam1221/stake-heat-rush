@@ -822,3 +822,220 @@
     opacity: 0.2;             
   }
 }
+
+
+
+
+
+
+
+.staking-rewards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.staking-rewards-subtitle {
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.staking-rewards-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+}
+
+.staking-rewards-label {
+  color: #888;
+}
+
+.staking-rewards-value {
+  font-weight: 600;
+  color: #fff;
+}
+
+.staking-claim-button {
+  margin-top: 0.75rem;
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(90deg, #ff6b00, #ffb347);
+  color: #000;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.staking-claim-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.staking-rewards-hint {
+  font-size: 0.8rem;
+  color: #999;
+}
+.claim-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.claim-btn-glow {
+  animation: claim-pulse 1.6s ease-in-out infinite;
+  background-image: linear-gradient(90deg, #ffb347, #ffe7c2);
+  color: #000;
+}
+
+.claim-btn-glow::before {
+  content: "Ξ";
+  position: absolute;
+  left: -10%;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.9rem;
+  opacity: 0.7;
+  animation: eth-move 1.8s linear infinite;
+}
+
+@keyframes claim-pulse {
+  0% {
+    box-shadow: 0 0 0px rgba(255, 180, 71, 0.0);
+    transform: translateY(0);
+  }
+  50% {
+    box-shadow: 0 0 18px rgba(255, 180, 71, 0.7);
+    transform: translateY(-1px);
+  }
+  100% {
+    box-shadow: 0 0 0px rgba(255, 180, 71, 0.0);
+    transform: translateY(0);
+  }
+}
+
+@keyframes eth-move {
+  0% {
+    left: -10%;
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.7;
+  }
+  70% {
+    opacity: 0.7;
+  }
+  100% {
+    left: 110%;
+    opacity: 0;
+  }
+}
+
+
+
+
+.no-rewards-bubble {
+  position: relative;
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: rgba(15, 15, 20, 0.96);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 180, 71, 0.4);
+  color: #f9fafb;
+  font-size: 0.8rem;
+  max-width: 320px;
+  animation: bubble-fade-in 0.2s ease-out;
+}
+
+.no-rewards-bubble-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #ffb347;
+}
+
+.no-rewards-bubble-text {
+  line-height: 1.3;
+  opacity: 0.9;
+}
+
+/* السهم الصغير اللي فوق الفقاعة */
+.no-rewards-bubble-arrow {
+  position: absolute;
+  top: -6px;
+  left: 18px;
+  width: 10px;
+  height: 10px;
+  background: rgba(15, 15, 20, 0.96);
+  border-left: 1px solid rgba(255, 180, 71, 0.4);
+  border-top: 1px solid rgba(255, 180, 71, 0.4);
+  transform: rotate(45deg);
+}
+
+@keyframes bubble-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+
+
+
+
+
+/* زر المطالبة بالمكافآت – يلمع ويتنفس 🔥 */
+.claim-glow-btn {
+  position: relative;
+  overflow: hidden;
+  border-radius: 999px;
+  box-shadow: 0 0 14px rgba(255, 153, 0, 0.5);
+  animation: claimPulse 1.8s ease-in-out infinite;
+}
+
+/* لمعة تمشي على الزر */
+.claim-glow-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.35) 40%,
+    transparent 80%
+  );
+  transform: translateX(-120%);
+  animation: claimShimmer 2.4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* نبض خفيف */
+@keyframes claimPulse {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 153, 0, 0.25);
+    transform: translateY(0);
+  }
+  50% {
+    box-shadow: 0 0 22px rgba(255, 153, 0, 0.7);
+    transform: translateY(-1px);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 153, 0, 0.25);
+    transform: translateY(0);
+  }
+}
+
+/* حركة اللمعة اللي تمر على الزر */
+@keyframes claimShimmer {
+  0% {
+    transform: translateX(-130%);
+  }
+  50% {
+    transform: translateX(130%);
+  }
+  100% {
+    transform: translateX(130%);
+  }
+}

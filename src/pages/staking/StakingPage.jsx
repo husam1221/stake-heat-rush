@@ -1,18 +1,22 @@
 // src/pages/staking/StakingPage.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   useAccount,
   useBalance,
   useSendTransaction,
   useReadContract,
+  useWriteContract,
   usePublicClient,
 } from "wagmi";
 import { parseEther, formatEther } from "viem";
 import {
   BASE_CHAIN_ID,
   STAKING_CONTRACT_ADDRESS,
+  FEE_DISTRIBUTOR_ADDRESS,
 } from "../../lib/constants.js";
 import { STAKING_ABI } from "../../lib/staking.js";
+import { FEE_DISTRIBUTOR_ABI } from "../../lib/fees";
+
 import { qualifyReferral } from "../../lib/referralApi.js";
 import { syncOnchainXpApi } from "../../lib/xpApi.js";
 
@@ -50,7 +54,7 @@ const getLevelInfo = (level) => {
 };
 
 const StakingPage = ({ showToast }) => {
-  const { address, isConnected } = useAccount();
+  const { address, isConnected, chainId } = useAccount();
   const publicClient = usePublicClient({ chainId: BASE_CHAIN_ID });
 
   // ===== WALLET BALANCE =====
@@ -65,9 +69,23 @@ const StakingPage = ({ showToast }) => {
     : "0.0000";
 
   const { sendTransactionAsync } = useSendTransaction();
+  const { writeContractAsync } = useWriteContract();
 
   const [amount, setAmount] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isClaiming, setIsClaiming] = useState(false);
+  const [showNoRewardsBubble, setShowNoRewardsBubble] = useState(false);
+  const claimButtonRef = useRef(null);
+
+  // لو جينا على الصفحة مع #claim ننزل مباشرة لزر المطالبة
+  useEffect(() => {
+    if (window.location.hash === "#claim" && claimButtonRef.current) {
+      claimButtonRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  }, []);
 
   // ===== ON-CHAIN METRICS (من العقد) =====
   const { data: totalStakedData } = useReadContract({
@@ -98,8 +116,7 @@ const StakingPage = ({ showToast }) => {
 
   const userXP = totalXPData ? Number(totalXPData) : 0;
 
-
-  // 🔄 مزامنة XP من عقد الستيك مع الـ XP backend (leaderboard / profile)
+  // 🔄 مزامنة XP مع backend
   useEffect(() => {
     if (!address || !isConnected) return;
 
@@ -110,7 +127,6 @@ const StakingPage = ({ showToast }) => {
       console.error("Failed to sync on-chain XP:", err);
     });
   }, [address, isConnected, userXP]);
-
 
   const { data: levelData } = useReadContract({
     abi: STAKING_ABI,
@@ -154,7 +170,6 @@ const StakingPage = ({ showToast }) => {
 
         const addresses = stakersData;
 
-        // نقرأ userStaked لكل عنوان
         const stakePromises = addresses.map((addr) =>
           publicClient.readContract({
             abi: STAKING_ABI,
@@ -188,6 +203,35 @@ const StakingPage = ({ showToast }) => {
 
     loadLeaderboard();
   }, [publicClient, stakersData]);
+
+  // ===== FEE DISTRIBUTOR: pending rewards & total staked =====
+  const {
+    data: pendingRewardsData,
+    refetch: refetchPendingRewards,
+    isLoading: isPendingRewardsLoading,
+  } = useReadContract({
+    abi: FEE_DISTRIBUTOR_ABI,
+    address: FEE_DISTRIBUTOR_ADDRESS,
+    functionName: "pendingRewards",
+    args: [address || ZERO_ADDRESS],
+  });
+
+  const { data: totalStakedEthData } = useReadContract({
+    abi: FEE_DISTRIBUTOR_ABI,
+    address: FEE_DISTRIBUTOR_ADDRESS,
+    functionName: "totalStakedEth",
+  });
+
+  const pendingRewardsEth = pendingRewardsData
+    ? Number(formatEther(pendingRewardsData))
+    : 0;
+
+  const hasRewards =
+    pendingRewardsData && pendingRewardsData > 0n;
+
+  const totalStakedForFeesEth = totalStakedEthData
+    ? Number(formatEther(totalStakedEthData))
+    : 0;
 
   // ===== HANDLERS =====
 
@@ -225,7 +269,6 @@ const StakingPage = ({ showToast }) => {
 
       showToast?.("success", "Transaction sent successfully!");
 
-      // 👇 هون نفعل الإحالة عن طريق الستايكنغ (stake)
       try {
         if (address) {
           qualifyReferral(address.toLowerCase(), "stake").catch((err) => {
@@ -247,10 +290,54 @@ const StakingPage = ({ showToast }) => {
     if (!isFinite(num)) return "0";
 
     return num.toLocaleString("en-US", {
-      minimumFractionDigits: 1, // أقل شيء رقم بعد الفاصلة
-      maximumFractionDigits: 4, // أقصى شيء 4 أرقام بعد الفاصلة
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 4,
     });
   };
+
+  // دالة كليم المكافآت من عقد التوزيع
+  const handleClaimRewards = async () => {
+    if (!address) {
+      showToast?.("error", "Connect your wallet first.");
+      return;
+    }
+
+    if (chainId !== BASE_CHAIN_ID) {
+      showToast?.("error", "Please switch to Base network to claim.");
+      return;
+    }
+
+    // لو ما في تخصيص → نطلع فقاعة منبثقة تحت الزر
+    if (!hasRewards) {
+      setShowNoRewardsBubble(true);
+      // نخليها تختفي بعد 4 ثواني
+      setTimeout(() => {
+        setShowNoRewardsBubble(false);
+      }, 4000);
+      return;
+    }
+
+    try {
+      setIsClaiming(true);
+
+      await writeContractAsync({
+        abi: FEE_DISTRIBUTOR_ABI,
+        address: FEE_DISTRIBUTOR_ADDRESS,
+        functionName: "claim",
+        chainId: BASE_CHAIN_ID,
+      });
+
+      showToast?.("success", "Rewards claimed successfully!");
+
+      refetchPendingRewards?.();
+    } catch (e) {
+      console.error("Claim rewards failed:", e);
+      showToast?.("error", "Claim transaction failed or was rejected.");
+    } finally {
+      setIsClaiming(false);
+    }
+  };
+
 
   return (
     <div className="staking-page">
@@ -294,8 +381,6 @@ const StakingPage = ({ showToast }) => {
         <div className="card staking-card staking-status">
           <h2 className="card-title">Your Staking Snapshot</h2>
 
-      
-
           <div className="status-row">
             <span className="status-label">You Staked</span>
             <span className="status-chip">
@@ -306,9 +391,7 @@ const StakingPage = ({ showToast }) => {
 
           <div className="status-row">
             <span className="status-label">Your Total XP</span>
-            <span className="status-chip">
-              {formatXP(userXP)}
-            </span>
+            <span className="status-chip">{formatXP(userXP)}</span>
           </div>
 
           <div className="status-row">
@@ -377,17 +460,17 @@ const StakingPage = ({ showToast }) => {
           </button>
 
           <div className="secondary-actions">
-            <button
-              className="secondary-btn"
-              onClick={() =>
-                showToast?.(
-                  "info",
-                  "Claiming rewards will be enabled in a future phase."
-                )
-              }
-            >
-              Claim Rewards
-            </button>
+<button
+  ref={claimButtonRef}
+  className={`secondary-btn claim-btn ${
+    hasRewards ? "claim-btn-glow" : ""
+  }`}
+  onClick={handleClaimRewards}
+  disabled={isClaiming || !address || chainId !== BASE_CHAIN_ID}
+>
+  {isClaiming ? "Claiming..." : "Claim Rewards"}
+</button>
+
 
             <button
               className="secondary-btn"
@@ -401,6 +484,22 @@ const StakingPage = ({ showToast }) => {
               Unstake (coming later)
             </button>
           </div>
+
+          {showNoRewardsBubble && (
+            <div className="no-rewards-bubble">
+              <div className="no-rewards-bubble-arrow" />
+              <div className="no-rewards-bubble-title">No rewards yet</div>
+              <div className="no-rewards-bubble-text">
+Stake ETH to start earning rewards.              </div>
+            </div>
+          )}
+
+
+
+
+
+
+
 
           <p className="stake-footnote">
             Withdrawals and advanced reward mechanics will be enabled in
@@ -485,75 +584,69 @@ const StakingPage = ({ showToast }) => {
             </li>
           </ul>
         </div>
- </div>
-        {/* ===== Top Stakers Leaderboard ===== */}
-        <div className="card staking-card staking-leaderboard">
-          <h2 className="card-title">Top Stakers</h2>
-          <p className="card-subtitle">
-            Addresses with the highest total ETH staked into HeatRush.
-          </p>
+      </div>
 
-          {leaderboardLoading && (
-            <p className="staking-leaderboard-note">Loading leaderboard...</p>
+      {/* ===== Top Stakers Leaderboard ===== */}
+      <div className="card staking-card staking-leaderboard">
+        <h2 className="card-title">Top Stakers</h2>
+        <p className="card-subtitle">
+          Addresses with the highest total ETH staked into HeatRush.
+        </p>
+
+        {leaderboardLoading && (
+          <p className="staking-leaderboard-note">Loading leaderboard...</p>
+        )}
+
+        {leaderboardError && !leaderboardLoading && (
+          <p className="staking-leaderboard-error">{leaderboardError}</p>
+        )}
+
+        {!leaderboardLoading &&
+          !leaderboardError &&
+          leaderboard.length === 0 && (
+            <p className="staking-leaderboard-note">
+              No staking activity yet. Be the first to appear on the
+              leaderboard.
+            </p>
           )}
 
-          {leaderboardError && !leaderboardLoading && (
-            <p className="staking-leaderboard-error">{leaderboardError}</p>
+        {!leaderboardLoading &&
+          !leaderboardError &&
+          leaderboard.length > 0 && (
+            <ul className="staking-leaderboard-list">
+              {leaderboard.map((row, index) => {
+                const isYou =
+                  address &&
+                  row.address &&
+                  row.address.toLowerCase() === address.toLowerCase();
+
+                return (
+                  <li
+                    key={row.address}
+                    className={`staking-leaderboard-row ${
+                      isYou ? "staking-leaderboard-row-you" : ""
+                    }`}
+                  >
+                    <span className="staking-leader-rank">{index + 1}</span>
+
+                    <span className="staking-leader-address">
+                      <span className="staking-leader-wallet">
+                        {formatShortAddress(row.address)}
+                      </span>
+                      {isYou && (
+                        <span className="staking-leader-you-pill">YOU</span>
+                      )}
+                    </span>
+
+                    <span className="staking-leader-amount">
+                      {formatEth(row.amountEth)}{" "}
+                      <span className="status-unit">ETH</span>
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
           )}
-
-          {!leaderboardLoading &&
-            !leaderboardError &&
-            leaderboard.length === 0 && (
-              <p className="staking-leaderboard-note">
-                No staking activity yet. Be the first to appear on the
-                leaderboard.
-              </p>
-            )}
-
-          {!leaderboardLoading &&
-            !leaderboardError &&
-            leaderboard.length > 0 && (
-              <ul className="staking-leaderboard-list">
-                {leaderboard.map((row, index) => {
-                  const isYou =
-                    address &&
-                    row.address &&
-                    row.address.toLowerCase() === address.toLowerCase();
-
-                  return (
-                    <li
-                      key={row.address}
-                      className={`staking-leaderboard-row ${
-                        isYou ? "staking-leaderboard-row-you" : ""
-                      }`}
-                    >
-                      <span className="staking-leader-rank">
-                        {index + 1}
-                      </span>
-
-                      <span className="staking-leader-address">
-                        <span className="staking-leader-wallet">
-                          {formatShortAddress(row.address)}
-                        </span>
-                        {isYou && (
-                          <span className="staking-leader-you-pill">
-                            YOU
-                          </span>
-                        )}
-                      </span>
-
-                      <span className="staking-leader-amount">
-                        {formatEth(row.amountEth)}{" "}
-                        <span className="status-unit">ETH</span>
-                      </span>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-     
-
-       
       </div>
     </div>
   );
