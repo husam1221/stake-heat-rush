@@ -1,5 +1,5 @@
 // src/pages/staking/StakingPage.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   useAccount,
   useBalance,
@@ -9,6 +9,7 @@ import {
   usePublicClient,
 } from "wagmi";
 import { parseEther, formatEther } from "viem";
+
 import {
   BASE_CHAIN_ID,
   STAKING_CONTRACT_ADDRESS,
@@ -24,42 +25,36 @@ import "../../styles/staking.css";
 
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
+// ====== 3D TILT HANDLERS (خفيف/أنيق) ======
+const handleTierTiltMove = (e) => {
+  const el = e.currentTarget;
+  const r = el.getBoundingClientRect();
 
+  const x = e.clientX - r.left;
+  const y = e.clientY - r.top;
 
+  const px = x / r.width; // 0..1
+  const py = y / r.height; // 0..1
 
-  const handleTierTiltMove = (e) => {
-    const el = e.currentTarget;
-    const r = el.getBoundingClientRect();
+  // ميلان خفيف (إلغاء الميلان القوي)
+  const ry = (px - 0.5) * 8; // يمين/يسار
+  const rx = (py - 0.5) * -6; // فوق/تحت
 
-    const x = e.clientX - r.left;
-    const y = e.clientY - r.top;
+  el.style.setProperty("--rx", `${rx}deg`);
+  el.style.setProperty("--ry", `${ry}deg`);
+  el.style.setProperty("--gx", `${px * 100}%`);
+  el.style.setProperty("--gy", `${py * 100}%`);
+  el.classList.add("is-tilting");
+};
 
-    const px = x / r.width;   // 0..1
-    const py = y / r.height;  // 0..1
-
-    // ميلان قوي لكن أنيق
-    const ry = (px - 0.5) * 14;     // يمين/يسار
-    const rx = (py - 0.5) * -12;    // فوق/تحت
-
-    el.style.setProperty("--rx", `${rx}deg`);
-    el.style.setProperty("--ry", `${ry}deg`);
-    el.style.setProperty("--gx", `${px * 100}%`); // نقطة اللمعة
-    el.style.setProperty("--gy", `${py * 100}%`);
-    el.classList.add("is-tilting");
-  };
-
-  const handleTierTiltLeave = (e) => {
-    const el = e.currentTarget;
-    el.style.setProperty("--rx", `10deg`);
-    el.style.setProperty("--ry", `0deg`);
-    el.style.setProperty("--gx", `20%`);
-    el.style.setProperty("--gy", `0%`);
-    el.classList.remove("is-tilting");
-  };
-
-
-
-
+const handleTierTiltLeave = (e) => {
+  const el = e.currentTarget;
+  el.style.setProperty("--rx", `1deg`);
+  el.style.setProperty("--ry", `0deg`);
+  el.style.setProperty("--gx", `20%`);
+  el.style.setProperty("--gy", `0%`);
+  el.classList.remove("is-tilting");
+};
 
 // فورمات ETH بأربعة أرقام بعد الفاصلة
 const formatEth = (value) => {
@@ -113,6 +108,18 @@ const StakingPage = ({ showToast }) => {
   const [isClaiming, setIsClaiming] = useState(false);
   const [showNoRewardsBubble, setShowNoRewardsBubble] = useState(false);
 
+  const claimButtonRef = useRef(null);
+
+  // لو جينا على الصفحة مع #claim ننزل مباشرة لزر المطالبة
+  useEffect(() => {
+    if (window.location.hash === "#claim" && claimButtonRef.current) {
+      claimButtonRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  }, []);
+
   // ===== ON-CHAIN METRICS (من العقد) =====
   const { data: totalStakedData } = useReadContract({
     abi: STAKING_ABI,
@@ -129,9 +136,7 @@ const StakingPage = ({ showToast }) => {
     args: [address || ZERO_ADDRESS],
   });
 
-  const userStakedEth = userStakedData
-    ? Number(formatEther(userStakedData))
-    : 0;
+  const userStakedEth = userStakedData ? Number(formatEther(userStakedData)) : 0;
 
   const { data: totalXPData } = useReadContract({
     abi: STAKING_ABI,
@@ -252,15 +257,13 @@ const StakingPage = ({ showToast }) => {
     ? Number(formatEther(pendingRewardsData))
     : 0;
 
-  const hasRewards =
-    pendingRewardsData && pendingRewardsData > 0n;
+  const hasRewards = pendingRewardsData && pendingRewardsData > 0n;
 
   const totalStakedForFeesEth = totalStakedEthData
     ? Number(formatEther(totalStakedEthData))
     : 0;
 
   // ===== HANDLERS =====
-
   const handleMax = () => {
     const bal = parseFloat(userBalance);
     if (!isNaN(bal) && bal > 0) {
@@ -285,7 +288,7 @@ const StakingPage = ({ showToast }) => {
     try {
       setIsLoading(true);
 
-      const tx = await sendTransactionAsync({
+      await sendTransactionAsync({
         to: STAKING_CONTRACT_ADDRESS,
         value: parseEther(amount),
       });
@@ -336,10 +339,7 @@ const StakingPage = ({ showToast }) => {
     // لو ما في تخصيص → نطلع فقاعة منبثقة تحت الزر
     if (!hasRewards) {
       setShowNoRewardsBubble(true);
-      // نخليها تختفي بعد 4 ثواني
-      setTimeout(() => {
-        setShowNoRewardsBubble(false);
-      }, 4000);
+      setTimeout(() => setShowNoRewardsBubble(false), 4000);
       return;
     }
 
@@ -354,7 +354,6 @@ const StakingPage = ({ showToast }) => {
       });
 
       showToast?.("success", "Rewards claimed successfully!");
-
       refetchPendingRewards?.();
     } catch (e) {
       console.error("Claim rewards failed:", e);
@@ -363,7 +362,6 @@ const StakingPage = ({ showToast }) => {
       setIsClaiming(false);
     }
   };
-
 
   return (
     <div className="staking-page">
@@ -487,7 +485,10 @@ const StakingPage = ({ showToast }) => {
 
           <div className="secondary-actions">
             <button
-              className="secondary-btn claim-btn claim-btn-glow"
+              ref={claimButtonRef}
+              className={`secondary-btn claim-btn ${
+                hasRewards ? "claim-btn-glow" : ""
+              }`}
               onClick={handleClaimRewards}
               disabled={isClaiming || !address || chainId !== BASE_CHAIN_ID}
             >
@@ -497,10 +498,7 @@ const StakingPage = ({ showToast }) => {
             <button
               className="secondary-btn"
               onClick={() =>
-                showToast?.(
-                  "info",
-                  "Unstaking will be introduced in a later stage."
-                )
+                showToast?.("info", "Unstaking will be introduced in a later stage.")
               }
             >
               Unstake (coming later)
@@ -512,22 +510,15 @@ const StakingPage = ({ showToast }) => {
               <div className="no-rewards-bubble-arrow" />
               <div className="no-rewards-bubble-title">No rewards yet</div>
               <div className="no-rewards-bubble-text">
-                Stake ETH to start earning your share of swap & bridge fees.
+                Stake ETH to start earning your share of swap &amp; bridge fees.
               </div>
             </div>
           )}
 
-
-
-
-
-
-
-
           <p className="stake-footnote">
-            Withdrawals and advanced reward mechanics will be enabled in
-            upcoming development phases. Early stakers are the first to benefit
-            when new features go live.
+            Withdrawals and advanced reward mechanics will be enabled in upcoming
+            development phases. Early stakers are the first to benefit when new
+            features go live.
           </p>
         </div>
 
@@ -542,9 +533,7 @@ const StakingPage = ({ showToast }) => {
 
           <div className="xp-formula-box">
             <div className="xp-formula-label">On-chain XP</div>
-            <div className="xp-formula-code">
-              Total XP: {formatXP(userXP)}
-            </div>
+            <div className="xp-formula-code">Total XP: {formatXP(userXP)}</div>
             <p className="xp-formula-note">
               XP is tracked directly by the HeatRush staking contract and grows
               alongside your long-term participation.
@@ -552,11 +541,11 @@ const StakingPage = ({ showToast }) => {
           </div>
 
           <div className="xp-levels-grid">
-            <div className="xp-level-card bronze tier-3d" 
-             onMouseMove={handleTierTiltMove}
-  onMouseLeave={handleTierTiltLeave}
-  >
-
+            <div
+              className="xp-level-card bronze tier-3d"
+              onMouseMove={handleTierTiltMove}
+              onMouseLeave={handleTierTiltLeave}
+            >
               <div className="xp-level-title">Bronze</div>
               <div className="xp-level-threshold">Stake ≥ 0.10 ETH</div>
               <p className="xp-level-desc">
@@ -564,25 +553,24 @@ const StakingPage = ({ showToast }) => {
               </p>
             </div>
 
-<div
-  className="xp-level-card silver tier-3d"
-  onMouseMove={handleTierTiltMove}
-  onMouseLeave={handleTierTiltLeave}
->
-  <div className="xp-level-title">Silver</div>
-  <div className="xp-level-threshold">Stake ≥ 0.50 ETH</div>
-  <p className="xp-level-desc">
-    Stake ≥ 0.50 ETH to reach Silver and strengthen your position in future
-    HeatRush campaigns.
-  </p>
-</div>
+            <div
+              className="xp-level-card silver tier-3d"
+              onMouseMove={handleTierTiltMove}
+              onMouseLeave={handleTierTiltLeave}
+            >
+              <div className="xp-level-title">Silver</div>
+              <div className="xp-level-threshold">Stake ≥ 0.50 ETH</div>
+              <p className="xp-level-desc">
+                Stake ≥ 0.50 ETH to reach Silver and strengthen your position in
+                future HeatRush campaigns.
+              </p>
+            </div>
 
-
-            <div className="xp-level-card gold tier-3d"
-                            onMouseMove={handleTierTiltMove}
-  onMouseLeave={handleTierTiltLeave}
-  >
-
+            <div
+              className="xp-level-card gold tier-3d"
+              onMouseMove={handleTierTiltMove}
+              onMouseLeave={handleTierTiltLeave}
+            >
               <div className="xp-level-title">Gold</div>
               <div className="xp-level-threshold">Stake ≥ 1.00 ETH</div>
               <p className="xp-level-desc">
@@ -600,22 +588,20 @@ const StakingPage = ({ showToast }) => {
           <ul className="why-list">
             <li>
               <span className="dot" />
+              <span>Priority exposure to future $HR distributions and bonuses.</span>
+            </li>
+            <li>
+              <span className="dot" />
               <span>
-                Priority exposure to future $HR distributions and bonuses.
+                Stronger position in upcoming HeatRush campaigns, quests, and loyalty
+                programs.
               </span>
             </li>
             <li>
               <span className="dot" />
               <span>
-                Stronger position in upcoming HeatRush campaigns, quests, and
-                loyalty programs.
-              </span>
-            </li>
-            <li>
-              <span className="dot" />
-              <span>
-                On-chain XP and tiers that can be referenced by future Heat
-                ecosystem apps.
+                On-chain XP and tiers that can be referenced by future Heat ecosystem
+                apps.
               </span>
             </li>
           </ul>
@@ -637,52 +623,45 @@ const StakingPage = ({ showToast }) => {
           <p className="staking-leaderboard-error">{leaderboardError}</p>
         )}
 
-        {!leaderboardLoading &&
-          !leaderboardError &&
-          leaderboard.length === 0 && (
-            <p className="staking-leaderboard-note">
-              No staking activity yet. Be the first to appear on the
-              leaderboard.
-            </p>
-          )}
+        {!leaderboardLoading && !leaderboardError && leaderboard.length === 0 && (
+          <p className="staking-leaderboard-note">
+            No staking activity yet. Be the first to appear on the leaderboard.
+          </p>
+        )}
 
-        {!leaderboardLoading &&
-          !leaderboardError &&
-          leaderboard.length > 0 && (
-            <ul className="staking-leaderboard-list">
-              {leaderboard.map((row, index) => {
-                const isYou =
-                  address &&
-                  row.address &&
-                  row.address.toLowerCase() === address.toLowerCase();
+        {!leaderboardLoading && !leaderboardError && leaderboard.length > 0 && (
+          <ul className="staking-leaderboard-list">
+            {leaderboard.map((row, index) => {
+              const isYou =
+                address &&
+                row.address &&
+                row.address.toLowerCase() === address.toLowerCase();
 
-                return (
-                  <li
-                    key={row.address}
-                    className={`staking-leaderboard-row ${
-                      isYou ? "staking-leaderboard-row-you" : ""
-                    }`}
-                  >
-                    <span className="staking-leader-rank">{index + 1}</span>
+              return (
+                <li
+                  key={row.address}
+                  className={`staking-leaderboard-row ${
+                    isYou ? "staking-leaderboard-row-you" : ""
+                  }`}
+                >
+                  <span className="staking-leader-rank">{index + 1}</span>
 
-                    <span className="staking-leader-address">
-                      <span className="staking-leader-wallet">
-                        {formatShortAddress(row.address)}
-                      </span>
-                      {isYou && (
-                        <span className="staking-leader-you-pill">YOU</span>
-                      )}
+                  <span className="staking-leader-address">
+                    <span className="staking-leader-wallet">
+                      {formatShortAddress(row.address)}
                     </span>
+                    {isYou && <span className="staking-leader-you-pill">YOU</span>}
+                  </span>
 
-                    <span className="staking-leader-amount">
-                      {formatEth(row.amountEth)}{" "}
-                      <span className="status-unit">ETH</span>
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
+                  <span className="staking-leader-amount">
+                    {formatEth(row.amountEth)}{" "}
+                    <span className="status-unit">ETH</span>
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        )}
       </div>
     </div>
   );

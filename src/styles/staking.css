@@ -826,9 +826,6 @@
 
 
 
-
-
-
 .staking-rewards {
   display: flex;
   flex-direction: column;
@@ -875,6 +872,8 @@
   font-size: 0.8rem;
   color: #999;
 }
+
+/* ===== Claim button (staking) ===== */
 .claim-btn {
   position: relative;
   overflow: hidden;
@@ -903,7 +902,7 @@
     transform: translateY(0);
   }
   50% {
-    box-shadow: 0 0 1px rgba(255, 180, 71, 0.7);
+    box-shadow: 0 0 18px rgba(255, 180, 71, 0.7);
     transform: translateY(-1px);
   }
   100% {
@@ -929,9 +928,7 @@
   }
 }
 
-
-
-
+/* ===== no rewards bubble ===== */
 .no-rewards-bubble {
   position: relative;
   margin-top: 10px;
@@ -956,7 +953,6 @@
   opacity: 0.9;
 }
 
-/* السهم الصغير اللي فوق الفقاعة */
 .no-rewards-bubble-arrow {
   position: absolute;
   top: -6px;
@@ -980,29 +976,10 @@
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* ===== Tier accent per card (text colors) ===== */
-.xp-level-card.bronze { --tier-accent: rgba(205, 127, 50, 0.95); } /* bronze */
-.xp-level-card.silver { --tier-accent: rgba(210, 220, 235, 0.95); } /* silver */
-.xp-level-card.gold   { --tier-accent: rgba(255, 170, 0, 0.98); }   /* gold */
+.xp-level-card.bronze { --tier-accent: rgba(205, 127, 50, 0.95); }
+.xp-level-card.silver { --tier-accent: rgba(210, 220, 235, 0.95); }
+.xp-level-card.gold   { --tier-accent: rgba(255, 170, 0, 0.98); }
 
 .xp-level-card .xp-level-title,
 .xp-level-card .xp-level-threshold {
@@ -1022,13 +999,12 @@
   overflow: hidden;
   transform-style: preserve-3d;
 
-  /* default angles */
   --rx: 1deg;
   --ry: 0deg;
-  --gx: 10%;
+  --gx: 20%;
   --gy: 0%;
 
-  transform: perspective(2000px) rotateX(var(--rx)) rotateY(var(--ry));
+  transform: perspective(1100px) rotateX(var(--rx)) rotateY(var(--ry));
   transition: transform 170ms ease, box-shadow 170ms ease, border-color 170ms ease;
   will-change: transform;
 
@@ -1038,7 +1014,6 @@
     0 0 0 1px rgba(255,255,255,0.05) inset;
 }
 
-/* stronger lift while tilting */
 .xp-level-card.tier-3d.is-tilting {
   box-shadow:
     0 26px 80px rgba(0,0,0,0.62),
@@ -1046,14 +1021,12 @@
   border-color: rgba(255, 170, 0, 0.35);
 }
 
-/* inner glossy layer follows mouse point */
 .xp-level-card.tier-3d::before {
   content: "";
   position: absolute;
   inset: -1px;
   pointer-events: none;
   transform: translateZ(28px);
-
   background:
     radial-gradient(900px 280px at var(--gx) var(--gy),
       rgba(255,255,255,0.16),
@@ -1064,7 +1037,6 @@
   opacity: 0.9;
 }
 
-/* moving shine sweep */
 .xp-level-card.tier-3d::after {
   content: "";
   position: absolute;
@@ -1085,7 +1057,6 @@
   opacity: 0;
 }
 
-/* run sweep on hover for all */
 .xp-level-card.tier-3d:hover::after {
   opacity: 1;
   animation: tierShineOnce 900ms ease-out 1;
@@ -1097,7 +1068,7 @@
   100% { left: 140%; opacity: 0; }
 }
 
-/* GOLD: keep shine running even without hover */
+/* GOLD: shine دائم حتى بدون hover */
 .xp-level-card.gold.tier-3d::after {
   opacity: 0.95;
   animation: tierShineLoop 3.2s ease-in-out infinite;
@@ -1110,19 +1081,10 @@
   100% { left: 140%; opacity: 0.0; }
 }
 
-/* mobile: stop heavy tilt (touch) but keep premium look */
+/* mobile */
 @media (max-width: 720px) {
   .xp-levels-grid { perspective: none; }
-  .xp-level-card.tier-3d {
-    transform: none;
-  }
-  .xp-level-card.tier-3d::after {
-    opacity: 0; /* (اختياري) */
-  }
-  .xp-level-card.gold.tier-3d::after {
-    opacity: 0.8; /* ثابت */
-    animation: none;
-  }
+  .xp-level-card.tier-3d { transform: none; }
 }
 
 /* reduced motion */
@@ -1139,4 +1101,40 @@
   .xp-level-card.gold.tier-3d::after {
     opacity: 0.85 !important;
   }
+}
+
+/* ===== Dashboard Claim button (optional, if used there) ===== */
+.claim-glow-btn {
+  position: relative;
+  overflow: hidden;
+  border-radius: 999px;
+  box-shadow: 0 0 14px rgba(255, 153, 0, 0.5);
+  animation: claimPulse 1.8s ease-in-out infinite;
+}
+
+.claim-glow-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.35) 40%,
+    transparent 80%
+  );
+  transform: translateX(-120%);
+  animation: claimShimmer 2.4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes claimPulse {
+  0% { box-shadow: 0 0 10px rgba(255, 153, 0, 0.25); transform: translateY(0); }
+  50% { box-shadow: 0 0 22px rgba(255, 153, 0, 0.7); transform: translateY(-1px); }
+  100% { box-shadow: 0 0 10px rgba(255, 153, 0, 0.25); transform: translateY(0); }
+}
+
+@keyframes claimShimmer {
+  0% { transform: translateX(-130%); }
+  50% { transform: translateX(130%); }
+  100% { transform: translateX(130%); }
 }
