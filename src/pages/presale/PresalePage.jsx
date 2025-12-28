@@ -1,5 +1,5 @@
 // src/pages/presale/PresalePage.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   useAccount,
   useBalance,
@@ -12,11 +12,27 @@ import { BASE_CHAIN_ID, HR_PRICE_USD } from "../../lib/constants.js";
 import { PRESALE_ABI, PRESALE_ADDRESS } from "../../lib/presale.js";
 import { qualifyReferral } from "../../lib/referralApi.js";
 import HrTokenImg from "../../assets/HR_token.png";
-
+import HrWordIcon from "../../assets/Tokens.png";
 
 import "../../styles/presale.css";
 
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
+
+
+
+function HRTag({ size = 46, className = "" }) {
+  return (
+    <span className={`hr-inline ${className}`} aria-label="HR">
+      <img
+        src={HrWordIcon}
+        alt="HR"
+        style={{ width: size, height: size }}
+        className="hr-inline-img"
+      />
+      <span className="hr-inline-text">HR</span>
+    </span>
+  );
+}
 
 const PresalePage = ({ showToast }) => {
   const { address, isConnected } = useAccount();
@@ -65,7 +81,6 @@ const PresalePage = ({ showToast }) => {
   }, []);
 
   // ========== ON-CHAIN PRESALE DATA ==========
-  // claimable HR من العقد
   const { data: claimableData } = useReadContract({
     abi: PRESALE_ABI,
     address: PRESALE_ADDRESS,
@@ -73,7 +88,6 @@ const PresalePage = ({ showToast }) => {
     args: [userAddr],
   });
 
-  // إجمالي HR المخصّص للمستخدم من البريسيل
   const { data: totalHrForData } = useReadContract({
     abi: PRESALE_ABI,
     address: PRESALE_ADDRESS,
@@ -81,7 +95,6 @@ const PresalePage = ({ showToast }) => {
     args: [userAddr],
   });
 
-  // إجمالي HR اللي طالبهم من عقد البريسيل
   const { data: claimedData } = useReadContract({
     abi: PRESALE_ABI,
     address: PRESALE_ADDRESS,
@@ -89,7 +102,6 @@ const PresalePage = ({ showToast }) => {
     args: [userAddr],
   });
 
-  // إجمالي ETH المساهم فيها بالبريسيل
   const { data: contributionsData } = useReadContract({
     abi: PRESALE_ABI,
     address: PRESALE_ADDRESS,
@@ -97,7 +109,6 @@ const PresalePage = ({ showToast }) => {
     args: [userAddr],
   });
 
-  // تحويل القيم لأرقام قابلة للعرض
   const claimable =
     claimableData !== undefined ? Number(formatUnits(claimableData, 18)) : 0;
 
@@ -105,130 +116,151 @@ const PresalePage = ({ showToast }) => {
     ? Number(formatUnits(totalHrForData, 18))
     : 0;
 
-  const claimedHr = claimedData
-    ? Number(formatUnits(claimedData, 18))
-    : 0;
+  const claimedHr = claimedData ? Number(formatUnits(claimedData, 18)) : 0;
 
   const remainingHr = Math.max(totalHrBought - claimedHr, 0);
 
   const totalEthContributed = contributionsData
     ? Number(formatUnits(contributionsData, 18))
     : 0;
+
   const claimProgress =
     totalHrBought > 0 ? Math.min(100, (claimedHr / totalHrBought) * 100) : 0;
 
-// ========== BUY PRESALE ==========
-const handlePresaleBuy = async () => {
-  if (!isConnected) {
-    showToast?.("error", "Please connect your wallet first.");
-    return;
-  }
-
-  const ethValue = Number(presaleAmount);
-  if (!ethValue || ethValue <= 0) {
-    showToast?.("error", "Enter a valid ETH amount.");
-    return;
-  }
-  if (ethValue < 0.0001) {
-    showToast?.("error", "Minimum is 0.0001 ETH.");
-    return;
-  }
-  if (ethValue > 2) {
-    showToast?.("error", "Maximum is 2 ETH.");
-    return;
-  }
-
-  try {
-    setIsPresaleLoading(true);
-
-    const tx = await writeContractAsync({
-      abi: PRESALE_ABI,
-      address: PRESALE_ADDRESS,
-      functionName: "buy",
-      value: parseEther(presaleAmount),
-    });
-
-    setPresaleAmount("");
-    showToast?.("success", "Purchase successful!");
-
-    // 👇 تأهيل الإحالة عن طريق الـ presale
-    try {
-      if (address) {
-        qualifyReferral(address.toLowerCase(), "presale").catch((err) => {
-          console.error("Failed to qualify referral via presale:", err);
-        });
-      }
-    } catch (e) {
-      console.error("Local qualifyReferral(presale) error:", e);
+  // ========== BUY PRESALE ==========
+  const handlePresaleBuy = async () => {
+    if (!isConnected) {
+      showToast?.("error", "Please connect your wallet first.");
+      return;
     }
-  } catch (error) {
-    console.error(error);
-    showToast?.("error", error.shortMessage || error.message);
-  } finally {
-    setIsPresaleLoading(false);
-  }
-};
+
+    const ethValue = Number(presaleAmount);
+    if (!ethValue || ethValue <= 0) {
+      showToast?.("error", "Enter a valid ETH amount.");
+      return;
+    }
+    if (ethValue < 0.0001) {
+      showToast?.("error", "Minimum is 0.0001 ETH.");
+      return;
+    }
+    if (ethValue > 2) {
+      showToast?.("error", "Maximum is 2 ETH.");
+      return;
+    }
+
+    try {
+      setIsPresaleLoading(true);
+
+      await writeContractAsync({
+        abi: PRESALE_ABI,
+        address: PRESALE_ADDRESS,
+        functionName: "buy",
+        value: parseEther(presaleAmount),
+      });
+
+      setPresaleAmount("");
+      showToast?.("success", "Purchase successful!");
+
+      // 👇 تأهيل الإحالة عن طريق الـ presale
+      try {
+        if (address) {
+          qualifyReferral(address.toLowerCase(), "presale").catch((err) => {
+            console.error("Failed to qualify referral via presale:", err);
+          });
+        }
+      } catch (e) {
+        console.error("Local qualifyReferral(presale) error:", e);
+      }
+    } catch (error) {
+      console.error(error);
+      showToast?.("error", error.shortMessage || error.message);
+    } finally {
+      setIsPresaleLoading(false);
+    }
+  };
 
   // ========== CLAIM HR ==========
-const handleClaim = async () => {
-  if (!isConnected) {
-    showToast?.("error", "Connect your wallet first.");
-    return;
-  }
+  const handleClaim = async () => {
+    if (!isConnected) {
+      showToast?.("error", "Connect your wallet first.");
+      return;
+    }
 
-  if (!claimable || claimable <= 0) {
-    showToast?.("error", "Nothing to claim yet.");
-    return;
-  }
+    if (!claimable || claimable <= 0) {
+      showToast?.("error", "Nothing to claim yet.");
+      return;
+    }
 
-  try {
-    setIsClaimLoading(true);
+    try {
+      setIsClaimLoading(true);
 
-    await writeContractAsync({
-      abi: PRESALE_ABI,
-      address: PRESALE_ADDRESS,
-      functionName: "claim",
-    });
+      await writeContractAsync({
+        abi: PRESALE_ABI,
+        address: PRESALE_ADDRESS,
+        functionName: "claim",
+      });
 
-    showToast?.("success", "Claim transaction sent!");
-  } catch (err) {
-    console.error(err);
-    showToast?.("error", err.shortMessage || err.message);
-  } finally {
-    setIsClaimLoading(false);
-  }
-};
-
+      showToast?.("success", "Claim transaction sent!");
+    } catch (err) {
+      console.error(err);
+      showToast?.("error", err.shortMessage || err.message);
+    } finally {
+      setIsClaimLoading(false);
+    }
+  };
 
   // ========== CALCULATIONS FOR ESTIMATE ==========
   const presaleEthValue = parseFloat(presaleAmount) || 0;
+
   const estimatedUsdValue =
     ethPriceUsd && presaleEthValue > 0 ? presaleEthValue * ethPriceUsd : 0;
+
   const estimatedHrAmount =
     estimatedUsdValue > 0 ? estimatedUsdValue / HR_PRICE_USD : 0;
 
-    
-      return (
-<div className="presale-page-3d">
+  const rateHrPerEth = 100000;
+
+  const formattedHrEstimate = useMemo(() => {
+    if (!estimatedHrAmount || estimatedHrAmount <= 0) return null;
+    return estimatedHrAmount.toLocaleString("en-US", {
+      maximumFractionDigits: 2,
+    });
+  }, [estimatedHrAmount]);
+
+  const quickAmounts = ["0.01", "0.25", "0.50", "1.00"];
+
+  return (
+    <div className="presale-page-3d">
+      {/* خلفية العملة (هادئة) */}
+  <img
+  className="presale-bg-coin"
+  src={HrWordIcon}   // بدل HrTokenImg
+  alt=""
+  aria-hidden="true"
+/>
+
+
       {/* HERO 3D SECTION */}
       <section className="presale-hero-3d">
         <div className="presale-hero-3d-left">
-          <h3 className="presale-title-3d">Public Presale - Buy $HR</h3>
+          <h3 className="presale-title-3d">
+            Public Presale - Buy <HRTag />
+          </h3>
+
           <p className="presale-subtitle-3d">
-            Jump into the presale, lock your HR at a fixed rate, and be early
-            to the HeatRush ecosystem before TGE.
+            Jump into the presale, lock your HR at a fixed rate, and be
+            early to the HeatRush ecosystem before TGE.
           </p>
 
           <div className="presale-hero-badges">
             <span className="presale-hero-pill">
-              🔵 Live on <strong>Base</strong>
+              🟠 Live on <strong>Base</strong>
             </span>
             <span className="presale-hero-pill">
-              🎯 Min <strong>0.0001 ETH</strong> · Max <strong>2.0 ETH</strong> per wallet
+              🎯 Min <strong>0.0001 ETH</strong> · Max <strong>2.0 ETH</strong>{" "}
+              per wallet
             </span>
-            <span className="presale-hero-pill">
-              ⚡ Instant claim from contract
-            </span>
+            <span className="presale-hero-pill">⚡ Instant claim from contract</span>
           </div>
 
           <div className="presale-top-row">
@@ -261,10 +293,10 @@ const handleClaim = async () => {
 
           <div className="presale-rate-box-3d">
             <span className="presale-rate-label">Presale Rate</span>
-            <span className="presale-rate-value">1 ETH = 100,000 HR</span>
-            <span className="presale-rate-tag">
-              Fixed forever during this phase
+            <span className="presale-rate-value">
+              1 ETH = {rateHrPerEth.toLocaleString("en-US")} HR
             </span>
+            <span className="presale-rate-tag">Fixed forever during this phase</span>
           </div>
         </div>
       </section>
@@ -282,6 +314,7 @@ const handleClaim = async () => {
           <div className="presale-input-row">
             <div className="presale-input-group">
               <label className="presale-label">Contribution ( ETH )</label>
+
               <div className="input-row">
                 <input
                   type="text"
@@ -309,15 +342,27 @@ const handleClaim = async () => {
                   MAX
                 </button>
               </div>
+
+              {/* ✅ أزرار سريعة */}
+              <div className="presale-quick-row">
+                {quickAmounts.map((v) => (
+                  <button
+                    key={v}
+                    type="button"
+                    className="presale-quick-btn"
+                    onClick={() => setPresaleAmount(v)}
+                  >
+                    {v} ETH
+                  </button>
+                ))}
+              </div>
             </div>
 
             <div className="presale-summary">
               <div className="presale-summary-item">
                 <span className="presale-summary-label">Estimated Value</span>
                 <span className="presale-summary-value">
-                  {estimatedUsdValue > 0
-                    ? `$${estimatedUsdValue.toFixed(2)}`
-                    : "—"}{" "}
+                  {estimatedUsdValue > 0 ? `$${estimatedUsdValue.toFixed(2)}` : "—"}{" "}
                   USDT
                 </span>
               </div>
@@ -325,30 +370,38 @@ const handleClaim = async () => {
               <div className="presale-summary-item">
                 <span className="presale-summary-label">You Receive</span>
                 <span className="presale-summary-value">
-                  {estimatedHrAmount > 0
-                    ? estimatedHrAmount.toLocaleString("en-US")
-                    : "—"}{" "}
-                  HR
+                  {formattedHrEstimate ? (
+                    <>
+                      {formattedHrEstimate} HR
+                    </>
+                  ) : (
+                    <>
+                      — <HRTag />
+                    </>
+                  )}
                 </span>
               </div>
             </div>
           </div>
 
           <div className="presale-actions">
-            {/* نفس زر الشراء، ما لمست المنطق */}
             <button
-              className={`stake-btn presale-btn ${
-                isPresaleLoading ? "loading" : ""
-              }`}
+              className={`stake-btn presale-btn ${isPresaleLoading ? "loading" : ""}`}
               onClick={handlePresaleBuy}
               disabled={isPresaleLoading}
             >
-              {isPresaleLoading ? "Processing..." : "Buy HR"}
+              {isPresaleLoading ? (
+                "Processing..."
+              ) : (
+                <>
+                  Buy <HRTag />
+                </>
+              )}
             </button>
 
             <p className="presale-mini-note">
-              Small contributions are fine – you can always come back and add more
-              up to the 2 ETH limit.
+              Small contributions are fine – you can always come back and add more up
+              to the 2 ETH limit.
             </p>
           </div>
         </div>
@@ -372,37 +425,56 @@ const handleClaim = async () => {
                 </div>
 
                 <div className="presale-stats-item">
-                  <span className="presale-stats-label">
-                    Total HR allocated
-                  </span>
+                  <span className="presale-stats-label">Total HR allocated</span>
                   <span className="presale-stats-value">
-                    {totalHrBought > 0
-                      ? `${totalHrBought.toLocaleString("en-US", {
+                    {totalHrBought > 0 ? (
+                      <>
+                        {totalHrBought.toLocaleString("en-US", {
                           maximumFractionDigits: 4,
-                        })} HR`
-                      : "—"}
+                        })}{" "}
+                       HR
+                      </>
+                    ) : (
+                      <>
+                        — HR
+                      </>
+                    )}
                   </span>
                 </div>
 
                 <div className="presale-stats-item">
                   <span className="presale-stats-label">Already claimed</span>
                   <span className="presale-stats-value">
-                    {claimedHr > 0
-                      ? `${claimedHr.toLocaleString("en-US", {
+                    {claimedHr > 0 ? (
+                      <>
+                        {claimedHr.toLocaleString("en-US", {
                           maximumFractionDigits: 4,
-                        })} HR`
-                      : "0 HR"}
+                        })}{" "}
+                       HR
+                      </>
+                    ) : (
+                      <>
+                        0 HR
+                      </>
+                    )}
                   </span>
                 </div>
 
                 <div className="presale-stats-item">
                   <span className="presale-stats-label">Still claimable</span>
                   <span className="presale-stats-value">
-                    {remainingHr > 0
-                      ? `${remainingHr.toLocaleString("en-US", {
+                    {remainingHr > 0 ? (
+                      <>
+                        {remainingHr.toLocaleString("en-US", {
                           maximumFractionDigits: 4,
-                        })} HR`
-                      : "0 HR"}
+                        })}{" "}
+                        HR
+                      </>
+                    ) : (
+                      <>
+                        0 HR
+                      </>
+                    )}
                   </span>
                 </div>
               </div>
@@ -428,7 +500,6 @@ const handleClaim = async () => {
             </p>
           )}
 
-          {/* نفس زر الكليم، ما لمست المنطق */}
           <button
             className={`claim-animated-btn ${
               !claimable || claimable <= 0 ? "locked" : "unlocked"
@@ -445,12 +516,16 @@ const handleClaim = async () => {
             }}
             disabled={!claimable || claimable <= 0 || isClaimLoading}
           >
-            <span className="lock-icon">
-              {claimable > 0 ? "🚀" : "🔒"}
-            </span>
-            {claimable > 0
-              ? `Claim ${claimable.toLocaleString("en-US")} HR now`
-              : "Claim HR"}
+            <span className="lock-icon">{claimable > 0 ? "🚀" : ""}</span>
+            {claimable > 0 ? (
+              <>
+                Claim {claimable.toLocaleString("en-US")} <HRTag /> now
+              </>
+            ) : (
+              <>
+                Claim <HRTag />
+              </>
+            )}
           </button>
 
           <div className="presale-why-card">
@@ -468,13 +543,11 @@ const handleClaim = async () => {
       <p className="presale-footnote">
         You need to buy HR in the presale before you can claim.
         <br />
-        HR tokens are claimable instantly from the presale contract once
+       HR tokens are claimable instantly from the presale contract once
         allocated to your wallet.
       </p>
     </div>
   );
-
-
 };
 
 export default PresalePage;

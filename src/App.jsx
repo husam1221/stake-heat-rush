@@ -16,6 +16,7 @@ import AirdropPage from "./pages/airdrop/AirdropPage.jsx";
 import PresalePage from "./pages/presale/PresalePage.jsx";
 import NodesPage from "./pages/nodes/NodesPage.jsx";
 import FaqPage from "./pages/faq/FaqPage.jsx";
+import Season2Page from "./pages/season2/Season2Page.jsx";
 
 
 import { useReferralListener } from "./hooks/useReferralListener.js";
@@ -59,6 +60,12 @@ function App() {
   path="/airdrop"
   element={<AirdropPage showToast={showToast} />}
 />
+
+<Route
+  path="/season2"
+  element={<Season2Page showToast={showToast} />}
+/>
+
 
           <Route
             path="/presale"

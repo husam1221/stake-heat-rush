@@ -56,12 +56,16 @@ const tvlHistory = [
   { day: "Week 1", tvl: 3200 },
   { day: "Week 2", tvl: 6800 },
   { day: "Week 3", tvl: 12400 },
-   { day: "Week 3", tvl: 13700 },
+  { day: "Week 3", tvl: 13700 },
   { day: "Now", tvl: 20900 },
-    { day: "Now", tvl: 25850 },
-        { day: "Now", tvl: 25900 },
-                { day: "Now", tvl: 29920 },
-                                { day: "Now", tvl: 31110 },
+  { day: "Now", tvl: 26850 },
+  { day: "Now", tvl: 25900 },
+  { day: "Now", tvl: 29920 },
+  { day: "Now", tvl: 32710 },
+  { day: "Now", tvl: 31110 },
+  { day: "Now", tvl: 31110 },
+  { day: "Now", tvl: 31110 },
+                       { day: "Now", tvl: 35820 },
 ];
 
 // APY History (جماليات)
@@ -180,7 +184,7 @@ const DashboardPage = () => {
 
 
 
-            <span className="mega-value">31,110 ETH</span>
+            <span className="mega-value">35820 ETH</span>
 
 
 
@@ -205,7 +209,7 @@ const DashboardPage = () => {
         <div className="card dash-mega-card apy-card">
           <div className="mega-card-header">
             <h3>Current Staking APY</h3>
-            <span className="mega-value insane">695%</span>
+            <span className="mega-value insane">697%</span>
           </div>
           <ResponsiveContainer width="100%" height={140}>
             <BarChart data={apyHistory}>
@@ -228,7 +232,7 @@ const DashboardPage = () => {
           </p>
           <div className="dash-hero-ctas">
             <Link to="/staking" className="dash-hero-btn primary">Start Staking</Link>
-            <Link to="/airdrop" className="dash-hero-btn ghost">Check Airdrop</Link>
+            <Link to="/airdrop" className="dash-hero-btn ghost">Check Season 1 Eligibility</Link>
           </div>
         </div>
         <div className="dash-hero-right">
@@ -247,12 +251,7 @@ const DashboardPage = () => {
               {isConnected && !airdropLoading && !airdropError && (isEligible ? "Eligible" : "Not eligible")}
             </span>
           </div>
-          <div className="dash-hero-stat small">
-            <span className="dash-hero-stat-label">Presale claimable</span>
-            <span className="dash-hero-stat-value">
-              {presaleClaimableHR > 0 ? `${presaleClaimableHR.toLocaleString("en-US")} HR` : "0 HR"}
-            </span>
-          </div>
+       
         </div>
       </div>
 

@@ -1,4 +1,4 @@
-export const CLAIM_ADDRESS = "0xA61C387C03594E77f10e6A58BDA2cC09Ba2bdD0e";
+export const CLAIM_ADDRESS = "0x16705d8dA3E2A77563f1023893CCA244D1c140fb";
 
 export const CLAIM_ABI = [
   {
@@ -8,7 +8,7 @@ export const CLAIM_ABI = [
     ],
     "name": "claim",
     "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -41,6 +41,22 @@ export const CLAIM_ABI = [
     "outputs": [
       { "internalType": "uint256", "name": "", "type": "uint256" }
     ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+
+  // ✅ جديد للرسوم
+  {
+    "inputs": [],
+    "name": "claimFeeWei",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "feeRecipient",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   }

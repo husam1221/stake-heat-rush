@@ -10,6 +10,7 @@
 export const TASKS = [
   // 1 ) XP MILESTONE ////////////////
 
+
   // الشرط: 10 XP من /xp/
   {
     id: "xp_10_onchain",
@@ -27,6 +28,7 @@ export const TASKS = [
     link: "/profile",
     icon: "target",
   },
+
 
   // الشرط: 30 XP من /xp/
   {
@@ -143,6 +145,24 @@ export const TASKS = [
     icon: "flame",
   },
 
+    // • STAKING 0.5 ETH
+  {
+    id: "stake_0_5_eth",
+    title: "Stake at least 0.5 ETH",
+    description:
+      "Lock 0.5 ETH or more into HeatRush staking on Base to prove real on-chain commitment.",
+    points: 7000,
+    xp: 500,
+    tag: "On-chain • Staking",
+    type: "onchain",
+    requirement: {
+      kind: "min_stake",
+      valueEth: 0.5,
+    },
+    link: "/staking",
+    icon: "flame",
+  },
+
   //  • PRESALE 1 HR
   {
     id: "join_presale_once10",
@@ -179,6 +199,23 @@ export const TASKS = [
     icon: "coins",
   },
 
+  //  • PRESALE 600 HR
+  {
+    id: "join_presale_once600",
+    title: "Join the Public Presale",
+    description:
+      "Buy at least 600 HR in the HeatRush public presale on Base to unlock this quest.",
+    points: 1050,
+    xp: 100,
+    tag: "On-chain • Presale",
+    type: "onchain",
+    requirement: {
+      kind: "presale_min_hr",
+      minHr: 600, // يعني لازم totalHrFor >= 50 HR (رقم رمزي بسيط)
+    },
+    link: "/presale",
+    icon: "coins",
+  },
 
 
 
@@ -274,4 +311,22 @@ export const TASKS = [
     link: "/dashboard",
     icon: "dashboard",
   },
+
+
+// • OPEN SEASON 2 PAGE
+{
+  id: "open_season2_page",
+  title: "Open Season 2 hub",
+  description:
+    "Open the Season 2 page and review your eligibility path, progress, and next steps.",
+  points: 100,
+  xp: 0,
+  tag: "System • Season 2",
+  type: "system",
+  requirement: {
+    kind: "none",
+  },
+  link: "/season2",
+  icon: "dashboard", // أو غيّرها حسب نظام الأيقونات عندك
+},
 ];

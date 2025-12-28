@@ -1,10 +1,8 @@
 // src/pages/airdrop/AirdropPage.jsx
-import React, { useEffect, useState } from "react";
-import {
-  useAccount,
-  useWriteContract,
-  useReadContract,
-} from "wagmi";
+import React, { useEffect, useState, useRef, useCallback } from "react";
+import { Link } from "react-router-dom";
+import { Layers, ExternalLink } from "lucide-react";
+import { useAccount, useWriteContract, useReadContract } from "wagmi";
 
 import { useAirdrop } from "../../hooks/useAirdrop.js";
 import { useCountdown } from "../../hooks/useCountdown.js";
@@ -13,13 +11,12 @@ import { CLAIM_ABI, CLAIM_ADDRESS } from "../../lib/claim.js";
 import { STAKING_ABI } from "../../lib/staking.js";
 import { formatUnits } from "viem";
 
+import "../../styles/season2.css";
 import "../../styles/airdrop.css"; // 👈 ستايل خاص بالصفحة
 
 // Helper to safely format numbers
 const safeFormat = (num) =>
-  typeof num === "number" && !isNaN(num)
-    ? num.toLocaleString("en-US")
-    : "0";
+  typeof num === "number" && !isNaN(num) ? num.toLocaleString("en-US") : "0";
 
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
@@ -131,6 +128,16 @@ const AirdropPage = ({ showToast }) => {
     args: [address || ZERO_ADDRESS, totalAllocationWei],
   });
 
+  // ✅ NEW: قراءة رسوم المطالبة من العقد (Wei)
+  const { data: claimFeeWeiData } = useReadContract({
+    abi: CLAIM_ABI,
+    address: CLAIM_ADDRESS,
+    functionName: "claimFeeWei",
+  });
+
+  const claimFeeWei = claimFeeWeiData ?? 0n;
+  const claimFeeEth = claimFeeWei > 0n ? formatUnits(claimFeeWei, 18) : "0";
+
   const totalHr =
     totalAllocationWei > 0n ? formatUnits(totalAllocationWei, 18) : "0";
   const unlockedHr =
@@ -168,8 +175,7 @@ const AirdropPage = ({ showToast }) => {
   const [isClaiming, setIsClaiming] = useState(false);
   const [hasShared, setHasShared] = useState(false); // 👈 مرحلة الشير قبل الكليم
 
-  const hasAllocation =
-    isConnected && isEligible && totalHrNumber > 0;
+  const hasAllocation = isConnected && isEligible && totalHrNumber > 0;
 
   const alreadyClaimedDisplay =
     liveUnlockedHr > liveClaimableHr
@@ -187,9 +193,7 @@ const AirdropPage = ({ showToast }) => {
   });
 
   const stakedEthNumber =
-    stakedData && stakedData > 0n
-      ? Number(formatUnits(stakedData, 18))
-      : 0;
+    stakedData && stakedData > 0n ? Number(formatUnits(stakedData, 18)) : 0;
 
   let stakeBonusPercent = 0;
   let stakeImpactLabel = "No boost yet";
@@ -230,6 +234,12 @@ const AirdropPage = ({ showToast }) => {
       return;
     }
 
+    // ✅ NEW: تأكد إن الرسوم انقرت من العقد (خصوصًا لو الرسوم > 0)
+    if (claimFeeWeiData === undefined) {
+      showToast?.("error", "Unable to load claim fee. Please try again.");
+      return;
+    }
+
     // 👇 أول ضغطة: شير على X، ثاني ضغطة: Claim فعلي
     if (!hasShared) {
       const totalDisplay = totalHrNumber.toFixed(5);
@@ -238,7 +248,7 @@ const AirdropPage = ({ showToast }) => {
       const alreadyDisplay = alreadyClaimedDisplay;
 
       const tweetText = encodeURIComponent(
-`Just checked my $HR airdrop on HeatRush! 🔥
+        `Just checked my $HR airdrop on HeatRush! 🔥
 
 Total allocation: ${totalDisplay} HR
 Unlocked so far: ${unlockedDisplay} HR
@@ -270,6 +280,8 @@ https://heatrush.xyz
         address: CLAIM_ADDRESS,
         functionName: "claim",
         args: [totalAllocationWei, merkleEntry.proof || []],
+        // ✅ NEW: ادفع الرسوم
+        value: claimFeeWei,
       });
 
       // ✅ إشعار جميل من نفس نظام التوست عندك
@@ -288,6 +300,17 @@ https://heatrush.xyz
   return (
     <div className="airdrop-page">
       {/* ===== Hero Card أعلى الصفحة ===== */}
+
+      {/* ✅ Season 2 Live Card (3D Tilt) */}
+      <Tilt3DCard
+        to="/season2"
+        kickerIcon={<Layers size={16} />}
+        kickerText="Season 2"
+        title="Season 2 is live"
+        subtitle="Follow the eligibility path: Verify wallet → Stake → Earn XP → Presale ≥ 100 HR."
+        buttonText="Go to Season 2"
+      />
+
       <div className="card airdrop-hero-card">
         <div className="airdrop-hero-main">
           <div>
@@ -308,8 +331,7 @@ https://heatrush.xyz
             {isConnected ? (
               <div
                 className={
-                  "airdrop-hero-pill " +
-                  (hasAllocation ? "pill-ok" : "pill-warn")
+                  "airdrop-hero-pill " + (hasAllocation ? "pill-ok" : "pill-warn")
                 }
               >
                 {hasAllocation
@@ -337,9 +359,7 @@ https://heatrush.xyz
             )}
 
             {isConnected && airdropLoading && (
-              <p className="airdrop-msg loading">
-                ⏳ Fetching your allocation...
-              </p>
+              <p className="airdrop-msg loading">⏳ Fetching your allocation...</p>
             )}
 
             {isConnected && !airdropLoading && airdropError && (
@@ -369,9 +389,7 @@ https://heatrush.xyz
                 <h3 className="airdrop-title">Your HeatRush Airdrop</h3>
 
                 {airdropLoading && (
-                  <p className="airdrop-loading">
-                    Loading your allocation...
-                  </p>
+                  <p className="airdrop-loading">Loading your allocation...</p>
                 )}
 
                 {airdropError && (
@@ -382,28 +400,18 @@ https://heatrush.xyz
                   <>
                     <div className="airdrop-main-row">
                       <div className="airdrop-main-item">
-                        <span className="airdrop-label">
-                          Points snapshot
-                        </span>
+                        <span className="airdrop-label">Points snapshot</span>
                         <span className="airdrop-value">{points}</span>
                       </div>
 
                       <div className="airdrop-main-item">
-                        <span className="airdrop-label">
-                          Base allocation
-                        </span>
-                        <span className="airdrop-value orange">
-                          {hrBase} HR
-                        </span>
+                        <span className="airdrop-label">Base allocation</span>
+                        <span className="airdrop-value orange">{hrBase} HR</span>
                       </div>
 
                       <div className="airdrop-main-item">
-                        <span className="airdrop-label">
-                          Power-up stake target
-                        </span>
-                        <span className="airdrop-value">
-                          {requiredStake} ETH
-                        </span>
+                        <span className="airdrop-label">Power-up stake target</span>
+                        <span className="airdrop-value">{requiredStake} ETH</span>
                       </div>
                     </div>
 
@@ -431,14 +439,10 @@ https://heatrush.xyz
                               </span>
                             </div>
 
-                            <div className="tier-bonus">
-                              +{tier.bonusPercent}% HR bonus
-                            </div>
+                            <div className="tier-bonus">+{tier.bonusPercent}% HR bonus</div>
 
                             {tier.instantUnlock && (
-                              <div className="tier-tag">
-                                🔓 100% unlock at TGE
-                              </div>
+                              <div className="tier-tag">🔓 100% unlock at TGE</div>
                             )}
 
                             <p className="tier-desc">{tier.description}</p>
@@ -528,6 +532,11 @@ https://heatrush.xyz
                 </div>
               </div>
 
+              {/* ✅ NEW: عرض رسوم المطالبة */}
+              <p className="claim-note" style={{ marginTop: "12px" }}>
+                Claim fee: <strong>{claimFeeEth}</strong> ETH
+              </p>
+
               {/* 👇 تأثير الستيك */}
               <div className="claim-stake-impact" style={{ marginTop: "16px" }}>
                 <div className="claim-metric">
@@ -550,9 +559,7 @@ https://heatrush.xyz
 
               {/* زر واحد فقط: أول ضغطة شير، ثاني ضغطة Claim */}
               <button
-                className={`stake-btn ${
-                  !canClaim || isClaiming ? "disabled-btn" : ""
-                }`}
+                className={`stake-btn ${!canClaim || isClaiming ? "disabled-btn" : ""}`}
                 onClick={handleClaim}
                 disabled={!canClaim || isClaiming}
                 style={{ marginTop: "18px" }}
@@ -590,9 +597,8 @@ https://heatrush.xyz
             and the remaining 40% over the next 180 days.
           </li>
           <li>
-            Your staked ETH on HeatRush acts as a{" "}
-            <strong>power-up</strong>, boosting how fast your HR unlocks based
-            on the stake tier you reach.
+            Your staked ETH on HeatRush acts as a <strong>power-up</strong>, boosting
+            how fast your HR unlocks based on the stake tier you reach.
           </li>
           <li>
             You can claim any unlocked HR at any time. Multiple smaller claims
@@ -609,3 +615,54 @@ https://heatrush.xyz
 };
 
 export default AirdropPage;
+
+/* ========= Component: 3D Tilt CTA Card (Season 2) ========= */
+function Tilt3DCard({ to, kickerIcon, kickerText, title, subtitle, buttonText }) {
+  const ref = useRef(null);
+  const [tiltStyle, setTiltStyle] = useState({ marginBottom: 14 });
+
+  const onMove = useCallback((e) => {
+    const el = ref.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const px = (e.clientX - rect.left) / rect.width;
+    const py = (e.clientY - rect.top) / rect.height;
+    const rotY = (px - 0.5) * 10;
+    const rotX = (0.5 - py) * 10;
+
+    setTiltStyle({
+      marginBottom: 14,
+      transform: `perspective(900px) rotateX(${rotX}deg) rotateY(${rotY}deg) translateY(-2px)`,
+    });
+  }, []);
+
+  const onLeave = useCallback(() => {
+    setTiltStyle({ marginBottom: 14, transform: "perspective(900px) rotateX(0deg) rotateY(0deg)" });
+  }, []);
+
+  return (
+    <Link
+      ref={ref}
+      to={to}
+      className="s2-tilt-card"
+      onMouseMove={onMove}
+      onMouseLeave={onLeave}
+      style={tiltStyle}
+    >
+      <div className="s2-tilt-card-glow" aria-hidden="true" />
+      <div className="s2-tilt-card-body">
+        <div className="s2-tilt-card-kicker">
+          {kickerIcon} <strong>{kickerText}</strong>
+        </div>
+
+        <div className="s2-tilt-card-title">{title} 🚀</div>
+        <div className="s2-tilt-card-sub">{subtitle}</div>
+
+        <div className="s2-tilt-card-btn">
+          <span>{buttonText}</span>
+          <ExternalLink size={16} />
+        </div>
+      </div>
+    </Link>
+  );
+}

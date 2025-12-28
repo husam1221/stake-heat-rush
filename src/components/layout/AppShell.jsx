@@ -14,6 +14,7 @@ import {
   Coins,
   Share2,
   HelpCircle,
+  Trophy,
 } from "lucide-react";
 
 const AppShell = ({ children }) => {
@@ -111,16 +112,18 @@ const AppShell = ({ children }) => {
             <span className="side-nav-label">Staking</span>
           </Link>
 
-          <Link
-            to="/airdrop"
-            className={location.pathname === "/airdrop" ? "active" : ""}
-            onClick={() => setMenuOpen(false)}
-          >
-            <span className="side-nav-icon">
-              <Gift size={16} />
-            </span>
-            <span className="side-nav-label">Airdrop S1</span>
-          </Link>
+    
+<Link
+  to="/season2"
+  className={`season2-highlight ${location.pathname.startsWith("/season2") ? "active" : ""}`}
+  onClick={() => setMenuOpen(false)}
+>
+  <span className="side-nav-icon">
+    <Gift size={16} />
+  </span>
+  <span className="side-nav-label">Airdrop </span>
+</Link>
+
 
           <Link
             to="/presale"
@@ -144,29 +147,20 @@ const AppShell = ({ children }) => {
             <span className="side-nav-label">Nodes</span>
           </Link>
 
-          <Link
-            to="/faq"
-            className={location.pathname === "/faq" ? "active" : ""}
-            onClick={() => setMenuOpen(false)}
-          >
-            <span className="side-nav-icon">
-              <HelpCircle size={16} />
-            </span>
-            <span className="side-nav-label">FAQ</span>
-          </Link>
+<Link
+  to="/faq"
+  className={`${location.pathname === "/faq" ? "active" : ""} faq-bottom`}
+  onClick={() => setMenuOpen(false)}
+>
+  <span className="side-nav-icon">
+    <HelpCircle size={16} />
+  </span>
+  <span className="side-nav-label">FAQ</span>
+</Link>
+
         </nav>
 
-        <div className="side-footer">
-          <span className="network-pill">● Base Mainnet</span>
-          <a
-            href="https://heatrush.xyz"
-            target="_blank"
-            rel="noreferrer"
-            className="side-link"
-          >
-            Main Website
-          </a>
-        </div>
+
       </aside>
 
       {/* MAIN CONTENT */}

@@ -1,0 +1,20 @@
+{
+  "week": 1,
+  "merkleRoot": "0x06040082909d4032c7bb6fb369a9ec5cd776ea990bdecf92b7493d33fb74d5b3",
+  "tokenDecimals": 18,
+  "amountHuman": "625",
+  "claims": {
+    "0xf1417c94d4827ea5f59c3ccd4884e44af5d099e1": {
+      "amountWei": "625000000000000000000",
+      "proof": [
+        "0xe10a18b3d247e4363d698a4ad1defb2da79a7d29f38061f2d5e002097c21a091"
+      ]
+    },
+    "0x4145024427db40d3d31b99570f29ebf64940e91d": {
+      "amountWei": "625000000000000000000",
+      "proof": [
+        "0x69193c92ef4e41cefddf48b6c41fe8e0652999f8a4f7a40f8ebe0adba72aeb21"
+      ]
+    }
+  }
+}

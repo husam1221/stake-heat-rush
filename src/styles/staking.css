@@ -822,3 +822,321 @@
     opacity: 0.2;             
   }
 }
+
+
+
+
+
+
+
+.staking-rewards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.staking-rewards-subtitle {
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.staking-rewards-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+}
+
+.staking-rewards-label {
+  color: #888;
+}
+
+.staking-rewards-value {
+  font-weight: 600;
+  color: #fff;
+}
+
+.staking-claim-button {
+  margin-top: 0.75rem;
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(90deg, #ff6b00, #ffb347);
+  color: #000;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.staking-claim-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.staking-rewards-hint {
+  font-size: 0.8rem;
+  color: #999;
+}
+.claim-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.claim-btn-glow {
+  animation: claim-pulse 1.6s ease-in-out infinite;
+  background-image: linear-gradient(90deg, #ffb347, #ffe7c2);
+  color: #000;
+}
+
+.claim-btn-glow::before {
+  content: "Ξ";
+  position: absolute;
+  left: -10%;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.9rem;
+  opacity: 0.7;
+  animation: eth-move 1.8s linear infinite;
+}
+
+@keyframes claim-pulse {
+  0% {
+    box-shadow: 0 0 0px rgba(255, 180, 71, 0.0);
+    transform: translateY(0);
+  }
+  50% {
+    box-shadow: 0 0 1px rgba(255, 180, 71, 0.7);
+    transform: translateY(-1px);
+  }
+  100% {
+    box-shadow: 0 0 0px rgba(255, 180, 71, 0.0);
+    transform: translateY(0);
+  }
+}
+
+@keyframes eth-move {
+  0% {
+    left: -10%;
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.7;
+  }
+  70% {
+    opacity: 0.7;
+  }
+  100% {
+    left: 110%;
+    opacity: 0;
+  }
+}
+
+
+
+
+.no-rewards-bubble {
+  position: relative;
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: rgba(15, 15, 20, 0.96);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 180, 71, 0.4);
+  color: #f9fafb;
+  font-size: 0.8rem;
+  max-width: 320px;
+  animation: bubble-fade-in 0.2s ease-out;
+}
+
+.no-rewards-bubble-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #ffb347;
+}
+
+.no-rewards-bubble-text {
+  line-height: 1.3;
+  opacity: 0.9;
+}
+
+/* السهم الصغير اللي فوق الفقاعة */
+.no-rewards-bubble-arrow {
+  position: absolute;
+  top: -6px;
+  left: 18px;
+  width: 10px;
+  height: 10px;
+  background: rgba(15, 15, 20, 0.96);
+  border-left: 1px solid rgba(255, 180, 71, 0.4);
+  border-top: 1px solid rgba(255, 180, 71, 0.4);
+  transform: rotate(45deg);
+}
+
+@keyframes bubble-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ===== Tier accent per card (text colors) ===== */
+.xp-level-card.bronze { --tier-accent: rgba(205, 127, 50, 0.95); } /* bronze */
+.xp-level-card.silver { --tier-accent: rgba(210, 220, 235, 0.95); } /* silver */
+.xp-level-card.gold   { --tier-accent: rgba(255, 170, 0, 0.98); }   /* gold */
+
+.xp-level-card .xp-level-title,
+.xp-level-card .xp-level-threshold {
+  color: var(--tier-accent);
+  font-weight: 900;
+}
+
+.xp-level-card .xp-level-desc {
+  color: rgba(253, 247, 240, 0.78);
+}
+
+/* ===== Real 3D tilt card ===== */
+.xp-levels-grid { perspective: 1200px; }
+
+.xp-level-card.tier-3d {
+  position: relative;
+  overflow: hidden;
+  transform-style: preserve-3d;
+
+  /* default angles */
+  --rx: 1deg;
+  --ry: 0deg;
+  --gx: 10%;
+  --gy: 0%;
+
+  transform: perspective(2000px) rotateX(var(--rx)) rotateY(var(--ry));
+  transition: transform 170ms ease, box-shadow 170ms ease, border-color 170ms ease;
+  will-change: transform;
+
+  border: 1px solid rgba(255, 170, 0, 0.18);
+  box-shadow:
+    0 18px 50px rgba(0,0,0,0.55),
+    0 0 0 1px rgba(255,255,255,0.05) inset;
+}
+
+/* stronger lift while tilting */
+.xp-level-card.tier-3d.is-tilting {
+  box-shadow:
+    0 26px 80px rgba(0,0,0,0.62),
+    0 0 0 1px rgba(255, 170, 0, 0.20) inset;
+  border-color: rgba(255, 170, 0, 0.35);
+}
+
+/* inner glossy layer follows mouse point */
+.xp-level-card.tier-3d::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  pointer-events: none;
+  transform: translateZ(28px);
+
+  background:
+    radial-gradient(900px 280px at var(--gx) var(--gy),
+      rgba(255,255,255,0.16),
+      rgba(255,255,255,0.00) 55%),
+    linear-gradient(180deg,
+      rgba(255, 170, 0, 0.08),
+      rgba(0,0,0,0) 60%);
+  opacity: 0.9;
+}
+
+/* moving shine sweep */
+.xp-level-card.tier-3d::after {
+  content: "";
+  position: absolute;
+  top: -55%;
+  left: -90%;
+  width: 60%;
+  height: 220%;
+  transform: rotate(22deg) translateZ(40px);
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0.10) 35%,
+    rgba(255,170,0,0.22) 50%,
+    rgba(255,255,255,0.10) 65%,
+    rgba(255,255,255,0) 100%
+  );
+  opacity: 0;
+}
+
+/* run sweep on hover for all */
+.xp-level-card.tier-3d:hover::after {
+  opacity: 1;
+  animation: tierShineOnce 900ms ease-out 1;
+}
+
+@keyframes tierShineOnce {
+  0%   { left: -95%; opacity: 0; }
+  15%  { opacity: 0.95; }
+  100% { left: 140%; opacity: 0; }
+}
+
+/* GOLD: keep shine running even without hover */
+.xp-level-card.gold.tier-3d::after {
+  opacity: 0.95;
+  animation: tierShineLoop 3.2s ease-in-out infinite;
+}
+
+@keyframes tierShineLoop {
+  0%   { left: -95%; opacity: 0.0; }
+  12%  { opacity: 0.95; }
+  55%  { left: 140%; opacity: 0.0; }
+  100% { left: 140%; opacity: 0.0; }
+}
+
+/* mobile: stop heavy tilt (touch) but keep premium look */
+@media (max-width: 720px) {
+  .xp-levels-grid { perspective: none; }
+  .xp-level-card.tier-3d {
+    transform: none;
+  }
+  .xp-level-card.tier-3d::after {
+    opacity: 0; /* (اختياري) */
+  }
+  .xp-level-card.gold.tier-3d::after {
+    opacity: 0.8; /* ثابت */
+    animation: none;
+  }
+}
+
+/* reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .xp-level-card.tier-3d,
+  .xp-level-card.tier-3d:hover {
+    transition: none;
+    transform: none;
+  }
+  .xp-level-card.tier-3d::after {
+    animation: none !important;
+    opacity: 0 !important;
+  }
+  .xp-level-card.gold.tier-3d::after {
+    opacity: 0.85 !important;
+  }
+}

@@ -29,8 +29,7 @@
   border-right: 1px solid rgba(255, 255, 255, 0.06);
   background:
     radial-gradient(circle at top, rgb(87, 45, 8) 0, rgb(8, 6, 4) 80%, #050308 100%);
-
-    box-shadow: 0 0 40px rgba(0, 0, 0, 0.9);
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.9);
   position: sticky;
   top: 0;
   align-self: flex-start;
@@ -67,7 +66,6 @@
   object-fit: contain;   /* أو cover حسب شكل اللوغو */
   transform: scale(1.4); /* هون التكبير الحقيقي */
 }
-
 
 .logo-text {
   display: flex;
@@ -134,11 +132,7 @@
 
 /* رابط Active – تشبه التابات في الصورة */
 .side-nav a.active {
-  background: linear-gradient(
-    120deg,
-    var(--hr-primary),
-    var(--hr-deep)
-  );
+  background: linear-gradient(120deg, var(--hr-primary), var(--hr-deep));
   color: #120602;
   box-shadow: 0 0 26px rgba(255, 123, 0, 0.75);
   opacity: 1;
@@ -192,7 +186,6 @@
   margin: 0;
 }
 
-
 /* زر المينيو للموبايل */
 .menu-toggle {
   display: none; /* Desktop: مخفي */
@@ -204,15 +197,29 @@
     position: relative;
   }
 
+.menu-toggle {
+  line-height: 1;              /* يمنع نزول الحرف */
+  transform: translateY(-1px);  /* ارفع شوي (جرّب -1px أو -2px) */
+}
+
+.menu-toggle {
+  position: relative;
+  top: -25px;   
+}
+
   /* sidebar تحت الهيدر بالـ z-index عشان زر المنيو يظل فوق */
   .sidebar {
     position: fixed;
     left: -280px;
     top: 0;
-    height: 100vh;
-    min-height: 100vh;
+    height: 100dvh;
+    min-height: 100dvh;
     z-index: 40;
     transition: left 0.25s ease-out;
+
+    /* مهم جداً: نخليها flex-column وتستوعب scroll */
+    display: flex;
+    flex-direction: column;
   }
 
   .sidebar.open {
@@ -253,9 +260,33 @@
     font-size: 1.1rem;
     cursor: pointer;
   }
+
+  /* ✅ أهم تعديل: الروابط هي اللي تعمل scroll */
+  .side-nav {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+    padding-right: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* ✅ ننزل اللوجو + الاسم لتحت */
+  .logo-area {
+    margin-bottom: 0;
+    margin-top: auto;
+    padding-top: 14px;
+  }
+
+  /* اختياري: يصير أصغر شوي عشان ما ياخذ مساحة */
+  .logo-circle {
+    width: 44px;
+    height: 44px;
+  }
+
+  .logo-text h2 {
+    font-size: 1.02rem;
+  }
 }
-
-
 
 /* ====== Top bar (يمين فوق) – اسم المشروع + Connect ====== */
 .top-bar {
@@ -299,11 +330,7 @@
   gap: 1.5rem;
 }
 
-
-
-
-
-
+/* ====== أيقونة + نص داخل الروابط ====== */
 .side-nav a {
   display: flex;
   align-items: center;
@@ -337,4 +364,74 @@
 
 .side-nav a:hover .side-nav-icon {
   border-color: rgba(248, 181, 71, 0.7);
+}
+
+/* ====== Season2 highlight ripple ====== */
+.side-nav a.season2-highlight .side-nav-icon {
+  position: relative;
+}
+
+.side-nav a.season2-highlight .side-nav-icon::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  background: rgba(255, 215, 0, 0.35);
+  animation: season2-ripple 1s ease-out infinite;
+}
+
+@keyframes season2-ripple {
+  0% {
+    opacity: 0.85;
+    transform: translate(-50%, -50%) scale(1);
+    box-shadow:
+      0 0 0 0  rgba(255, 215, 0, 0.45),
+      0 0 12px 2px rgba(255, 215, 0, 0.35);
+    filter: blur(0px);
+  }
+  70% {
+    opacity: 0.22;
+    transform: translate(-50%, -50%) scale(1.5);
+    box-shadow:
+      0 0 0 22px rgba(255, 215, 0, 0.0),
+      0 0 12px 10px rgba(255, 215, 0, 0.0);
+    filter: blur(0.5px);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(7.5); /* ✅ fixed */
+    box-shadow:
+      0 0 0 28px rgba(255, 215, 0, 0.0);
+  }
+}
+
+/* احترام إعدادات تقليل الحركة */
+@media (prefers-reduced-motion: reduce) {
+  .side-nav a.season2-highlight .side-nav-icon::after {
+    animation: none;
+  }
+}
+
+
+
+
+
+
+
+/* خلي المنيو ياخذ باقي ارتفاع السايدبار */
+.side-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  flex: 1;
+}
+
+/* ثبّت FAQ تحت */
+.side-nav a.faq-bottom {
+  margin-top: auto;
 }
