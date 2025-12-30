@@ -219,7 +219,7 @@ const DashboardPage = () => {
             <span className="orange">staking</span>,{" "}
             <span className="orange">airdrop</span>, and{" "}
             <span className="orange">presale</span>. One place to see where you
-            stand – and what you might be missing.
+            stand and what you might be missing.
           </p>
 
           <div className="dash-hero-ctas">
