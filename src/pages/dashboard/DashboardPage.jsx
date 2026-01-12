@@ -5,6 +5,7 @@ import { useAccount, useBalance, useReadContract } from "wagmi";
 import { formatUnits } from "viem";
 import { useReferralListener } from "../../hooks/useReferralListener.js";
 import { useNavigate } from "react-router-dom";
+import TokensImg from "../../assets/Tokens.png";
 
 // Recharts
 import {
@@ -48,6 +49,7 @@ const tvlHistory = [
   { day: "Week 3", tvl: 13700 },
   { day: "Week 4", tvl: 20900 },
   { day: "Now", tvl: 35820 },
+  { day: "Now", tvl: 39120 },
 ];
 
 // APY History (جماليات)
@@ -165,7 +167,7 @@ const DashboardPage = () => {
         <div className="card dash-mega-card tvl-card">
           <div className="mega-card-header">
             <h3>Total Value Locked</h3>
-            <span className="mega-value">35,820 ETH</span>
+            <span className="mega-value">39,120 ETH</span>
           </div>
 
           <ResponsiveContainer width="100%" height={140}>
@@ -207,6 +209,23 @@ const DashboardPage = () => {
           </ResponsiveContainer>
         </div>
       </div>
+
+
+
+{/* ===== QUICK STAKE BUTTONS (NEW) ===== */}
+<div className="dash-stake-actions">
+  <Link to="/staking" className="dash-stake-btn eth">
+    <img src="/eth.svg" alt="ETH" className="dash-stake-icon" />
+    <span>Stake ETH</span>
+  </Link>
+
+  <Link to="/staking" className="dash-stake-btn hr hr-glow">
+    <img src={TokensImg} alt="HR" className="dash-stake-icon" />
+    <span>Stake HR</span>
+  </Link>
+</div>
+
+
 
       {/* HERO CARD */}
       <div className="card dash-hero-card">
@@ -269,6 +288,21 @@ const DashboardPage = () => {
           </div>
         </div>
       </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
       {/* MAIN GRID */}
       <div className="dash-grid">

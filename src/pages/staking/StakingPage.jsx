@@ -1,5 +1,5 @@
 // src/pages/staking/StakingPage.jsx
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import {
   useAccount,
   useBalance,
@@ -8,18 +8,26 @@ import {
   useWriteContract,
   usePublicClient,
 } from "wagmi";
-import { parseEther, formatEther } from "viem";
+import { parseEther, formatEther, parseUnits, formatUnits } from "viem";
 
 import {
   BASE_CHAIN_ID,
   STAKING_CONTRACT_ADDRESS,
   FEE_DISTRIBUTOR_ADDRESS,
+  HR_TOKEN_ADDRESS,
+  HR_STAKING_CONTRACT_ADDRESS,
+  ETH_HR_REWARDS_CONTRACT_ADDRESS,
 } from "../../lib/constants.js";
+
 import { STAKING_ABI } from "../../lib/staking.js";
 import { FEE_DISTRIBUTOR_ABI } from "../../lib/fees";
+import { HR_STAKING_ABI } from "../../lib/hrStaking.js";
+import { ETH_HR_REWARDS_ABI } from "../../lib/ethHrRewards.js";
+import { ERC20_ABI } from "../../lib/erc20.js";
 
 import { qualifyReferral } from "../../lib/referralApi.js";
 import { syncOnchainXpApi } from "../../lib/xpApi.js";
+import TokensImg from "../../assets/Tokens.png";
 
 import "../../styles/staking.css";
 
@@ -66,10 +74,24 @@ const formatEth = (value) => {
   });
 };
 
+const formatNum = (value, decimals = 2) => {
+  const num = Number(value || 0);
+  if (!isFinite(num)) return "0";
+  return num.toLocaleString("en-US", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: decimals,
+  });
+};
+
 const formatShortAddress = (addr) =>
   addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "";
 
-const getLevelInfo = (level) => {
+const getLevelInfo = (level, userStakedEth = 0) => {
+  // ✅ UI-only Platinum tier for 3 ETH+
+  if (Number(userStakedEth || 0) >= 3) {
+    return { label: "Platinum", desc: "Stake ≥ 3.00 ETH to reach Platinum." };
+  }
+
   switch (level) {
     case 1:
       return { label: "Bronze", desc: "Stake ≥ 0.10 ETH to reach Bronze." };
@@ -85,28 +107,75 @@ const getLevelInfo = (level) => {
   }
 };
 
+
+// ===== HR Tier / Multiplier (واجهة فقط) =====
+const getHrMultiplierInfo = (hrAmount) => {
+  const amt = Number(hrAmount || 0);
+
+  // نفس الشرائح اللي اتفقنا عليها
+  if (amt >= 200_000) return { mult: 2.0, label: "Elite", nextTarget: null };
+  if (amt >= 100_000)
+    return { mult: 1.65, label: "Diamond", nextTarget: 200_000 };
+  if (amt >= 50_000)
+    return { mult: 1.35, label: "Platinum", nextTarget: 100_000 };
+  if (amt >= 10_000) return { mult: 1.15, label: "Silver", nextTarget: 50_000 };
+  return { mult: 1.0, label: "Starter", nextTarget: 10_000 };
+};
+
 const StakingPage = ({ showToast }) => {
   const { address, isConnected, chainId } = useAccount();
   const publicClient = usePublicClient({ chainId: BASE_CHAIN_ID });
 
-  // ===== WALLET BALANCE =====
-  const { data } = useBalance({
+  const { sendTransactionAsync } = useSendTransaction();
+  const { writeContractAsync } = useWriteContract();
+
+  // ===== ETH WALLET BALANCE =====
+  const { data: ethBalData } = useBalance({
     address,
     chainId: BASE_CHAIN_ID,
     watch: true,
   });
 
-  const userBalance = data?.formatted
-    ? Number(data.formatted).toFixed(6)
+  const userBalance = ethBalData?.formatted
+    ? Number(ethBalData.formatted).toFixed(6)
     : "0.0000";
 
-  const { sendTransactionAsync } = useSendTransaction();
-  const { writeContractAsync } = useWriteContract();
+  // ===== HR WALLET BALANCE =====
+  const { data: hrBalData } = useBalance({
+    address,
+    chainId: BASE_CHAIN_ID,
+    token: HR_TOKEN_ADDRESS,
+    watch: true,
+  });
 
-  const [amount, setAmount] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [isClaiming, setIsClaiming] = useState(false);
+  const hrWalletBalance = hrBalData?.formatted
+    ? Number(hrBalData.formatted).toFixed(4)
+    : "0.0000";
+
+  // ===== Token decimals (للاحتياط) =====
+  const { data: hrDecimalsData } = useReadContract({
+    abi: ERC20_ABI,
+    address: HR_TOKEN_ADDRESS,
+    functionName: "decimals",
+  });
+
+  const HR_DECIMALS =
+    typeof hrDecimalsData === "number"
+      ? hrDecimalsData
+      : Number(hrDecimalsData || 18);
+
+  // ===== Local UI state =====
+  const [amount, setAmount] = useState(""); // ETH stake input
+  const [hrAmount, setHrAmount] = useState(""); // HR stake input
+
+  const [isLoading, setIsLoading] = useState(false); // ETH stake
+  const [isClaiming, setIsClaiming] = useState(false); // fee distributor claim (old)
   const [showNoRewardsBubble, setShowNoRewardsBubble] = useState(false);
+
+  const [isHrStaking, setIsHrStaking] = useState(false);
+  const [isHrClaiming, setIsHrClaiming] = useState(false);
+  const [isEthHrClaiming, setIsEthHrClaiming] = useState(false);
+  const [isApprovingHr, setIsApprovingHr] = useState(false);
 
   const claimButtonRef = useRef(null);
 
@@ -120,7 +189,7 @@ const StakingPage = ({ showToast }) => {
     }
   }, []);
 
-  // ===== ON-CHAIN METRICS (من العقد) =====
+  // ===== ON-CHAIN METRICS (ETH STAKING) =====
   const { data: totalStakedData } = useReadContract({
     abi: STAKING_ABI,
     address: STAKING_CONTRACT_ADDRESS,
@@ -168,9 +237,29 @@ const StakingPage = ({ showToast }) => {
 
   const userLevel =
     typeof levelData === "number" ? levelData : Number(levelData || 0);
-  const levelInfo = getLevelInfo(userLevel);
+const levelInfo = getLevelInfo(userLevel, userStakedEth);
 
-  // نجيب كل الستيكَرز للـ leaderboard
+
+
+// ===== ETH Boost (UI only) =====
+const ethNextTarget = useMemo(() => {
+  if (userStakedEth >= 3) return null; // already Platinum
+  if (userStakedEth >= 1) return 3;    // next is Platinum
+  return 1;                            // next is Gold
+}, [userStakedEth]);
+
+const ethProgressPct = useMemo(() => {
+  const target = ethNextTarget ?? 3;
+  if (!target || target <= 0) return 100;
+  return Math.max(0, Math.min(100, (userStakedEth / target) * 100));
+}, [userStakedEth, ethNextTarget]);
+
+
+
+
+
+
+  // ===== Leaderboard (ETH staking) =====
   const { data: stakersData } = useReadContract({
     abi: STAKING_ABI,
     address: STAKING_CONTRACT_ADDRESS,
@@ -235,33 +324,92 @@ const StakingPage = ({ showToast }) => {
     loadLeaderboard();
   }, [publicClient, stakersData]);
 
-  // ===== FEE DISTRIBUTOR: pending rewards & total staked =====
-  const {
-    data: pendingRewardsData,
-    refetch: refetchPendingRewards,
-    isLoading: isPendingRewardsLoading,
-  } = useReadContract({
-    abi: FEE_DISTRIBUTOR_ABI,
-    address: FEE_DISTRIBUTOR_ADDRESS,
-    functionName: "pendingRewards",
-    args: [address || ZERO_ADDRESS],
-  });
-
-  const { data: totalStakedEthData } = useReadContract({
-    abi: FEE_DISTRIBUTOR_ABI,
-    address: FEE_DISTRIBUTOR_ADDRESS,
-    functionName: "totalStakedEth",
-  });
+  // ===== FEE DISTRIBUTOR (old rewards) =====
+  const { data: pendingRewardsData, refetch: refetchPendingRewards } =
+    useReadContract({
+      abi: FEE_DISTRIBUTOR_ABI,
+      address: FEE_DISTRIBUTOR_ADDRESS,
+      functionName: "pendingRewards",
+      args: [address || ZERO_ADDRESS],
+    });
 
   const pendingRewardsEth = pendingRewardsData
     ? Number(formatEther(pendingRewardsData))
     : 0;
-
   const hasRewards = pendingRewardsData && pendingRewardsData > 0n;
 
-  const totalStakedForFeesEth = totalStakedEthData
-    ? Number(formatEther(totalStakedEthData))
+  // ===== HR STAKING (new) reads =====
+  const { data: userHrDepositedRaw } = useReadContract({
+    abi: HR_STAKING_ABI,
+    address: HR_STAKING_CONTRACT_ADDRESS,
+    functionName: "deposited",
+    args: [address || ZERO_ADDRESS],
+  });
+
+  const userHrDeposited = userHrDepositedRaw
+    ? Number(formatUnits(userHrDepositedRaw, HR_DECIMALS))
     : 0;
+
+  const { data: pendingHrRewardsRaw, refetch: refetchPendingHrRewards } =
+    useReadContract({
+      abi: HR_STAKING_ABI,
+      address: HR_STAKING_CONTRACT_ADDRESS,
+      functionName: "pendingRewards",
+      args: [address || ZERO_ADDRESS],
+    });
+
+  const pendingHrRewards = pendingHrRewardsRaw
+    ? Number(formatUnits(pendingHrRewardsRaw, HR_DECIMALS))
+    : 0;
+
+  // ===== ETH STAKERS -> HR REWARDS reads =====
+  const { data: pendingEthHrRaw, refetch: refetchPendingEthHr } = useReadContract({
+    abi: ETH_HR_REWARDS_ABI,
+    address: ETH_HR_REWARDS_CONTRACT_ADDRESS,
+    functionName: "pendingRewards",
+    args: [address || ZERO_ADDRESS],
+  });
+
+  const pendingEthHr = pendingEthHrRaw
+    ? Number(formatUnits(pendingEthHrRaw, HR_DECIMALS))
+    : 0;
+
+  // ===== HR allowance for staking =====
+  const hrToStakeWei = useMemo(() => {
+    try {
+      if (!hrAmount) return 0n;
+      return parseUnits(hrAmount, HR_DECIMALS);
+    } catch {
+      return 0n;
+    }
+  }, [hrAmount, HR_DECIMALS]);
+
+  const { data: allowanceRaw, refetch: refetchAllowance } = useReadContract({
+    abi: ERC20_ABI,
+    address: HR_TOKEN_ADDRESS,
+    functionName: "allowance",
+    args: [address || ZERO_ADDRESS, HR_STAKING_CONTRACT_ADDRESS],
+  });
+
+  const allowance = allowanceRaw ?? 0n;
+  const needsApprove = hrToStakeWei > 0n && allowance < hrToStakeWei;
+
+  // ===== Incentive calc (HR tiers) =====
+  const hrTier = useMemo(
+    () => getHrMultiplierInfo(userHrDeposited),
+    [userHrDeposited]
+  );
+
+  const hrProgressToElite = useMemo(() => {
+    const eliteTarget = 200_000;
+    const pct = (userHrDeposited / eliteTarget) * 100;
+    return Math.max(0, Math.min(100, pct));
+  }, [userHrDeposited]);
+
+  const hrToNextTier = useMemo(() => {
+    if (!hrTier.nextTarget) return 0;
+    return Math.max(0, hrTier.nextTarget - userHrDeposited);
+  }, [hrTier, userHrDeposited]);
 
   // ===== HANDLERS =====
   const handleMax = () => {
@@ -273,9 +421,23 @@ const StakingPage = ({ showToast }) => {
     }
   };
 
+  const handleMaxHr = () => {
+    const bal = parseFloat(hrWalletBalance);
+    if (!isNaN(bal) && bal > 0) {
+      setHrAmount(bal.toString());
+    } else {
+      showToast?.("info", "No HR balance available on Base.");
+    }
+  };
+
   const handleStake = async () => {
     if (!isConnected) {
       showToast?.("error", "Please connect your wallet first.");
+      return;
+    }
+
+    if (chainId !== BASE_CHAIN_ID) {
+      showToast?.("error", "Please switch to Base network.");
       return;
     }
 
@@ -324,7 +486,7 @@ const StakingPage = ({ showToast }) => {
     });
   };
 
-  // دالة كليم المكافآت من عقد التوزيع
+  // Claim old fee rewards
   const handleClaimRewards = async () => {
     if (!address) {
       showToast?.("error", "Connect your wallet first.");
@@ -336,7 +498,6 @@ const StakingPage = ({ showToast }) => {
       return;
     }
 
-    // لو ما في تخصيص → نطلع فقاعة منبثقة تحت الزر
     if (!hasRewards) {
       setShowNoRewardsBubble(true);
       setTimeout(() => setShowNoRewardsBubble(false), 4000);
@@ -363,8 +524,157 @@ const StakingPage = ({ showToast }) => {
     }
   };
 
+  // Approve HR for HR staking contract
+  const handleApproveHr = async () => {
+    if (!address) return showToast?.("error", "Connect your wallet first.");
+    if (chainId !== BASE_CHAIN_ID)
+      return showToast?.("error", "Please switch to Base network.");
+    if (!hrToStakeWei || hrToStakeWei <= 0n)
+      return showToast?.("error", "Enter a valid HR amount.");
+
+    try {
+      setIsApprovingHr(true);
+      await writeContractAsync({
+        abi: ERC20_ABI,
+        address: HR_TOKEN_ADDRESS,
+        functionName: "approve",
+        args: [HR_STAKING_CONTRACT_ADDRESS, hrToStakeWei],
+        chainId: BASE_CHAIN_ID,
+      });
+      showToast?.("success", "Approve done!");
+      refetchAllowance?.();
+    } catch (e) {
+      console.error(e);
+      showToast?.("error", "Approve failed or was rejected.");
+    } finally {
+      setIsApprovingHr(false);
+    }
+  };
+
+  // Stake HR into HR staking contract
+  const handleStakeHr = async () => {
+    if (!address) return showToast?.("error", "Connect your wallet first.");
+    if (chainId !== BASE_CHAIN_ID)
+      return showToast?.("error", "Please switch to Base network.");
+    if (!hrToStakeWei || hrToStakeWei <= 0n)
+      return showToast?.("error", "Enter a valid HR amount.");
+    if (needsApprove) return showToast?.("info", "Please approve HR first.");
+
+    try {
+      setIsHrStaking(true);
+      await writeContractAsync({
+        abi: HR_STAKING_ABI,
+        address: HR_STAKING_CONTRACT_ADDRESS,
+        functionName: "stake",
+        args: [hrToStakeWei],
+        chainId: BASE_CHAIN_ID,
+      });
+
+      setHrAmount("");
+      showToast?.("success", "HR staked successfully!");
+      refetchPendingHrRewards?.();
+      refetchAllowance?.();
+    } catch (e) {
+      console.error(e);
+      showToast?.("error", e.shortMessage || e.message || "HR stake failed.");
+    } finally {
+      setIsHrStaking(false);
+    }
+  };
+
+  // Claim HR rewards from HR staking
+  const handleClaimHrRewards = async () => {
+    if (!address) return showToast?.("error", "Connect your wallet first.");
+    if (chainId !== BASE_CHAIN_ID)
+      return showToast?.("error", "Please switch to Base network.");
+
+    if (!pendingHrRewardsRaw || pendingHrRewardsRaw === 0n) {
+      showToast?.("info", "No HR rewards yet.");
+      return;
+    }
+
+    try {
+      setIsHrClaiming(true);
+      await writeContractAsync({
+        abi: HR_STAKING_ABI,
+        address: HR_STAKING_CONTRACT_ADDRESS,
+        functionName: "claim",
+        chainId: BASE_CHAIN_ID,
+      });
+
+      showToast?.("success", "HR rewards claimed!");
+      refetchPendingHrRewards?.();
+    } catch (e) {
+      console.error(e);
+      showToast?.("error", "Claim failed (maybe cooldown).");
+    } finally {
+      setIsHrClaiming(false);
+    }
+  };
+
+  // Claim HR rewards for ETH stakers (new contract)
+  const handleClaimEthHrRewards = async () => {
+    if (!address) return showToast?.("error", "Connect your wallet first.");
+    if (chainId !== BASE_CHAIN_ID)
+      return showToast?.("error", "Please switch to Base network.");
+
+    // إذا ما عنده أي ETH staked أصلاً
+    if (!userStakedData || userStakedData === 0n) {
+      showToast?.("info", "You have no ETH staked yet.");
+      return;
+    }
+
+    try {
+      setIsEthHrClaiming(true);
+
+      // دائمًا Sync أولاً (تفعيل/تحديث)
+      await writeContractAsync({
+        abi: ETH_HR_REWARDS_ABI,
+        address: ETH_HR_REWARDS_CONTRACT_ADDRESS,
+        functionName: "sync",
+        chainId: BASE_CHAIN_ID,
+      });
+
+      // إذا ما في pending بعد (أول مرة غالبًا) -> نخليه تفعيل فقط
+      if (!pendingEthHrRaw || pendingEthHrRaw === 0n) {
+        showToast?.("success", "HR rewards activated ✅ Come back later to claim.");
+        refetchPendingEthHr?.();
+        return;
+      }
+
+      // إذا في pending -> claim
+      await writeContractAsync({
+        abi: ETH_HR_REWARDS_ABI,
+        address: ETH_HR_REWARDS_CONTRACT_ADDRESS,
+        functionName: "claim",
+        chainId: BASE_CHAIN_ID,
+      });
+
+      showToast?.("success", "ETH-staker HR rewards claimed!");
+      refetchPendingEthHr?.();
+    } catch (e) {
+      console.error(e);
+      showToast?.("error", "Claim failed (maybe cooldown / rejected).");
+    } finally {
+      setIsEthHrClaiming(false);
+    }
+  };
+
   return (
     <div className="staking-page">
+      {/* tiny local styles for the animated motivation banner (UI only) */}
+      <style>{`
+        @keyframes hrShimmer {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+        @keyframes hrPulseDot {
+          0%, 100% { transform: scale(1); opacity: .8; }
+          50% { transform: scale(1.25); opacity: 1; }
+        }
+      `}</style>
+
       <div className="staking-grid">
         {/* ===== Hero Card ===== */}
         <div className="card staking-card staking-hero">
@@ -374,30 +684,23 @@ const StakingPage = ({ showToast }) => {
                 <span className="hero-title-highlight">HeatRush Staking</span>
               </h1>
               <p className="hero-subtitle">
-                Lock ETH into HeatRush on <span className="orange">Base</span>{" "}
-                and position yourself for future $HR rewards, airdrops, and
-                priority access.
+                Stake ETH or HR on <span className="orange">Base</span>{" "}
+                and earn daily HR rewards.
               </p>
             </div>
           </div>
 
           <div className="hero-tags-row">
             <span className="hero-pill accent">Live on Base</span>
-            <span className="hero-pill subtle">On-chain ETH staking</span>
-            <span className="hero-pill subtle">XP &amp; tiers</span>
+            <span className="hero-pill subtle">ETH staking</span>
+            <span className="hero-pill subtle">HR staking (daily)</span>
           </div>
 
           <p className="hero-note">
-            Every ETH staked powers the HeatRush treasury and strengthens the{" "}
-            <span className="orange-text">Heat Network</span>. Top stakers get
-            the strongest exposure to future rewards, airdrops, and special
-            allocations.
+            ETH staking strengthens the treasury. HR staking rewards long-term believers.
           </p>
           <p className="hero-note">
-            <strong>
-              If you’re not staked when major events go live, you’re simply not
-              in the front row.
-            </strong>
+            <strong>Bigger stake = bigger daily rewards.</strong>
           </p>
         </div>
 
@@ -406,10 +709,24 @@ const StakingPage = ({ showToast }) => {
           <h2 className="card-title">Your Staking Snapshot</h2>
 
           <div className="status-row">
-            <span className="status-label">You Staked</span>
+            <span className="status-label">You Staked (ETH)</span>
             <span className="status-chip">
-              {formatEth(userStakedEth)}{" "}
-              <span className="status-unit">ETH</span>
+              {formatEth(userStakedEth)} <span className="status-unit">ETH</span>
+            </span>
+          </div>
+
+          <div className="status-row">
+            <span className="status-label">You Staked (HR)</span>
+            <span className="status-chip">
+              {formatNum(userHrDeposited, 2)} <span className="status-unit">HR</span>
+            </span>
+          </div>
+
+          <div className="status-row">
+            <span className="status-label">Your HR Multiplier</span>
+            <span className="status-chip">
+              {hrTier.mult.toFixed(2)}x{" "}
+              <span className="status-unit">{hrTier.label}</span>
             </span>
           </div>
 
@@ -419,32 +736,145 @@ const StakingPage = ({ showToast }) => {
           </div>
 
           <div className="status-row">
-            <span className="status-label">Your Tier</span>
+            <span className="status-label">Your ETH Tier</span>
             <span className="status-value">
               <span className="status-chip">{levelInfo.label}</span>
             </span>
           </div>
 
+
           <div className="status-row">
-            <span className="status-label">Wallet Balance (Base)</span>
+            <span className="status-label">HR Wallet Balance</span>
             <span className="status-chip">
-              {userBalance} <span className="status-unit">ETH</span>
+              {hrWalletBalance} <span className="status-unit">HR</span>
             </span>
           </div>
 
           <p className="status-note">
-            All stats are read live from the HeatRush staking contract on Base.
-            Your stake is your live contribution to the HeatRush ecosystem.
+            HR staking rewards are claimable daily. Principal unlock will come later.
           </p>
         </div>
 
-        {/* ===== Stake Action Card ===== */}
+        {/* ===== Stake ETH Action Card ===== */}
         <div className="card staking-card staking-action">
-          <h2 className="card-title">Stake ETH</h2>
+<h2
+  className="card-title"
+  style={{ display: "flex", alignItems: "center", gap: 10 }}
+>
+  <img
+    src="/eth.svg"
+    alt="ETH"
+    width={33}
+    height={33}
+    style={{ display: "block" }}
+  />
+  Stake ETH
+</h2>
           <p className="card-subtitle">
-            Staking is executed directly through HeatRush’s secure on-chain
-            contract.
+            Staking is executed directly through HeatRush’s secure on-chain contract.
           </p>
+
+
+
+
+
+
+{/* ===== ETH quick stats (UI only) ===== */}
+<div style={{ marginTop: 12 }}>
+  <div className="status-row">
+    <span className="status-label">Your ETH Staked</span>
+    <span className="status-value">
+      <span className="status-chip">
+        {formatEth(userStakedEth)} <span className="status-unit">ETH</span>
+      </span>
+    </span>
+  </div>
+
+  <div className="status-row">
+    <span className="status-label">Pending Fees</span>
+    <span className="status-value">
+      <span className="status-chip">
+        {pendingRewardsEth.toFixed(4)} <span className="status-unit">ETH</span>
+      </span>
+    </span>
+  </div>
+
+  <div className="status-row">
+    <span className="status-label">Pending HR (from ETH stake)</span>
+    <span className="status-value">
+      <span className="status-chip">
+        {formatNum(pendingEthHr, 4)} <span className="status-unit">HR</span>
+      </span>
+    </span>
+  </div>
+</div>
+
+
+
+
+
+
+{/* ===== ETH Boost Box (UI only) ===== */}
+<div className="xp-formula-box" style={{ marginTop: 12 }}>
+  <div className="xp-formula-label">Boost your daily rewards</div>
+
+  <div className="xp-formula-code">
+    Current tier: <strong>{levelInfo.label}</strong>
+  </div>
+
+  <p className="xp-formula-note">{levelInfo.desc}</p>
+
+  {ethNextTarget ? (
+    <>
+      <p className="xp-formula-note" style={{ marginTop: 6 }}>
+        Next milestone at <strong>{ethNextTarget.toFixed(2)} ETH</strong>. You’re{" "}
+        <strong>{formatEth(Math.max(0, ethNextTarget - userStakedEth))} ETH</strong> away.
+      </p>
+
+      <div style={{ marginTop: 10 }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            fontSize: 12,
+            opacity: 0.85,
+          }}
+        >
+          <span>
+            Progress to {ethNextTarget === 1 ? "Gold (1.00 ETH)" : "Platinum (3.00 ETH)"}
+          </span>
+          <span>{formatNum(ethProgressPct, 1)}%</span>
+        </div>
+
+        <div
+          style={{
+            height: 10,
+            borderRadius: 999,
+            background: "rgba(255,255,255,0.08)",
+            overflow: "hidden",
+            marginTop: 6,
+          }}
+        >
+          <div
+            style={{
+              height: "100%",
+              width: `${ethProgressPct}%`,
+              background: "rgba(255, 140, 0, 0.9)",
+            }}
+          />
+        </div>
+      </div>
+    </>
+  ) : (
+    <p className="xp-formula-note" style={{ marginTop: 6 }}>
+      You’re at <strong>Platinum (3.00 ETH)</strong>. Maximum tier unlocked.
+    </p>
+  )}
+</div>
+
+
+
+
 
           <div className="stake-input-block">
             <div className="stake-input-header">
@@ -492,7 +922,22 @@ const StakingPage = ({ showToast }) => {
               onClick={handleClaimRewards}
               disabled={isClaiming || !address || chainId !== BASE_CHAIN_ID}
             >
-              {isClaiming ? "Claiming..." : "Claim Rewards"}
+              {isClaiming
+                ? "Claiming..."
+                : `Claim Fees (${pendingRewardsEth.toFixed(4)} ETH)`}
+            </button>
+
+            {/* ✅ HR claim for ETH stakers moved right under Claim Fees (UI only) */}
+            <button
+              className={`secondary-btn claim-btn ${
+                pendingEthHrRaw > 0n ? "claim-btn-glow" : ""
+              }`}
+              onClick={handleClaimEthHrRewards}
+              disabled={isEthHrClaiming || !address || chainId !== BASE_CHAIN_ID}
+            >
+              {isEthHrClaiming
+                ? "Claiming..."
+                : `Claim HR (${formatNum(pendingEthHr, 4)} HR)`}
             </button>
 
             <button
@@ -516,9 +961,151 @@ const StakingPage = ({ showToast }) => {
           )}
 
           <p className="stake-footnote">
-            Withdrawals and advanced reward mechanics will be enabled in upcoming
-            development phases. Early stakers are the first to benefit when new
-            features go live.
+            ETH staking is live. HR rewards for ETH stakers can be claimed right above.
+          </p>
+        </div>
+
+        {/* ===== NEW: Stake HR + Claim HR rewards ===== */}
+        <div className="card staking-card staking-action">
+<h2
+  className="card-title"
+  style={{ display: "flex", alignItems: "center", gap: 10 }}
+>
+  <img
+    src={TokensImg}
+    alt="Tokens"
+    width={36}
+    height={43}
+    style={{ display: "block", borderRadius: 6 }}
+  />
+  Stake HR
+</h2>
+          <p className="card-subtitle">
+            Stake HR directly in the HR staking contract. Principal is locked for now. Claim rewards daily.
+          </p>
+
+          <div className="status-row">
+            <span className="status-label">Your HR Staked</span>
+            <span className="status-chip">
+              {formatNum(userHrDeposited, 2)} <span className="status-unit">HR</span>
+            </span>
+          </div>
+
+          <div className="status-row">
+            <span className="status-label">Pending HR Rewards</span>
+            <span className="status-chip">
+              {formatNum(pendingHrRewards, 2)} <span className="status-unit">HR</span>
+            </span>
+          </div>
+
+          {/* Incentive: progress to 200k */}
+          <div className="xp-formula-box" style={{ marginTop: 12 }}>
+            <div className="xp-formula-label">Boost your daily rewards</div>
+            <div className="xp-formula-code">
+              Current multiplier: <strong>{hrTier.mult.toFixed(2)}x</strong> (
+              {hrTier.label})
+            </div>
+
+            {hrTier.nextTarget ? (
+              <p className="xp-formula-note">
+                Next tier at <strong>{hrTier.nextTarget.toLocaleString()} HR</strong>.
+                You’re <strong>{formatNum(hrToNextTier, 0)} HR</strong> away.
+              </p>
+            ) : (
+              <p className="xp-formula-note">
+                You’re at <strong>Elite (2.00x)</strong>. Daily rewards are maximized.
+              </p>
+            )}
+
+            <div style={{ marginTop: 10 }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  fontSize: 12,
+                  opacity: 0.85,
+                }}
+              >
+                <span>Progress to 200,000 HR</span>
+                <span>{formatNum(hrProgressToElite, 1)}%</span>
+              </div>
+              <div
+                style={{
+                  height: 10,
+                  borderRadius: 999,
+                  background: "rgba(255,255,255,0.08)",
+                  overflow: "hidden",
+                  marginTop: 6,
+                }}
+              >
+                <div
+                  style={{
+                    height: "100%",
+                    width: `${hrProgressToElite}%`,
+                    background: "rgba(255, 140, 0, 0.9)",
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="stake-input-block">
+            <div className="stake-input-header">
+              <span className="stake-label">Amount to stake</span>
+              <span className="stake-hint">Approve once, then stake HR.</span>
+            </div>
+
+            <div className="input-row">
+              <input
+                type="text"
+                inputMode="decimal"
+                className="input"
+                placeholder="Enter HR amount"
+                value={hrAmount}
+                onChange={(e) => {
+                  const raw = e.target.value.replace(",", ".");
+                  const regex = /^[0-9]*\.?[0-9]*$/;
+                  if (raw === "" || regex.test(raw)) setHrAmount(raw);
+                }}
+              />
+              <button className="max-btn" onClick={handleMaxHr}>
+                MAX
+              </button>
+            </div>
+          </div>
+
+          {needsApprove ? (
+            <button
+              className={`stake-btn ${isApprovingHr ? "loading" : ""}`}
+              onClick={handleApproveHr}
+              disabled={isApprovingHr}
+            >
+              {isApprovingHr ? "Approving..." : "Approve HR"}
+            </button>
+          ) : (
+            <button
+              className={`stake-btn ${isHrStaking ? "loading" : ""}`}
+              onClick={handleStakeHr}
+              disabled={isHrStaking}
+            >
+              {isHrStaking ? "Processing..." : "Stake HR"}
+            </button>
+          )}
+
+          <div className="secondary-actions">
+            <button
+              className={`secondary-btn claim-btn ${
+                pendingHrRewardsRaw > 0n ? "claim-btn-glow" : ""
+              }`}
+              onClick={handleClaimHrRewards}
+              disabled={isHrClaiming || !address || chainId !== BASE_CHAIN_ID}
+            >
+              {isHrClaiming ? "Claiming..." : "Claim HR Rewards"}
+            </button>
+          </div>
+
+          <p className="stake-footnote">
+            Rewards are distributed daily. Unstaking will be enabled in a later phase.
           </p>
         </div>
 
@@ -527,16 +1114,14 @@ const StakingPage = ({ showToast }) => {
           <h2 className="card-title">Your XP & Levels</h2>
 
           <p className="xp-intro">
-            XP boosts your weight for airdrops, future campaigns, and on-chain
-            reputation. It can also be referenced by future Heat ecosystem apps.
+            XP boosts your weight for airdrops, future campaigns, and on-chain reputation.
           </p>
 
           <div className="xp-formula-box">
             <div className="xp-formula-label">On-chain XP</div>
             <div className="xp-formula-code">Total XP: {formatXP(userXP)}</div>
             <p className="xp-formula-note">
-              XP is tracked directly by the HeatRush staking contract and grows
-              alongside your long-term participation.
+              XP is tracked directly by the HeatRush ETH staking contract.
             </p>
           </div>
 
@@ -548,9 +1133,7 @@ const StakingPage = ({ showToast }) => {
             >
               <div className="xp-level-title">Bronze</div>
               <div className="xp-level-threshold">Stake ≥ 0.10 ETH</div>
-              <p className="xp-level-desc">
-                Stake ≥ 0.10 ETH to reach Bronze and unlock your first tier.
-              </p>
+              <p className="xp-level-desc">Stake ≥ 0.10 ETH to reach Bronze.</p>
             </div>
 
             <div
@@ -560,10 +1143,7 @@ const StakingPage = ({ showToast }) => {
             >
               <div className="xp-level-title">Silver</div>
               <div className="xp-level-threshold">Stake ≥ 0.50 ETH</div>
-              <p className="xp-level-desc">
-                Stake ≥ 0.50 ETH to reach Silver and strengthen your position in
-                future HeatRush campaigns.
-              </p>
+              <p className="xp-level-desc">Stake ≥ 0.50 ETH to reach Silver.</p>
             </div>
 
             <div
@@ -573,11 +1153,22 @@ const StakingPage = ({ showToast }) => {
             >
               <div className="xp-level-title">Gold</div>
               <div className="xp-level-threshold">Stake ≥ 1.00 ETH</div>
-              <p className="xp-level-desc">
-                Stake ≥ 1.00 ETH to reach Gold and sit in the front row for
-                future rewards and allocations.
-              </p>
+              <p className="xp-level-desc">Stake ≥ 1.00 ETH to reach Gold.</p>
             </div>
+
+<div
+  className="xp-level-card platinum tier-3d"
+  onMouseMove={handleTierTiltMove}
+  onMouseLeave={handleTierTiltLeave}
+>
+  <div className="xp-level-title">Platinum</div>
+  <div className="xp-level-threshold">Stake ≥ 3.00 ETH</div>
+  <p className="xp-level-desc">
+    Stake ≥ 3.00 ETH to reach Platinum.
+  </p>
+</div>
+
+
           </div>
         </div>
 
@@ -588,21 +1179,15 @@ const StakingPage = ({ showToast }) => {
           <ul className="why-list">
             <li>
               <span className="dot" />
-              <span>Priority exposure to future $HR distributions and bonuses.</span>
+              <span>Daily HR rewards for HR stakers.</span>
             </li>
             <li>
               <span className="dot" />
-              <span>
-                Stronger position in upcoming HeatRush campaigns, quests, and loyalty
-                programs.
-              </span>
+              <span>HR rewards for ETH stakers (claimable daily).</span>
             </li>
             <li>
               <span className="dot" />
-              <span>
-                On-chain XP and tiers that can be referenced by future Heat ecosystem
-                apps.
-              </span>
+              <span>Progress-based multipliers encourage bigger HR stakes.</span>
             </li>
           </ul>
         </div>
@@ -610,7 +1195,7 @@ const StakingPage = ({ showToast }) => {
 
       {/* ===== Top Stakers Leaderboard ===== */}
       <div className="card staking-card staking-leaderboard">
-        <h2 className="card-title">Top Stakers</h2>
+        <h2 className="card-title">Top ETH Stakers</h2>
         <p className="card-subtitle">
           Addresses with the highest total ETH staked into HeatRush.
         </p>
@@ -637,6 +1222,10 @@ const StakingPage = ({ showToast }) => {
                 row.address &&
                 row.address.toLowerCase() === address.toLowerCase();
 
+
+
+
+                
               return (
                 <li
                   key={row.address}
@@ -650,7 +1239,9 @@ const StakingPage = ({ showToast }) => {
                     <span className="staking-leader-wallet">
                       {formatShortAddress(row.address)}
                     </span>
-                    {isYou && <span className="staking-leader-you-pill">YOU</span>}
+                    {isYou && (
+                      <span className="staking-leader-you-pill">YOU</span>
+                    )}
                   </span>
 
                   <span className="staking-leader-amount">

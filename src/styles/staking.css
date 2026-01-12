@@ -446,6 +446,37 @@
 .xp-level-card.gold {
   border-color: rgba(255, 138, 38, 0.9);
 }
+.xp-level-card.platinum {
+  border-color: rgba(229, 228, 226, 0.55);
+}
+.xp-level-card.platinum.tier-3d.is-tilting {
+  border-color: rgba(229, 228, 226, 0.8);
+  box-shadow:
+    0 26px 80px rgba(0,0,0,0.62),
+    0 0 0 1px rgba(229, 228, 226, 0.22) inset;
+}
+
+.xp-level-card.platinum { --tier-accent: rgba(229, 228, 226, 0.98); }
+/* PLATINUM: shine دائم بلون فضّي/بلاتينيوم */
+.xp-level-card.platinum.tier-3d::after {
+  opacity: 0.95;
+  animation: tierShineLoopPlatinum 3s ease-in-out infinite;
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0.14) 35%,
+    rgba(229, 228, 226, 0.35) 50%,
+    rgba(255,255,255,0.14) 65%,
+    rgba(255,255,255,0) 100%
+  );
+}
+
+@keyframes tierShineLoopPlatinum {
+  0%   { left: -95%; opacity: 0.0; }
+  12%  { opacity: 0.95; }
+  55%  { left: 140%; opacity: 0.0; }
+  100% { left: 140%; opacity: 0.0; }
+}
 
 /* ====== بطاقة 5: Why Stake ====== */
 
@@ -1137,4 +1168,18 @@
   0% { transform: translateX(-130%); }
   50% { transform: translateX(130%); }
   100% { transform: translateX(130%); }
+}
+
+
+
+.status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;          /* المسافة بين النص والـ chip */
+  margin-bottom: 10px; /* المسافة بين كل سطر وسطر */
+}
+
+.status-row:last-child {
+  margin-bottom: 0;
 }
