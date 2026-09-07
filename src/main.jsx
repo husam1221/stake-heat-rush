@@ -9,7 +9,7 @@ import {
 } from "@rainbow-me/rainbowkit";
 
 import { WagmiProvider } from "wagmi";
-import { base } from "wagmi/chains";
+import { base, bsc } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // 👇 بدل styles.css بهذه الاستايلات الموجودة فعليًا عندك
@@ -34,7 +34,7 @@ import "./styles/faq.css";
 const config = getDefaultConfig({
   appName: "HeatRush",
   projectId: "b4a9deb03fa34b25139f708d290ba1b3",
-  chains: [base],
+  chains: [base, bsc],
   ssr: false,
   metadata: {
     name: "HeatRush Staking",

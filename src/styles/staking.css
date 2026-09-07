@@ -1183,3 +1183,994 @@
 .status-row:last-child {
   margin-bottom: 0;
 }
+
+
+/* =========================================================
+   HeatRush Multi-Chain Staking
+   Strictly prefixed to avoid collisions with legacy styles.
+   ========================================================= */
+.multistake-section {
+  grid-column: 1 / -1;
+  padding: 22px;
+  border: 1px solid rgba(255, 153, 0, 0.2);
+  border-radius: 22px;
+  background: linear-gradient(145deg, rgba(255, 153, 0, 0.055), rgba(255, 255, 255, 0.018));
+}
+.multistake-section-head { display:flex; justify-content:space-between; gap:18px; align-items:flex-start; margin-bottom:18px; }
+.multistake-section-head h2 { margin:5px 0 6px; font-size:clamp(22px,3vw,30px); }
+.multistake-section-head p { margin:0; opacity:.72; max-width:720px; }
+.multistake-kicker { font-size:11px; font-weight:800; letter-spacing:.16em; color:#ff9900; }
+.multistake-live-pill { flex:0 0 auto; border:1px solid rgba(255,153,0,.35); border-radius:999px; padding:7px 11px; font-size:11px; font-weight:800; color:#ffb13b; background:rgba(255,153,0,.08); }
+.multistake-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }
+.multistake-card { min-width:0; padding:17px; border-radius:18px; border:1px solid rgba(255,255,255,.09); background:rgba(8,9,12,.72); box-shadow:0 14px 35px rgba(0,0,0,.18); }
+.multistake-card.has-error { border-color:rgba(255,90,90,.35); }
+.multistake-card-head { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.multistake-asset-id { display:flex; align-items:center; gap:11px; min-width:0; }
+.multistake-logo-wrap { position:relative; width:44px; height:44px; flex:0 0 44px; }
+.multistake-asset-logo { width:44px; height:44px; object-fit:contain; border-radius:50%; }
+.multistake-network-logo { position:absolute; right:-3px; bottom:-3px; width:19px; height:19px; object-fit:contain; border-radius:50%; background:#111; border:2px solid #111; }
+.multistake-symbol { font-size:17px; font-weight:900; }
+.multistake-network { margin-top:2px; font-size:11px; opacity:.62; }
+.multistake-status { flex:0 0 auto; font-size:10px; font-weight:900; letter-spacing:.08em; color:#67e8a5; border:1px solid rgba(103,232,165,.25); background:rgba(103,232,165,.08); padding:6px 8px; border-radius:999px; }
+.multistake-status.paused { color:#ffbd5b; border-color:rgba(255,189,91,.3); background:rgba(255,189,91,.08); }
+.multistake-status.error { color:#ff7777; border-color:rgba(255,119,119,.3); background:rgba(255,119,119,.08); }
+.multistake-reward-line { margin-top:16px; color:#ff9d13; font-size:12px; font-weight:900; letter-spacing:.05em; }
+.multistake-copy { min-height:48px; margin:6px 0 14px; font-size:12px; line-height:1.5; opacity:.72; }
+.multistake-stats { display:grid; gap:8px; }
+.multistake-stats > div { display:flex; justify-content:space-between; gap:10px; align-items:center; padding:9px 10px; border-radius:11px; background:rgba(255,255,255,.035); }
+.multistake-stats span { font-size:11px; opacity:.62; }
+.multistake-stats strong { font-size:11px; text-align:right; overflow-wrap:anywhere; }
+.multistake-error-box { margin-top:11px; padding:10px; border-radius:10px; background:rgba(255,80,80,.07); color:#ff9b9b; font-size:11px; line-height:1.45; }
+.multistake-open-btn, .multistake-confirm-btn { width:100%; border:0; border-radius:12px; cursor:pointer; font-weight:900; }
+.multistake-open-btn { margin-top:14px; padding:11px 12px; color:#111; background:linear-gradient(135deg,#ff8a00,#ffb52e); }
+.multistake-open-btn:disabled { cursor:not-allowed; opacity:.45; }
+.multistake-panel { margin-top:12px; padding-top:12px; border-top:1px solid rgba(255,255,255,.07); }
+.multistake-minimum, .multistake-gas-note { font-size:10px; opacity:.62; margin-bottom:7px; }
+.multistake-input { width:100%; box-sizing:border-box; border:1px solid rgba(255,255,255,.11); border-radius:11px; padding:12px; background:rgba(0,0,0,.28); color:#fff; outline:none; }
+.multistake-input:focus { border-color:rgba(255,153,0,.55); box-shadow:0 0 0 3px rgba(255,153,0,.08); }
+.multistake-percent-row { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin:8px 0 10px; }
+.multistake-percent-row button { border:1px solid rgba(255,255,255,.1); border-radius:9px; padding:8px 4px; color:#fff; background:rgba(255,255,255,.04); cursor:pointer; font-size:10px; font-weight:800; }
+.multistake-percent-row button:hover { border-color:rgba(255,153,0,.45); }
+.multistake-confirm-btn { padding:12px; color:#fff; background:linear-gradient(135deg,#d86f00,#ff9300); }
+.multistake-confirm-btn:disabled { cursor:not-allowed; opacity:.5; }
+@media (max-width: 1050px) { .multistake-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media (max-width: 680px) { .multistake-section { padding:15px; } .multistake-section-head { flex-direction:column; } .multistake-grid { grid-template-columns:1fr; } .multistake-copy { min-height:0; } }
+
+/* =========================================================
+   HeatRush Staking Conversion Redesign
+   Added as a scoped override layer. Existing legacy styles
+   above are intentionally preserved.
+   ========================================================= */
+
+.staking-conversion-page {
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 10px 0 36px;
+}
+
+.staking-conversion-hero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 24px 26px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(255, 145, 0, 0.22);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 0 0, rgba(255, 114, 0, 0.16), transparent 34%),
+    linear-gradient(145deg, rgba(7, 12, 20, 0.96), rgba(5, 8, 14, 0.98));
+  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.24);
+}
+
+.staking-conversion-kicker,
+.staking-insight-kicker,
+.staking-network-eyebrow {
+  display: block;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #ff9d19;
+}
+
+.staking-conversion-hero h1 {
+  margin: 6px 0 7px;
+  font-size: clamp(28px, 4vw, 46px);
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.staking-conversion-hero p {
+  max-width: 760px;
+  margin: 0;
+  color: rgba(235, 240, 247, 0.72);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.staking-conversion-hero-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  flex: 0 0 auto;
+}
+
+.staking-market-count,
+.staking-network-count,
+.staking-market-live-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.staking-market-count {
+  color: #ff9d19;
+  border: 1px solid rgba(255, 157, 25, 0.35);
+  background: rgba(255, 157, 25, 0.08);
+}
+
+.staking-live-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: rgba(235, 240, 247, 0.78);
+}
+
+.staking-live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #58e8a4;
+  box-shadow: 0 0 14px rgba(88, 232, 164, 0.75);
+}
+
+.staking-market-hub {
+  display: grid;
+  gap: 16px;
+}
+
+.staking-network-block {
+  padding: 20px;
+  border-radius: 24px;
+  overflow: hidden;
+}
+
+.staking-network-base {
+  border: 1px solid rgba(35, 117, 255, 0.42);
+  background:
+    radial-gradient(circle at 0 0, rgba(30, 89, 255, 0.18), transparent 38%),
+    linear-gradient(145deg, rgba(4, 11, 24, 0.96), rgba(5, 8, 14, 0.98));
+}
+
+.staking-network-bnb {
+  border: 1px solid rgba(240, 185, 11, 0.44);
+  background:
+    radial-gradient(circle at 0 0, rgba(240, 185, 11, 0.15), transparent 38%),
+    linear-gradient(145deg, rgba(18, 13, 3, 0.95), rgba(7, 8, 11, 0.98));
+}
+
+.staking-network-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 15px;
+}
+
+.staking-network-title {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.staking-network-title > img {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+.staking-network-title h2 {
+  margin: 2px 0 0;
+  font-size: 21px;
+}
+
+.staking-network-base .staking-network-count {
+  color: #8cb4ff;
+  border: 1px solid rgba(70, 130, 255, 0.35);
+  background: rgba(42, 101, 255, 0.12);
+}
+
+.staking-network-bnb .staking-network-count {
+  color: #f5ce58;
+  border: 1px solid rgba(240, 185, 11, 0.34);
+  background: rgba(240, 185, 11, 0.1);
+}
+
+.staking-network-grid {
+  display: grid;
+  align-items: start;
+  gap: 14px;
+}
+
+.staking-network-grid-base {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.staking-network-grid-bnb {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.staking-market-card,
+.staking-conversion-page .multistake-card {
+  min-width: 0;
+  border-radius: 19px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background:
+    radial-gradient(circle at 20% 0, rgba(255, 255, 255, 0.045), transparent 38%),
+    rgba(4, 7, 13, 0.84);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.03),
+    0 15px 36px rgba(0, 0, 0, 0.16);
+}
+
+.staking-market-card {
+  padding: 17px;
+}
+
+.staking-market-card-eth {
+  border-color: rgba(117, 143, 255, 0.36);
+}
+
+.staking-market-card-hr {
+  border-color: rgba(255, 74, 88, 0.32);
+}
+
+.staking-market-card-head,
+.staking-market-identity {
+  display: flex;
+  align-items: center;
+}
+
+.staking-market-card-head {
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.staking-market-identity {
+  min-width: 0;
+  gap: 11px;
+}
+
+.staking-market-logo-wrap {
+  position: relative;
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
+}
+
+.staking-market-main-logo {
+  width: 46px;
+  height: 46px;
+  display: block;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+.staking-market-hr-logo {
+  object-fit: cover;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.staking-market-network-logo {
+  position: absolute;
+  right: -3px;
+  bottom: -3px;
+  width: 19px;
+  height: 19px;
+  object-fit: contain;
+  border-radius: 50%;
+  border: 2px solid #070b11;
+  background: #070b11;
+}
+
+.staking-market-symbol {
+  font-size: 18px;
+  line-height: 1;
+  font-weight: 950;
+}
+
+.staking-market-network-name {
+  margin-top: 4px;
+  color: rgba(235, 240, 247, 0.55);
+  font-size: 11px;
+}
+
+.staking-market-live-pill {
+  color: #63e7aa;
+  border: 1px solid rgba(99, 231, 170, 0.27);
+  background: rgba(99, 231, 170, 0.08);
+}
+
+.staking-market-reward-title {
+  margin-top: 15px;
+  color: #ff9d19;
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.06em;
+}
+
+.staking-market-reward-copy {
+  min-height: 48px;
+  margin: 6px 0 13px;
+  color: rgba(235, 240, 247, 0.67);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.staking-market-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.staking-market-stat-grid > div,
+.staking-snapshot-grid > div {
+  min-width: 0;
+  padding: 9px 10px;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.staking-market-stat-grid span,
+.staking-snapshot-grid span {
+  display: block;
+  color: rgba(235, 240, 247, 0.52);
+  font-size: 10px;
+}
+
+.staking-market-stat-grid strong,
+.staking-snapshot-grid strong {
+  display: block;
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+  color: #f6f8fb;
+  font-size: 11px;
+}
+
+.staking-market-progress-box {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 145, 0, 0.13);
+  background: rgba(255, 145, 0, 0.04);
+}
+
+.staking-market-progress-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 10px;
+}
+
+.staking-market-progress-head span {
+  color: rgba(235, 240, 247, 0.67);
+}
+
+.staking-market-progress-head strong {
+  color: #ffad32;
+}
+
+.staking-market-progress-track {
+  height: 7px;
+  margin-top: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.staking-market-progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #6f88ff, #ff9d19);
+  box-shadow: 0 0 13px rgba(255, 157, 25, 0.32);
+}
+
+.staking-market-progress-fill-hr {
+  background: linear-gradient(90deg, #ff445c, #ff9d19);
+}
+
+.staking-market-progress-box p {
+  margin: 6px 0 0;
+  color: rgba(235, 240, 247, 0.56);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.staking-market-input-area {
+  margin-top: 11px;
+}
+
+.staking-market-input-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 7px;
+}
+
+.staking-market-input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 12px;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 11px;
+  outline: none;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.staking-market-input:focus {
+  border-color: rgba(255, 157, 25, 0.5);
+  box-shadow: 0 0 0 3px rgba(255, 157, 25, 0.07);
+}
+
+.staking-market-max-btn {
+  min-width: 58px;
+  border: 1px solid rgba(255, 157, 25, 0.27);
+  border-radius: 11px;
+  color: #ffad32;
+  background: rgba(255, 157, 25, 0.07);
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.staking-market-primary-btn,
+.staking-market-secondary-btn,
+.staking-market-unstake-btn {
+  width: 100%;
+  border-radius: 11px;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.staking-market-primary-btn {
+  margin-top: 8px;
+  padding: 12px;
+  border: 0;
+  color: #111;
+  background: linear-gradient(135deg, #ff8300, #ffb536);
+  box-shadow: 0 9px 22px rgba(255, 142, 0, 0.14);
+}
+
+.staking-market-primary-btn:disabled,
+.staking-market-secondary-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+.staking-market-secondary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  margin-top: 8px;
+}
+
+.staking-market-secondary-grid-single {
+  grid-template-columns: 1fr;
+}
+
+.staking-market-secondary-btn,
+.staking-market-unstake-btn {
+  padding: 9px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  color: rgba(245, 247, 250, 0.86);
+  background: rgba(255, 255, 255, 0.035);
+  font-size: 10px;
+}
+
+.staking-market-secondary-btn.is-hot {
+  color: #ffbf54;
+  border-color: rgba(255, 184, 71, 0.31);
+  background: rgba(255, 184, 71, 0.07);
+}
+
+.staking-market-unstake-btn {
+  margin-top: 7px;
+  color: rgba(235, 240, 247, 0.55);
+}
+
+.staking-market-footnote {
+  margin: 8px 0 0;
+  color: rgba(235, 240, 247, 0.52);
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+/* Re-skin the existing new multichain cards inside the grouped market hub. */
+.staking-conversion-page .multistake-card {
+  padding: 17px;
+}
+
+.staking-conversion-page .multistake-copy {
+  min-height: 48px;
+}
+
+.staking-conversion-page .multistake-open-btn {
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+}
+
+.staking-conversion-page .multistake-open-btn:hover,
+.staking-market-primary-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px rgba(255, 145, 0, 0.2);
+}
+
+.staking-motivation-strip {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin: 16px 0;
+  padding: 18px 20px;
+  border: 1px solid rgba(54, 135, 255, 0.28);
+  border-radius: 20px;
+  background:
+    linear-gradient(110deg, rgba(3, 50, 115, 0.48), rgba(49, 16, 86, 0.42)),
+    rgba(5, 9, 17, 0.96);
+}
+
+.staking-motivation-icon {
+  font-size: 28px;
+  filter: drop-shadow(0 0 12px rgba(255, 204, 61, 0.4));
+}
+
+.staking-motivation-strip strong,
+.staking-motivation-strip span {
+  display: block;
+}
+
+.staking-motivation-strip strong {
+  font-size: 16px;
+}
+
+.staking-motivation-strip span {
+  margin-top: 4px;
+  color: rgba(235, 240, 247, 0.62);
+  font-size: 12px;
+}
+
+.staking-insights-grid,
+.staking-support-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.staking-support-grid {
+  margin-top: 16px;
+}
+
+.staking-status-modern,
+.staking-leaderboard-modern,
+.staking-xp-modern,
+.staking-why-modern {
+  min-width: 0;
+  margin: 0;
+  padding: 20px;
+  border-radius: 20px;
+}
+
+.staking-status-modern {
+  border-color: rgba(46, 122, 255, 0.24);
+}
+
+.staking-leaderboard-modern {
+  border-color: rgba(204, 72, 255, 0.23);
+}
+
+.staking-insight-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.staking-insight-title-row h2 {
+  margin: 4px 0 0;
+  font-size: 18px;
+}
+
+.staking-snapshot-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.staking-snapshot-grid > div {
+  padding: 12px;
+}
+
+.staking-snapshot-grid strong {
+  font-size: 13px;
+}
+
+.staking-snapshot-note {
+  margin: 12px 0 0;
+  color: rgba(235, 240, 247, 0.56);
+  font-size: 11px;
+}
+
+.staking-leaderboard-modern .staking-leaderboard-list {
+  padding: 0;
+}
+
+.staking-leaderboard-modern .staking-leaderboard-row {
+  border-radius: 12px;
+}
+
+.staking-why-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.staking-why-grid > div {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.staking-why-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  margin-bottom: 9px;
+  border-radius: 50%;
+  color: #ffb13b;
+  background: rgba(255, 157, 25, 0.11);
+}
+
+.staking-why-grid strong {
+  display: block;
+  font-size: 12px;
+}
+
+.staking-why-grid p {
+  margin: 5px 0 0;
+  color: rgba(235, 240, 247, 0.56);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+@media (max-width: 1180px) {
+  .staking-network-grid-base {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .staking-network-grid-bnb {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 820px) {
+  .staking-conversion-page {
+    padding: 6px 0 28px;
+  }
+
+  .staking-conversion-hero {
+    flex-direction: column;
+    padding: 18px;
+    border-radius: 20px;
+  }
+
+  .staking-conversion-hero-meta {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .staking-network-block {
+    padding: 14px;
+    border-radius: 20px;
+  }
+
+  .staking-network-grid-base,
+  .staking-network-grid-bnb,
+  .staking-insights-grid,
+  .staking-support-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .staking-network-header {
+    align-items: center;
+  }
+
+  .staking-network-title > img {
+    width: 34px;
+    height: 34px;
+  }
+
+  .staking-network-title h2 {
+    font-size: 18px;
+  }
+
+  .staking-market-reward-copy,
+  .staking-conversion-page .multistake-copy {
+    min-height: 0;
+  }
+
+  .staking-snapshot-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .staking-conversion-hero {
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .staking-conversion-hero h1 {
+    font-size: 30px;
+  }
+
+  .staking-conversion-hero-meta {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .staking-network-block {
+    padding: 12px;
+  }
+
+  .staking-network-header {
+    margin-bottom: 12px;
+  }
+
+  .staking-network-grid {
+    gap: 10px;
+  }
+
+  .staking-market-card,
+  .staking-conversion-page .multistake-card {
+    padding: 14px;
+  }
+
+  .staking-market-stat-grid,
+  .staking-snapshot-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .staking-market-secondary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .staking-motivation-strip {
+    align-items: flex-start;
+    padding: 15px;
+  }
+
+  .staking-status-modern,
+  .staking-leaderboard-modern,
+  .staking-xp-modern,
+  .staking-why-modern {
+    padding: 15px;
+  }
+
+  .staking-why-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .staking-leaderboard-modern .staking-leaderboard-row {
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .staking-leader-wallet {
+    font-size: 0.76rem;
+  }
+
+  .staking-leader-amount {
+    font-size: 0.78rem;
+  }
+}
+
+/* =========================================================
+   Multi-chain Milestones + Future Reward Claim Buttons
+   Scoped to the new multichain staking cards only.
+   ========================================================= */
+.multistake-milestone-box {
+  margin-top: 11px;
+  padding: 10px;
+  border: 1px solid rgba(255, 157, 25, 0.14);
+  border-radius: 12px;
+  background: rgba(255, 157, 25, 0.035);
+}
+
+.multistake-milestone-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 10px;
+}
+
+.multistake-milestone-head span {
+  color: rgba(235, 240, 247, 0.68);
+}
+
+.multistake-milestone-head strong {
+  flex: 0 0 auto;
+  color: #ffad32;
+  font-size: 10px;
+}
+
+.multistake-milestone-track {
+  height: 7px;
+  margin-top: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.multistake-milestone-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #627fff, #ff9d19);
+  box-shadow: 0 0 13px rgba(255, 157, 25, 0.3);
+}
+
+.multistake-milestone-box p {
+  margin: 6px 0 0;
+  color: rgba(235, 240, 247, 0.55);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.multistake-reward-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.multistake-reward-btn {
+  width: 100%;
+  min-width: 0;
+  padding: 9px 7px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 10px;
+  color: rgba(235, 240, 247, 0.5);
+  background: rgba(255, 255, 255, 0.028);
+  font-size: 9px;
+  font-weight: 850;
+  line-height: 1.25;
+}
+
+.multistake-reward-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+.multistake-reward-coming-soon {
+  margin-top: 6px;
+  color: rgba(235, 240, 247, 0.38);
+  font-size: 9px;
+  line-height: 1.35;
+  text-align: center;
+}
+
+@media (max-width: 520px) {
+  .multistake-reward-actions {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .multistake-reward-btn {
+    font-size: 8.5px;
+  }
+}
+
+/* =========================================================
+   Layout fix after removing "Your Staking Snapshot"
+   The leaderboard now spans the full row instead of leaving
+   an empty second-column gap.
+   ========================================================= */
+.staking-conversion-page .staking-insights-grid .staking-leaderboard-modern {
+  grid-column: 1 / -1;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   Multi-asset Community Leaderboard Tabs
+   One leaderboard card; the selected asset changes the data.
+   ========================================================= */
+.staking-conversion-page .staking-leaderboard-title-row {
+  margin-bottom: 12px;
+}
+
+.staking-conversion-page .staking-leaderboard-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin: 0 0 16px;
+  padding: 6px;
+  overflow-x: auto;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.025);
+  scrollbar-width: thin;
+}
+
+.staking-conversion-page .staking-leaderboard-tab {
+  flex: 0 0 auto;
+  min-height: 36px;
+  padding: 8px 13px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.035);
+  color: rgba(235, 240, 247, 0.68);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease,
+    background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.staking-conversion-page .staking-leaderboard-tab:hover {
+  transform: translateY(-1px);
+  border-color: rgba(249, 115, 22, 0.42);
+  color: #fff;
+}
+
+.staking-conversion-page .staking-leaderboard-tab.active {
+  border-color: rgba(249, 115, 22, 0.72);
+  background: linear-gradient(
+    135deg,
+    rgba(249, 115, 22, 0.22),
+    rgba(250, 204, 21, 0.08)
+  );
+  color: #fff;
+  box-shadow: 0 0 20px rgba(249, 115, 22, 0.12);
+}
+
+.staking-conversion-page .staking-leaderboard-unavailable {
+  padding: 18px;
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  color: rgba(235, 240, 247, 0.58);
+}
+
+@media (max-width: 640px) {
+  .staking-conversion-page .staking-leaderboard-tabs {
+    gap: 6px;
+    padding: 5px;
+  }
+
+  .staking-conversion-page .staking-leaderboard-tab {
+    min-height: 34px;
+    padding: 7px 10px;
+    font-size: 9.5px;
+  }
+}

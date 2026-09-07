@@ -1000,7 +1000,7 @@ export default function Season2Page({ showToast }) {
                     />
                     <StationDot state={journey.stakeState} />
                     <div className="s2-tl-body">
-                      <div className="s2-tl-title">Stake 0.01 EH</div>
+                      <div className="s2-tl-title">Join Staking </div>
                       <div className="s2-tl-sub muted">
                         {journey.stakeState === "locked"
                           ? "Locked — verify wallet first"

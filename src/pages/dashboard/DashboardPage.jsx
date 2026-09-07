@@ -14,10 +14,6 @@ import {
   Pie,
   Cell,
   Tooltip,
-  AreaChart,
-  Area,
-  BarChart,
-  Bar,
 } from "recharts";
 
 import { BASE_CHAIN_ID } from "../../lib/constants.js";
@@ -39,27 +35,6 @@ const tokenomicsData = [
   { name: "Marketing & Community", value: 10, tokens: "10M", color: "#FF9100" },
   { name: "Staking Rewards", value: 4, tokens: "4M", color: "#00E676" },
   { name: "Strategic Partners & Advisors", value: 4, tokens: "4M", color: "#1DE9B6" },
-];
-
-// TVL Growth (جماليات)
-const tvlHistory = [
-  { day: "Launch", tvl: 800 },
-  { day: "Week 1", tvl: 3200 },
-  { day: "Week 2", tvl: 6800 },
-  { day: "Week 3", tvl: 13700 },
-  { day: "Week 4", tvl: 20900 },
-  { day: "Now", tvl: 35820 },
-  { day: "Now", tvl: 39120 },
-];
-
-// APY History (جماليات)
-const apyHistory = [
-  { month: "Jan", apy: 180 },
-  { month: "Feb", apy: 290 },
-  { month: "Mar", apy: 380 },
-  { month: "Apr", apy: 520 },
-  { month: "Now", apy: 689 },
-  { month: "Now+", apy: 792 },
 ];
 
 const CustomTooltip = ({ active, payload }) => {
@@ -148,11 +123,17 @@ const DashboardPage = () => {
     ? Number(formatUnits(claimableAirdropRaw, 18))
     : 0;
 
-  // (اختياري للعرض) — إجمالي ما يملكه المستخدم من HR على داشبورد
-  const totalOwnedHR = presaleTotalHr + baseAllocation;
-  const totalClaimedHR = presaleClaimedHr + claimableAirdropHR;
+  // بيانات Legacy محفوظة كما هي حاليًا لعدم حذف أي منطق بدون إذن.
+  // لا نعتمد عليها في شريط التقدم لأن claimableAirdropHR ليست قيمة "تم استلامها".
+  const _totalOwnedHR = presaleTotalHr + baseAllocation;
+  const _totalClaimedHR = presaleClaimedHr + claimableAirdropHR;
+
+  // نسبة Claim الصحيحة المعروضة هنا تخص Presale فقط:
+  // HR المستلمة ÷ إجمالي HR المشتراة.
   const claimProgress =
-    totalOwnedHR > 0 ? (totalClaimedHR / totalOwnedHR) * 100 : 0;
+    presaleTotalHr > 0
+      ? Math.min((presaleClaimedHr / presaleTotalHr) * 100, 100)
+      : 0;
 
   // زر ينزلك على زر Claim Rewards في صفحة staking
   const handleGoToClaimRewards = () => {
@@ -161,69 +142,218 @@ const DashboardPage = () => {
 
   return (
     <div className="dashboard-page">
-      {/* 🔥 الصف الجديد الفخم في الأعلى 🔥 */}
-      <div className="dash-stats-row">
-        {/* TVL Card */}
-        <div className="card dash-mega-card tvl-card">
-          <div className="mega-card-header">
-            <h3>Total Value Locked</h3>
-            <span className="mega-value">39,120 ETH</span>
+      {/* ===== REIGNITION STATUS ===== */}
+      <section className="dash-reignition-card" aria-label="HeatRush platform status">
+        <div className="dash-reignition-glow" aria-hidden="true" />
+
+        <div className="dash-reignition-copy">
+          <div className="dash-reignition-kicker">
+            <span className="dash-live-dot" aria-hidden="true" />
+            HEATRUSH REIGNITION
           </div>
 
-          <ResponsiveContainer width="100%" height={140}>
-            <AreaChart data={tvlHistory}>
-              <defs>
-                <linearGradient id="tvlGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#FF6200" stopOpacity={0.7} />
-                  <stop offset="95%" stopColor="#FF6200" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <Area
-                type="monotone"
-                dataKey="tvl"
-                stroke="#FF6200"
-                strokeWidth={3}
-                fill="url(#tvlGrad)"
-              />
-              <Tooltip
-                contentStyle={{
-                  background: "#0f0f1f",
-                  border: "1px solid #FF6200",
-                  borderRadius: 8,
-                }}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+          <h1 className="dash-reignition-title">
+            The infrastructure is <span>live.</span>
+          </h1>
+
+          <p className="dash-reignition-text">
+            HeatRush is moving into its next phase with active Base infrastructure,
+            staking access, Season 2 participation, and the next ecosystem modules
+            being prepared step by step.
+          </p>
+
+          <div className="dash-reignition-actions">
+            <Link to="/staking" className="dash-reignition-btn primary">
+              Stake Assets
+            </Link>
+            <Link to="/season2" className="dash-reignition-btn secondary">
+              Explore Season 2
+            </Link>
+            <button
+              type="button"
+              className="dash-reignition-btn secondary"
+              onClick={handleGoToClaimRewards}
+            >
+              Claim Rewards
+            </button>
+          </div>
         </div>
 
-        {/* APY Card */}
-        <div className="card dash-mega-card apy-card">
-          <div className="mega-card-header">
-            <h3>Current Staking APY</h3>
-            <span className="mega-value insane">697%</span>
+        <div className="dash-reignition-statuses">
+          <div className="dash-status-row">
+            <div>
+              <span className="dash-status-name">Base + BNB Chain</span>
+              <span className="dash-status-detail">Multi-chain staking live</span>
+            </div>
+            <span className="dash-status-badge live">LIVE</span>
           </div>
-          <ResponsiveContainer width="100%" height={140}>
-            <BarChart data={apyHistory}>
-              <Bar dataKey="apy" fill="#b66701ff" radius={[30, 30, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+
+          <div className="dash-status-row">
+            <div>
+              <span className="dash-status-name">Staking</span>
+              <span className="dash-status-detail">7 staking markets</span>
+            </div>
+            <span className="dash-status-badge live">ACTIVE</span>
+          </div>
+
+          <div className="dash-status-row">
+            <div>
+              <span className="dash-status-name">Season 2</span>
+              <span className="dash-status-detail">Participation hub</span>
+            </div>
+            <span className="dash-status-badge ready">AVAILABLE</span>
+          </div>
         </div>
+      </section>
+
+
+{/* ===== NEW MULTI-CHAIN STAKING DISCOVERY ===== */}
+<section className="dash-multichain-staking" aria-label="New multi-chain staking markets">
+  <div className="dash-multichain-head">
+    <div>
+      <div className="dash-multichain-kicker">
+        <span className="dash-live-dot" aria-hidden="true" />
+        NEW • MULTI-CHAIN STAKING
       </div>
+      <h2>Stake across Base &amp; BNB Chain</h2>
+      <p>
+        7 staking markets are now available. Choose your asset, build XP,
+        and qualify for HeatRush rewards.
+      </p>
+    </div>
 
+    <Link to="/staking" className="dash-multichain-main-cta">
+      Explore All Markets →
+    </Link>
+  </div>
 
+  <div className="dash-multichain-network dash-multichain-network-base">
+    <div className="dash-multichain-network-title">
+      <img src="/baselogo.png" alt="Base" />
+      <div>
+        <span>BASE</span>
+        <strong>Base Chain</strong>
+      </div>
+    </div>
 
-{/* ===== QUICK STAKE BUTTONS (NEW) ===== */}
-<div className="dash-stake-actions">
-  <Link to="/staking" className="dash-stake-btn eth">
-    <img src="/eth.svg" alt="ETH" className="dash-stake-icon" />
-    <span>Stake ETH</span>
-  </Link>
+    <div className="dash-multichain-market-grid dash-multichain-market-grid-base">
+      <Link to="/staking" className="dash-multichain-market">
+        <div className="dash-multichain-market-main">
+          <img src="/ethlogo.png" alt="ETH" />
+          <div>
+            <strong>ETH</strong>
+            <span>Stake ETH</span>
+          </div>
+        </div>
+        <div className="dash-multichain-market-apy">
+          <span>APY</span>
+          <strong>2% - 4%</strong>
+        </div>
+      </Link>
 
-  <Link to="/staking" className="dash-stake-btn hr hr-glow">
-    <img src={TokensImg} alt="HR" className="dash-stake-icon" />
-    <span>Stake HR</span>
-  </Link>
-</div>
+      <Link to="/staking" className="dash-multichain-market">
+        <div className="dash-multichain-market-main">
+          <img src={TokensImg} alt="HR" />
+          <div>
+            <strong>HR</strong>
+            <span>Stake HR</span>
+          </div>
+        </div>
+        <div className="dash-multichain-market-apy">
+          <span>APY</span>
+          <strong>70%</strong>
+        </div>
+      </Link>
+
+      <Link to="/staking" className="dash-multichain-market">
+        <div className="dash-multichain-market-main">
+          <img src="/usdclogo.png" alt="USDC" />
+          <div>
+            <strong>USDC</strong>
+            <span>Stake USDC</span>
+          </div>
+        </div>
+        <div className="dash-multichain-market-apy">
+          <span>APY</span>
+          <strong>5% - 30%</strong>
+        </div>
+      </Link>
+    </div>
+  </div>
+
+  <div className="dash-multichain-network dash-multichain-network-bnb">
+    <div className="dash-multichain-network-title">
+      <img src="/smartchainlogo.png" alt="BNB Chain" />
+      <div>
+        <span>BNB</span>
+        <strong>BNB Chain</strong>
+      </div>
+    </div>
+
+    <div className="dash-multichain-market-grid dash-multichain-market-grid-bnb">
+      <Link to="/staking" className="dash-multichain-market">
+        <div className="dash-multichain-market-main">
+          <img src="/smartchainlogo.png" alt="BNB" />
+          <div>
+            <strong>BNB</strong>
+            <span>Stake BNB</span>
+          </div>
+        </div>
+        <div className="dash-multichain-market-apy">
+          <span>APY</span>
+          <strong>17% - 32.5%</strong>
+        </div>
+      </Link>
+
+      <Link to="/staking" className="dash-multichain-market">
+        <div className="dash-multichain-market-main">
+          <img src="/btclogo.png" alt="BTCB" />
+          <div>
+            <strong>BTCB</strong>
+            <span>Stake BTCB</span>
+          </div>
+        </div>
+        <div className="dash-multichain-market-apy">
+          <span>APY</span>
+          <strong>18% - 37%</strong>
+        </div>
+      </Link>
+
+      <Link to="/staking" className="dash-multichain-market">
+        <div className="dash-multichain-market-main">
+          <img src="/bitcoinLogo.png" alt="USDT" />
+          <div>
+            <strong>USDT</strong>
+            <span>Stake USDT</span>
+          </div>
+        </div>
+        <div className="dash-multichain-market-apy">
+          <span>APY</span>
+          <strong>6% - 33%</strong>
+        </div>
+      </Link>
+
+      <Link to="/staking" className="dash-multichain-market">
+        <div className="dash-multichain-market-main">
+          <img src="/usdclogo.png" alt="USDC" />
+          <div>
+            <strong>USDC</strong>
+            <span>Stake USDC</span>
+          </div>
+        </div>
+        <div className="dash-multichain-market-apy">
+          <span>APY</span>
+          <strong>7.4% - 29%</strong>
+        </div>
+      </Link>
+    </div>
+  </div>
+
+  <div className="dash-multichain-footer">
+    <span>Stake • Earn XP • Qualify for HR Rewards</span>
+    <Link to="/staking">Open Staking →</Link>
+  </div>
+</section>
 
 
 
@@ -302,6 +432,60 @@ const DashboardPage = () => {
 
 
 
+
+
+      {/* ===== ECOSYSTEM STATUS ===== */}
+      <section className="dash-ecosystem-section" aria-label="HeatRush ecosystem">
+        <div className="dash-section-heading">
+          <div>
+            <span className="dash-section-kicker">PLATFORM STATUS</span>
+            <h2>HeatRush Ecosystem</h2>
+          </div>
+          <p>Core areas of the platform and their current rollout status.</p>
+        </div>
+
+        <div className="dash-ecosystem-grid">
+          <Link to="/staking" className="dash-ecosystem-card">
+            <div className="dash-ecosystem-top">
+              <span className="dash-ecosystem-icon">S</span>
+              <span className="dash-status-badge live">LIVE</span>
+            </div>
+            <h3>Staking</h3>
+            <p>Stake across Base and BNB Chain with 7 active staking markets.</p>
+            <span className="dash-ecosystem-link">Open Staking →</span>
+          </Link>
+
+          <Link to="/season2" className="dash-ecosystem-card">
+            <div className="dash-ecosystem-top">
+              <span className="dash-ecosystem-icon">2</span>
+              <span className="dash-status-badge ready">AVAILABLE</span>
+            </div>
+            <h3>Season 2</h3>
+            <p>Follow Season 2 participation, progress, and platform activity.</p>
+            <span className="dash-ecosystem-link">Explore Season 2 →</span>
+          </Link>
+
+          <Link to="/tasks" className="dash-ecosystem-card">
+            <div className="dash-ecosystem-top">
+              <span className="dash-ecosystem-icon">T</span>
+              <span className="dash-status-badge ready">AVAILABLE</span>
+            </div>
+            <h3>Tasks</h3>
+            <p>Complete active platform tasks and continue building your profile.</p>
+            <span className="dash-ecosystem-link">View Tasks →</span>
+          </Link>
+
+          <Link to="/nodes" className="dash-ecosystem-card upcoming">
+            <div className="dash-ecosystem-top">
+              <span className="dash-ecosystem-icon">N</span>
+              <span className="dash-status-badge upcoming">COMING NEXT</span>
+            </div>
+            <h3>Founders Node</h3>
+            <p>The Nodes module is visible now and scheduled for the next activation step.</p>
+            <span className="dash-ecosystem-link">Preview Nodes →</span>
+          </Link>
+        </div>
+      </section>
 
 
       {/* MAIN GRID */}
@@ -436,6 +620,36 @@ const DashboardPage = () => {
               <span className="dash-stat-value">
                 {presaleClaimableHR > 0 ? `${presaleClaimableHR.toLocaleString("en-US")} HR` : "0 HR"}
               </span>
+            </div>
+          </div>
+
+          <div className="dash-claim-progress">
+            <div className="dash-claim-progress-head">
+              <div>
+                <span className="dash-claim-progress-label">Claim Progress</span>
+                <span className="dash-claim-progress-detail">
+                  {presaleClaimedHr.toLocaleString("en-US")} HR claimed of{" "}
+                  {presaleTotalHr.toLocaleString("en-US")} HR
+                </span>
+              </div>
+
+              <span className="dash-claim-progress-percent">
+                {claimProgress.toFixed(1)}%
+              </span>
+            </div>
+
+            <div
+              className="dash-claim-progress-track"
+              role="progressbar"
+              aria-label="Presale claim progress"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow={Number(claimProgress.toFixed(1))}
+            >
+              <div
+                className="dash-claim-progress-fill"
+                style={{ width: `${claimProgress}%` }}
+              />
             </div>
           </div>
 
