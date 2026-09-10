@@ -64,11 +64,13 @@ export default function FuelRunPage({ showToast }) {
 
   const [status, setStatus] = useState("idle");
   const [playerLane, setPlayerLane] = useState(1);
-  const [items, setItems] = useState([]);
-  const [score, setScore] = useState(0);
-  const [fuel, setFuel] = useState(100);
-  const [timeLeft, setTimeLeft] = useState(30);
-  const [combo, setCombo] = useState(0);
+  const [game, setGame] = useState({
+    items: [],
+    score: 0,
+    fuel: 100,
+    timeLeft: 30,
+    combo: 0,
+  });
   const [bestScore, setBestScore] = useState(() => {
     try {
       return Number(window.localStorage.getItem("hr_fuel_run_best") || 0);
@@ -82,6 +84,7 @@ export default function FuelRunPage({ showToast }) {
   const lastSpawnRef = useRef(0);
   const pointerStartRef = useRef(null);
   const statusRef = useRef(status);
+  const { items, score, fuel, timeLeft, combo } = game;
 
   const { data: stakedRaw } = useReadContract({
     abi: STAKING_ABI,
@@ -147,7 +150,7 @@ export default function FuelRunPage({ showToast }) {
 
   const finishRun = useCallback(() => {
     setStatus("complete");
-    setItems([]);
+    setGame((current) => ({ ...current, items: [] }));
   }, []);
 
   useEffect(() => {
@@ -157,21 +160,12 @@ export default function FuelRunPage({ showToast }) {
       const now = Date.now();
       const elapsed = now - startTimeRef.current;
       const remainingMs = Math.max(0, RUN_DURATION_MS - elapsed);
-      setTimeLeft(Math.ceil(remainingMs / 1000));
 
-      if (remainingMs <= 0) {
-        finishRun();
-        return;
-      }
-
-      setFuel((currentFuel) => {
-        const nextFuel = Math.max(0, currentFuel - 0.085);
-        if (nextFuel <= 0) finishRun();
-        return nextFuel;
-      });
-
-      setItems((currentItems) => {
-        let workingItems = currentItems;
+      setGame((current) => {
+        let workingItems = current.items;
+        let nextFuel = Math.max(0, current.fuel - 0.085);
+        let nextCombo = current.combo;
+        let nextScore = current.score;
 
         if (now - lastSpawnRef.current >= 620) {
           const lane = LANES[Math.floor(Math.random() * LANES.length)];
@@ -197,15 +191,13 @@ export default function FuelRunPage({ showToast }) {
           if (didCollide) {
             const config = ITEM_CONFIG[moved.type];
             if (moved.type === "obstacle") {
-              setCombo(0);
-              setFuel((value) => Math.max(0, value + config.fuel));
+              nextCombo = 0;
+              nextFuel = Math.max(0, nextFuel + config.fuel);
             } else {
-              setCombo((value) => value + 1);
-              setFuel((value) => Math.min(100, value + config.fuel));
-              setScore((value) => {
-                const multiplier = combo >= 9 ? 3 : combo >= 4 ? 2 : 1;
-                return value + config.score * multiplier;
-              });
+              nextCombo += 1;
+              nextFuel = Math.min(100, nextFuel + config.fuel);
+              const multiplier = nextCombo >= 10 ? 3 : nextCombo >= 5 ? 2 : 1;
+              nextScore += config.score * multiplier;
             }
             return;
           }
@@ -213,12 +205,24 @@ export default function FuelRunPage({ showToast }) {
           if (moved.y <= 105) survivors.push(moved);
         });
 
-        return survivors;
+        return {
+          items: survivors,
+          score: nextScore,
+          fuel: nextFuel,
+          timeLeft: Math.ceil(remainingMs / 1000),
+          combo: nextCombo,
+        };
       });
     }, TICK_MS);
 
     return () => window.clearInterval(timer);
-  }, [combo, finishRun, playerLane, status]);
+  }, [playerLane, status]);
+
+  useEffect(() => {
+    if (status === "running" && (timeLeft <= 0 || fuel <= 0)) {
+      finishRun();
+    }
+  }, [finishRun, fuel, status, timeLeft]);
 
   useEffect(() => {
     if (status !== "complete") return;
@@ -257,11 +261,13 @@ export default function FuelRunPage({ showToast }) {
   const startRun = () => {
     setStatus("running");
     setPlayerLane(1);
-    setItems([]);
-    setScore(0);
-    setFuel(100);
-    setTimeLeft(30);
-    setCombo(0);
+    setGame({
+      items: [],
+      score: 0,
+      fuel: 100,
+      timeLeft: 30,
+      combo: 0,
+    });
     startTimeRef.current = Date.now();
     lastSpawnRef.current = Date.now() - 400;
   };
