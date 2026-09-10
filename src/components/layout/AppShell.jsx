@@ -21,6 +21,7 @@ import {
   Activity,
   X,
   Menu,
+  Gamepad2,
 } from "lucide-react";
 
 const AppShell = ({ children, toast }) => {
@@ -41,6 +42,7 @@ const AppShell = ({ children, toast }) => {
     if (location.pathname.startsWith("/profile")) return "PROFILE";
     if (location.pathname.startsWith("/referral")) return "INVITE FRIENDS";
     if (location.pathname.startsWith("/tasks")) return "TASKS";
+    if (location.pathname.startsWith("/fuel-run")) return "FUEL RUN";
     if (location.pathname.startsWith("/staking")) return "STAKING";
     if (location.pathname.startsWith("/airdrop")) return "AIRDROP";
     if (location.pathname.startsWith("/season2")) return "SEASON 2";
@@ -241,6 +243,28 @@ const AppShell = ({ children, toast }) => {
 
             <span className="side-nav-label">
               Tasks
+            </span>
+          </Link>
+
+          <Link
+            to="/fuel-run"
+            className={
+              location.pathname === "/fuel-run"
+                ? "active"
+                : ""
+            }
+            onClick={closeMenu}
+          >
+            <span className="side-nav-icon">
+              <Gamepad2 size={16} />
+            </span>
+
+            <span className="side-nav-label">
+              Fuel Run
+            </span>
+
+            <span className="nav-live-badge">
+              PLAY
             </span>
           </Link>
 
