@@ -292,7 +292,7 @@ const LandingPage = () => {
               <div className="ecosystem-core-ring ecosystem-core-ring-two" />
 
               <div className="ecosystem-core-token ecosystem-core-token-coin">
-                <img src="/coin.png" alt="HeatRush HR token" />
+                <img src="/coin.webp" alt="HeatRush HR token" />
               </div>
 
               {economyNodes.map(({ icon: Icon, label }, index) => (
@@ -387,7 +387,7 @@ const LandingPage = () => {
 
               <div className="hr-token hr-token-3d">
                 <div className="hr-token-coin-wrap">
-                  <img src="/coin.png" alt="HeatRush HR token" />
+                  <img src="/coin.webp" alt="HeatRush HR token" />
                   <span className="hr-token-edge" />
                 </div>
               </div>
@@ -591,7 +591,7 @@ const LandingPage = () => {
     {supportedAssets.map((asset) => {
       const assetLogo = {
         ETH: "/ethlogo.png",
-        HR: "/coin.png",
+        HR: "/coin.webp",
         USDC: "/usdclogo.png",
         BNB: "/smartchainlogo.png",
         BTCB: "/btclogo.png",
