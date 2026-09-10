@@ -16,14 +16,11 @@ const NodesPage = () => {
       <div className="card nodes-hero-card">
         <div className="nodes-hero-left">
           <h1 className="nodes-title">
-            HeatRush <span className="orange">Nodes</span> & Boosters
+            HeatRush <span className="orange">Nodes</span> <small>COMING SOON</small>
           </h1>
           <p className="nodes-subtitle">
-            Nodes are long-term boosters for your on-chain identity inside
-            HeatRush. They don&apos;t just sit in your wallet – they amplify
-            your <span className="orange">XP</span>,{" "}
-            <span className="orange">tiers</span>, and future{" "}
-            <span className="orange">$HR</span> chances.
+            Preview the planned node tiers and the future benefits connected
+            to your HeatRush activity.
           </p>
 
           <ul className="nodes-hero-list">
@@ -144,7 +141,7 @@ const NodesPage = () => {
             <li>Reserved for early season addresses once live.</li>
           </ul>
 
-          <button className="node-cta-btn">
+          <button className="node-cta-btn disabled" disabled>
             Coming soon · On-chain node purchase
           </button>
 
@@ -188,7 +185,7 @@ const NodesPage = () => {
             <li>Intended for active, long-term ecosystem participants.</li>
           </ul>
 
-          <button className="node-cta-btn">
+          <button className="node-cta-btn disabled" disabled>
             Coming soon · Node contract integration
           </button>
 

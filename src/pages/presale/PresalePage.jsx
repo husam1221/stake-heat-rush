@@ -244,12 +244,12 @@ const PresalePage = ({ showToast }) => {
       <section className="presale-hero-3d">
         <div className="presale-hero-3d-left">
           <h3 className="presale-title-3d">
-            Public Presale - Buy <HRTag />
+            Buy <HRTag />
           </h3>
 
           <p className="presale-subtitle-3d">
-            Jump into the presale, lock your HR at a fixed rate, and be
-            early to the HeatRush ecosystem before TGE.
+            Enter an ETH amount, review how much HR you receive, and confirm
+            the purchase from your wallet on Base.
           </p>
 
           <div className="presale-hero-badges">
@@ -301,19 +301,25 @@ const PresalePage = ({ showToast }) => {
         </div>
       </section>
 
+      <section className="presale-buy-guide" aria-label="How to buy HR">
+        <div><span>1</span><strong>Connect on Base</strong><small>Use the wallet button above</small></div>
+        <div><span>2</span><strong>Enter ETH amount</strong><small>Review your HR estimate</small></div>
+        <div><span>3</span><strong>Buy and claim HR</strong><small>Confirm through the official contract</small></div>
+      </section>
+
       {/* MAIN 3D GRID */}
       <section className="presale-main-3d">
         {/* LEFT 3D CARD – BUY */}
         <div className="presale-3d-card presale-3d-left">
-          <h4 className="presale-3d-title">Contribute to the presale</h4>
+          <h4 className="presale-3d-title">Choose how much HR to buy</h4>
           <p className="presale-3d-sub">
-            Choose how much ETH you want to contribute. You can stack multiple
-            buys up to the 2 ETH cap.
+            Enter the ETH amount you want to use. The HR estimate updates
+            before you confirm.
           </p>
 
           <div className="presale-input-row">
             <div className="presale-input-group">
-              <label className="presale-label">Contribution ( ETH )</label>
+              <label className="presale-label">You pay (ETH)</label>
 
               <div className="input-row">
                 <input
@@ -368,7 +374,7 @@ const PresalePage = ({ showToast }) => {
               </div>
 
               <div className="presale-summary-item">
-                <span className="presale-summary-label">You Receive</span>
+                <span className="presale-summary-label">You receive</span>
                 <span className="presale-summary-value">
                   {formattedHrEstimate ? (
                     <>

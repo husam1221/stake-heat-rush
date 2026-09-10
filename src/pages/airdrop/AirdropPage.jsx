@@ -299,22 +299,19 @@ https://heatrush.xyz
 
   return (
     <div className="airdrop-page">
-      {/* ===== Hero Card أعلى الصفحة ===== */}
-
-      {/* ✅ Season 2 Live Card (3D Tilt) */}
-      <Tilt3DCard
-        to="/season2"
-        kickerIcon={<Layers size={16} />}
-        kickerText="Season 2"
-        title="Season 2 is live"
-        subtitle="Follow the eligibility path: Verify wallet → Stake → Earn XP → Presale ≥ 100 HR."
-        buttonText="Go to Season 2"
-      />
+      <nav className="rewards-switcher" aria-label="HeatRush rewards sections">
+        <Link to="/season2">
+          <span>SEASON 2</span><strong>Progress &amp; Eligibility</strong>
+        </Link>
+        <Link to="/airdrop" className="active">
+          <span>SEASON 1</span><strong>Airdrop &amp; Claim</strong>
+        </Link>
+      </nav>
 
       <div className="card airdrop-hero-card">
         <div className="airdrop-hero-main">
           <div>
-            <h1 className="airdrop-hero-title">$HR Airdrop Center</h1>
+            <h1 className="airdrop-hero-title">Season 1 Airdrop &amp; Claim</h1>
             <p className="airdrop-hero-subtitle">
               Track your personal allocation, unlock schedule, and claim status
               - all in one place.

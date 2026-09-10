@@ -14,8 +14,18 @@ const FaqPage = () => {
         </p>
       </div>
 
+      <nav className="faq-quick-nav" aria-label="FAQ categories">
+        <a href="#faq-general">General</a>
+        <a href="#faq-airdrop">Airdrop</a>
+        <a href="#faq-buy">Buy HR</a>
+        <a href="#faq-staking">Staking &amp; XP</a>
+        <a href="#faq-referrals">Referrals</a>
+        <a href="#faq-security">Security</a>
+        <a href="#faq-nodes">Nodes</a>
+      </nav>
+
       {/* SECTION: GENERAL */}
-      <section className="faq-section">
+      <section id="faq-general" className="faq-section">
         <h2 className="faq-section-title">General</h2>
 
         <div className="faq-item">
@@ -39,7 +49,7 @@ const FaqPage = () => {
       </section>
 
       {/* SECTION: AIRDROP & TGE */}
-      <section className="faq-section">
+      <section id="faq-airdrop" className="faq-section">
         <h2 className="faq-section-title">Airdrop & TGE</h2>
 
         <div className="faq-item">
@@ -79,24 +89,11 @@ const FaqPage = () => {
           </p>
         </div>
 
-        {/* نفس السؤال بالعربي */}
-        <div className="faq-item">
-          <h3 className="faq-question">
-           Q: Why am I not eligible in the snapshot check?
-
-            </h3>
-          <p className="faq-answer">
-            A: If the Airdrop page shows that you are not eligible, 
-            it means your wallet did not appear in the original campaign snapshot or 
-            it violated the campaign rules. 
-            You can still earn HR point
-          </p>
-        </div>
       </section>
 
       {/* SECTION: PRESALE */}
-      <section className="faq-section">
-        <h2 className="faq-section-title">Presale</h2>
+      <section id="faq-buy" className="faq-section">
+        <h2 className="faq-section-title">Buy HR</h2>
 
         <div className="faq-item">
           <h3 className="faq-question">How does the public presale work?</h3>
@@ -121,7 +118,7 @@ const FaqPage = () => {
       </section>
 
       {/* SECTION: STAKING & XP */}
-      <section className="faq-section">
+      <section id="faq-staking" className="faq-section">
         <h2 className="faq-section-title">Staking, XP & Tasks</h2>
 
         <div className="faq-item">
@@ -147,7 +144,7 @@ const FaqPage = () => {
       </section>
 
       {/* SECTION: REFERRALS (محدث بالكامل) */}
-      <section className="faq-section">
+      <section id="faq-referrals" className="faq-section">
         <h2 className="faq-section-title">Referrals</h2>
 
         <div className="faq-item">
@@ -211,7 +208,7 @@ const FaqPage = () => {
       </section>
 
       {/* SECTION: SECURITY & WALLETS */}
-      <section className="faq-section">
+      <section id="faq-security" className="faq-section">
         <h2 className="faq-section-title">Security &amp; Wallets</h2>
 
         <div className="faq-item">
@@ -252,7 +249,7 @@ const FaqPage = () => {
       </section>
 
       {/* SECTION: NODES (COMING SOON) */}
-      <section className="faq-section">
+      <section id="faq-nodes" className="faq-section">
         <h2 className="faq-section-title">Nodes (Coming Soon)</h2>
 
         <div className="faq-item">

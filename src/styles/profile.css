@@ -854,3 +854,19 @@
   width: 16px;
   height: 16px;
 }
+.profile-action-panel { display: grid; grid-template-columns: minmax(190px,.55fr) minmax(0,1.45fr); align-items: center; gap: 18px; padding: 18px; border: 1px solid rgba(255,138,38,.18); border-radius: 18px; background: rgba(255,138,38,.045); }
+.profile-action-heading > span { color: #ff9c32; font-size: 9px; font-weight: 900; letter-spacing: .14em; }
+.profile-action-heading h2 { margin: 5px 0 0; font-size: 18px; }
+.profile-action-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+.profile-action-grid a { display: grid; gap: 4px; padding: 12px; border: 1px solid rgba(255,255,255,.08); border-radius: 11px; background: rgba(255,255,255,.025); color: #fff; text-decoration: none; }
+.profile-action-grid a:hover { border-color: rgba(255,138,38,.45); background: rgba(255,138,38,.08); }
+.profile-action-grid strong { font-size: 12px; }
+.profile-action-grid span { color: rgba(255,255,255,.5); font-size: 10px; }
+.profile-top-summary { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
+.profile-top-summary > .profile-stat-row { margin: 0; padding: 15px; border: 1px solid rgba(255,255,255,.08); border-radius: 14px; background: rgba(255,255,255,.025); }
+@media (max-width: 760px) {
+  .profile-action-panel { grid-template-columns: 1fr; }
+}
+@media (max-width: 520px) {
+  .profile-action-grid,.profile-top-summary { grid-template-columns: 1fr; }
+}

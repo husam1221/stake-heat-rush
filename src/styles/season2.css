@@ -1215,3 +1215,13 @@
 
 
 
+.rewards-switcher { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; margin-bottom: 18px; padding: 7px; border: 1px solid rgba(255,255,255,.09); border-radius: 16px; background: rgba(255,255,255,.025); }
+.rewards-switcher a { display: grid; gap: 3px; padding: 13px 15px; border: 1px solid transparent; border-radius: 11px; color: rgba(255,255,255,.62); text-decoration: none; }
+.rewards-switcher a > span { font-size: 9px; font-weight: 900; letter-spacing: .14em; }
+.rewards-switcher a > strong { font-size: 13px; }
+.rewards-switcher a.active { border-color: rgba(255,98,0,.42); background: rgba(255,98,0,.11); color: #fff; }
+.s2-focus-title { margin: 0 0 8px; font-size: clamp(1.8rem,4vw,3rem); }
+.s2-focus-copy { max-width: 650px; margin: 0; color: rgba(255,255,255,.62); line-height: 1.6; }
+@media (max-width: 580px) {
+  .rewards-switcher { grid-template-columns: 1fr; }
+}

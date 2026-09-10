@@ -115,6 +115,20 @@ const ReferralPage = ({ showToast }) => {
       });
   };
 
+  const shareInvite = (platform) => {
+    if (!referralUrl) return;
+    const url = encodeURIComponent(referralUrl);
+    const text = encodeURIComponent(
+      "Join me on HeatRush and start building your Web3 position."
+    );
+    const shareUrls = {
+      x: `https://x.com/intent/tweet?text=${text}&url=${url}`,
+      telegram: `https://t.me/share/url?url=${url}&text=${text}`,
+      whatsapp: `https://wa.me/?text=${text}%20${url}`,
+    };
+    window.open(shareUrls[platform], "_blank", "noopener,noreferrer");
+  };
+
   const totalReferrals = stats?.totals?.totalReferrals ?? 0;
   const totalQualified = stats?.totals?.totalQualified ?? 0;
   const pointsFromReferrals = stats?.totals?.pointsFromReferrals ?? 0;
@@ -271,6 +285,17 @@ const ReferralPage = ({ showToast }) => {
                     Copy link
                   </button>
                 </div>
+              </div>
+
+              <div className="referral-share-row" aria-label="Share invite link">
+                <button type="button" onClick={() => shareInvite("x")}>Share on X</button>
+                <button type="button" onClick={() => shareInvite("telegram")}>Telegram</button>
+                <button type="button" onClick={() => shareInvite("whatsapp")}>WhatsApp</button>
+              </div>
+
+              <div className="referral-qualify-box">
+                <strong>How your friend becomes qualified</strong>
+                <span>They qualify by staking, joining the HR sale, or reaching the required XP.</span>
               </div>
 
               <p className="referral-note">

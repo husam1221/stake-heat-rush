@@ -362,8 +362,8 @@ const ProfilePage = () => {
           
           <h1 className="profile-title">My HeatRush Profile</h1>
           <p className="profile-subtitle">
-            Track your staking progress, airdrop snapshot, presale position, referrals and
-            both on-chain & off-chain XP inside the HeatRush ecosystem.
+            See your Points, XP, activity, rewards, and the actions that grow
+            your HeatRush position.
           </p>
         </div>
       </div>
@@ -389,6 +389,19 @@ const ProfilePage = () => {
           </div>
       
       </div>
+
+      <section className="profile-action-panel" aria-label="Profile quick actions">
+        <div className="profile-action-heading">
+          <span>KEEP GROWING</span>
+          <h2>Choose your next action</h2>
+        </div>
+        <div className="profile-action-grid">
+          <a href="/staking"><strong>Stake Assets</strong><span>Build XP and rewards →</span></a>
+          <a href="/presale"><strong>Buy HR</strong><span>Grow your HR position →</span></a>
+          <a href="/referral"><strong>Invite Friends</strong><span>Earn referral bonuses →</span></a>
+          <a href="/tasks"><strong>Complete Tasks</strong><span>Collect Points and XP →</span></a>
+        </div>
+      </section>
 
       {/* GRID */}
       <div className="profile-grid">
@@ -576,8 +589,8 @@ const ProfilePage = () => {
         {/* CARD 4 — Presale & Future Rewards */}
         <div className="card profile-card">
           <div className="profile-card-header">
-            <h2>Presale & Future Rewards</h2>
-            <span className="profile-chip gold">On-chain Presale</span>
+            <h2>HR Purchase &amp; Claim</h2>
+            <span className="profile-chip gold">On-chain</span>
           </div>
 
           <div className="profile-stat-row">
@@ -618,11 +631,11 @@ const ProfilePage = () => {
           </div>
 
           <p className="profile-card-note">
-            Your presale HR is fully on-chain and ready to claim anytime.
+            Your purchased HR and claim status are tracked on-chain.
           </p>
 
           <a href="/presale" className="profile-cta-link">
-            → Go to Presale page
+            → Open Buy HR
           </a>
         </div>
 

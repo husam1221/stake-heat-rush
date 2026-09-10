@@ -140,8 +140,76 @@ const DashboardPage = () => {
     navigate("/staking#claim");
   };
 
+  const nextAction = !isConnected
+    ? {
+        eyebrow: "START HERE",
+        title: "Connect your wallet",
+        text: "Connect from the top-right button to unlock your HeatRush dashboard.",
+        to: null,
+        label: "Connect Wallet Above",
+      }
+    : presaleClaimableHR > 0 || claimableAirdropHR > 0
+      ? {
+          eyebrow: "REWARD READY",
+          title: "You have rewards available",
+          text: "Open your rewards area and claim what is currently available.",
+          to: "/airdrop",
+          label: "View Rewards",
+        }
+      : presaleTotalHr <= 0
+        ? {
+            eyebrow: "NEXT BEST ACTION",
+            title: "Get your first HR",
+            text: "Buy HR directly through the official HeatRush flow on Base.",
+            to: "/presale",
+            label: "Buy HR",
+          }
+        : {
+            eyebrow: "NEXT BEST ACTION",
+            title: "Grow your network",
+            text: "Invite qualified users and build your Points and XP.",
+            to: "/referral",
+            label: "Invite Friends",
+          };
+
   return (
     <div className="dashboard-page">
+      <section className="dash-action-center" aria-label="HeatRush quick actions">
+        <div className="dash-action-intro">
+          <span className="dash-section-kicker">YOUR HEATRUSH HUB</span>
+          <h1>Choose your next move.</h1>
+          <p>Stake assets, get HR, or invite friends — everything starts here.</p>
+        </div>
+
+        <div className="dash-primary-actions">
+          <Link to="/staking" className="dash-primary-action">
+            <span>01</span><strong>Stake Assets</strong>
+            <p>Earn rewards and build XP.</p><b>Start Staking →</b>
+          </Link>
+          <Link to="/presale" className="dash-primary-action featured">
+            <span>02</span><strong>Buy HR</strong>
+            <p>Get HR directly through HeatRush.</p><b>Buy HR →</b>
+          </Link>
+          <Link to="/referral" className="dash-primary-action">
+            <span>03</span><strong>Invite Friends</strong>
+            <p>Earn Points, XP, and bonuses.</p><b>Start Inviting →</b>
+          </Link>
+        </div>
+
+        <div className="dash-next-action">
+          <div>
+            <span>{nextAction.eyebrow}</span>
+            <h2>{nextAction.title}</h2>
+            <p>{nextAction.text}</p>
+          </div>
+          {nextAction.to ? (
+            <Link to={nextAction.to}>{nextAction.label} →</Link>
+          ) : (
+            <span className="dash-next-disabled">{nextAction.label}</span>
+          )}
+        </div>
+      </section>
+
       {/* ===== REIGNITION STATUS ===== */}
       <section className="dash-reignition-card" aria-label="HeatRush platform status">
         <div className="dash-reignition-glow" aria-hidden="true" />

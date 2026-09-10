@@ -525,9 +525,9 @@ const TasksPage = ({ showToast }) => {
         <div>
           <h1 className="tasks-title">Tasks & Quests</h1>
           <p className="tasks-subtitle">
-            Lightweight off-chain quests that reward{" "}
-            <span className="orange">Points</span> for simple actions and{" "}
-            <span className="orange">XP</span> for deeper commitment.
+            Claim your daily reward, complete available missions, and grow your{" "}
+            <span className="orange">Points</span> and{" "}
+            <span className="orange">XP</span>.
           </p>
         </div>
 
@@ -545,14 +545,14 @@ const TasksPage = ({ showToast }) => {
           </div>
 
           <div className="tasks-summary-row">
-            <span className="tasks-summary-label">Task Points (local)</span>
+            <span className="tasks-summary-label">Total Task Points</span>
             <span className="tasks-summary-value">
               {totalPoints.toLocaleString("en-US")} pts
             </span>
           </div>
 
           <div className="tasks-summary-row">
-            <span className="tasks-summary-label">Task XP (local)</span>
+            <span className="tasks-summary-label">Total Task XP</span>
             <span className="tasks-summary-value">
               {totalXP.toLocaleString("en-US")}{" "}
               <span className="unit">XP</span>
@@ -576,22 +576,32 @@ const TasksPage = ({ showToast }) => {
         </div>
       </div>
 
+      <nav className="tasks-quick-nav" aria-label="Task categories">
+        <span>JUMP TO</span>
+        <a href="#daily-reward">Daily Reward</a>
+        {onchainTasks.length > 0 && <a href="#onchain-missions">On-chain</a>}
+        {socialTasks.length > 0 && <a href="#community-missions">Community</a>}
+        {systemTasks.length > 0 && <a href="#lifetime-missions">Lifetime</a>}
+      </nav>
+
       {/* ====== DAILY FUEL TANK ====== */}
-      <DailyTankCard
-        showToast={showToast}
-        dailyTank={dailyTank}
-        onClaim={(earnedToday, newTotalFromTank, gainedXpToday) => {
-          showToast?.(
-            "success",
-            `Daily tank claimed: +${earnedToday} points, +${gainedXpToday} XP`
-          );
-        }}
-      />
+      <div id="daily-reward" className="tasks-anchor-section">
+        <DailyTankCard
+          showToast={showToast}
+          dailyTank={dailyTank}
+          onClaim={(earnedToday, newTotalFromTank, gainedXpToday) => {
+            showToast?.(
+              "success",
+              `Daily tank claimed: +${earnedToday} points, +${gainedXpToday} XP`
+            );
+          }}
+        />
+      </div>
 
       {/* ====== ON-CHAIN QUESTS ====== */}
       {onchainTasks.length > 0 && (
         <>
-          <h2 className="tasks-section-title">On-chain Missions</h2>
+          <h2 id="onchain-missions" className="tasks-section-title">On-chain Missions</h2>
           <p className="tasks-section-subtitle">
             These quests verify real on-chain actions like staking and presale.
           </p>
@@ -693,7 +703,7 @@ const TasksPage = ({ showToast }) => {
       {/* ====== SOCIAL QUESTS ====== */}
       {socialTasks.length > 0 && (
         <>
-          <h2 className="tasks-section-title">Community & Social</h2>
+          <h2 id="community-missions" className="tasks-section-title">Community & Social</h2>
           <p className="tasks-section-subtitle">
             Simple off-chain quests that help you plug into the HeatRush
             ecosystem.
@@ -778,7 +788,7 @@ const TasksPage = ({ showToast }) => {
       {/* ====== SYSTEM QUESTS ====== */}
       {systemTasks.length > 0 && (
         <>
-          <h2 className="tasks-section-title">System & Lifetime Quests</h2>
+          <h2 id="lifetime-missions" className="tasks-section-title">System & Lifetime Quests</h2>
           <p className="tasks-section-subtitle">
             High-level actions that show you&apos;re really exploring the
             HeatRush hub.
@@ -862,8 +872,7 @@ const TasksPage = ({ showToast }) => {
 
       {!isConnected && (
         <p className="tasks-footnote">
-          Connect your wallet to store quest progress per address and keep your
-          Points / XP synced across sessions (locally + backend).
+          Connect your wallet to save progress to your HeatRush profile.
         </p>
       )}
     </div>

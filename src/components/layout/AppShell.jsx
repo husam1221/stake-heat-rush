@@ -6,6 +6,7 @@ import "../../styles/layout.css";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
 import SidebarLogo from "../../assets/sidebar-log.png";
+import Toast from "../ui/Toast.jsx";
 
 import {
   LayoutDashboard,
@@ -22,7 +23,7 @@ import {
   Menu,
 } from "lucide-react";
 
-const AppShell = ({ children }) => {
+const AppShell = ({ children, toast }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
   const { isConnected, chainId } = useAccount();
@@ -38,12 +39,12 @@ const AppShell = ({ children }) => {
   const getPageLabel = () => {
     if (location.pathname === "/dashboard") return "DASHBOARD";
     if (location.pathname.startsWith("/profile")) return "PROFILE";
-    if (location.pathname.startsWith("/referral")) return "REFERRAL";
+    if (location.pathname.startsWith("/referral")) return "INVITE FRIENDS";
     if (location.pathname.startsWith("/tasks")) return "TASKS";
     if (location.pathname.startsWith("/staking")) return "STAKING";
     if (location.pathname.startsWith("/airdrop")) return "AIRDROP";
     if (location.pathname.startsWith("/season2")) return "SEASON 2";
-    if (location.pathname.startsWith("/presale")) return "PRESALE";
+    if (location.pathname.startsWith("/presale")) return "BUY HR";
     if (location.pathname.startsWith("/nodes")) return "NODES";
     if (location.pathname.startsWith("/faq")) return "FAQ";
 
@@ -162,66 +163,6 @@ const AppShell = ({ children }) => {
           </Link>
 
           <Link
-            to="/profile"
-            className={
-              location.pathname === "/profile"
-                ? "active"
-                : ""
-            }
-            onClick={closeMenu}
-          >
-            <span className="side-nav-icon">
-              <User size={16} />
-            </span>
-
-            <span className="side-nav-label">
-              Profile
-            </span>
-          </Link>
-
-          <Link
-            to="/referral"
-            className={
-              location.pathname === "/referral"
-                ? "active"
-                : ""
-            }
-            onClick={closeMenu}
-          >
-            <span className="side-nav-icon">
-              <Users size={16} />
-            </span>
-
-            <span className="side-nav-label">
-              Referral
-            </span>
-          </Link>
-
-          <Link
-            to="/tasks"
-            className={
-              location.pathname === "/tasks"
-                ? "active"
-                : ""
-            }
-            onClick={closeMenu}
-          >
-            <span className="side-nav-icon">
-              <CheckSquare size={16} />
-            </span>
-
-            <span className="side-nav-label">
-              Tasks
-            </span>
-          </Link>
-
-          <div className="side-nav-divider" />
-
-          <div className="side-nav-section-label">
-            ECOSYSTEM
-          </div>
-
-          <Link
             to="/staking"
             className={
               location.pathname === "/staking"
@@ -244,28 +185,6 @@ const AppShell = ({ children }) => {
           </Link>
 
           <Link
-            to="/season2"
-            className={`season2-highlight ${
-              location.pathname.startsWith("/season2")
-                ? "active"
-                : ""
-            }`}
-            onClick={closeMenu}
-          >
-            <span className="side-nav-icon">
-              <Gift size={16} />
-            </span>
-
-            <span className="side-nav-label">
-              Airdrop
-            </span>
-
-            <span className="nav-season-badge">
-              S2
-            </span>
-          </Link>
-
-          <Link
             to="/presale"
             className={
               location.pathname === "/presale"
@@ -279,7 +198,107 @@ const AppShell = ({ children }) => {
             </span>
 
             <span className="side-nav-label">
-              Presale
+              Buy HR
+            </span>
+          </Link>
+
+          <Link
+            to="/referral"
+            className={
+              location.pathname === "/referral"
+                ? "active"
+                : ""
+            }
+            onClick={closeMenu}
+          >
+            <span className="side-nav-icon">
+              <Users size={16} />
+            </span>
+
+            <span className="side-nav-label">
+              Invite Friends
+            </span>
+          </Link>
+
+          <div className="side-nav-divider" />
+
+          <div className="side-nav-section-label">
+            ECOSYSTEM
+          </div>
+
+          <Link
+            to="/tasks"
+            className={
+              location.pathname === "/tasks"
+                ? "active"
+                : ""
+            }
+            onClick={closeMenu}
+          >
+            <span className="side-nav-icon">
+              <CheckSquare size={16} />
+            </span>
+
+            <span className="side-nav-label">
+              Tasks
+            </span>
+          </Link>
+
+          <Link
+            to="/season2"
+            className={`season2-highlight ${
+              location.pathname.startsWith("/season2")
+                ? "active"
+                : ""
+            }`}
+            onClick={closeMenu}
+          >
+            <span className="side-nav-icon">
+              <Gift size={16} />
+            </span>
+
+            <span className="side-nav-label">
+              Season 2
+            </span>
+
+            <span className="nav-season-badge">
+              S2
+            </span>
+          </Link>
+
+          <Link
+            to="/airdrop"
+            className={
+              location.pathname === "/airdrop"
+                ? "active"
+                : ""
+            }
+            onClick={closeMenu}
+          >
+            <span className="side-nav-icon">
+              <Gift size={16} />
+            </span>
+
+            <span className="side-nav-label">
+              Airdrop Claim
+            </span>
+          </Link>
+
+          <Link
+            to="/profile"
+            className={
+              location.pathname === "/profile"
+                ? "active"
+                : ""
+            }
+            onClick={closeMenu}
+          >
+            <span className="side-nav-icon">
+              <User size={16} />
+            </span>
+
+            <span className="side-nav-label">
+              Profile
             </span>
           </Link>
 
@@ -298,6 +317,10 @@ const AppShell = ({ children }) => {
 
             <span className="side-nav-label">
               Nodes
+            </span>
+
+            <span className="nav-season-badge">
+              SOON
             </span>
           </Link>
 
@@ -402,6 +425,13 @@ const AppShell = ({ children }) => {
           {children}
         </div>
       </div>
+
+      {toast && (
+        <Toast
+          type={toast.type}
+          message={toast.message}
+        />
+      )}
     </div>
   );
 };

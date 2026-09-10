@@ -1,5 +1,6 @@
 // src/pages/season2/Season2Page.jsx
 import React, { useEffect, useMemo, useState, useRef, useCallback } from "react";
+import { Link } from "react-router-dom";
 import {
   useAccount,
   useReadContract,
@@ -844,6 +845,15 @@ export default function Season2Page({ showToast }) {
 
   return (
     <div className="season2-page">
+      <nav className="rewards-switcher" aria-label="HeatRush rewards sections">
+        <Link to="/season2" className="active">
+          <span>SEASON 2</span><strong>Progress &amp; Eligibility</strong>
+        </Link>
+        <Link to="/airdrop">
+          <span>SEASON 1</span><strong>Airdrop &amp; Claim</strong>
+        </Link>
+      </nav>
+
       <div className="s2-kicker">
         <Sparkles size={16} /> Season 2 Dashboard
       </div>
@@ -856,15 +866,11 @@ export default function Season2Page({ showToast }) {
         transition={{ duration: 0.35 }}
       >
         <div className="s2-hero-left">
-          {/* 3D Card: Season 1 Eligibility */}
-          <div className="s2-hero-cta-row">
-            <Tilt3DCard
-              title="Check Season 1 Eligibility"
-              subtitle="Verify your Season 1 airdrop eligibility and claim schedule."
-              buttonText="Check Eligibility"
-              href="/airdrop"
-            />
-          </div>
+          <h1 className="s2-focus-title">Your Season 2 Progress</h1>
+          <p className="s2-focus-copy">
+            Complete the eligibility path, follow your progress, and continue
+            from your next required action.
+          </p>
         </div>
 
         <div className="s2-hero-right">

@@ -1094,10 +1094,10 @@ const ethProgressPct = useMemo(() => {
       <section className="staking-conversion-hero">
         <div className="staking-conversion-hero-copy">
           <span className="staking-conversion-kicker">HEATRUSH STAKING</span>
-          <h1>Stake. Earn. Rise.</h1>
+          <h1>Choose a market and stake.</h1>
           <p>
-            Choose your asset, build your position, earn XP and qualify for
-            HeatRush rewards across Base and BNB Chain.
+            Select a network and asset, enter an amount, then confirm the
+            transaction from your wallet.
           </p>
         </div>
 
@@ -1110,8 +1110,21 @@ const ethProgressPct = useMemo(() => {
         </div>
       </section>
 
+      <section className="staking-quick-start" aria-label="How to start staking">
+        <div className="staking-quick-steps">
+          <div><span>1</span><strong>Choose a network</strong><small>Base or BNB Chain</small></div>
+          <div><span>2</span><strong>Select an asset</strong><small>Pick one active market</small></div>
+          <div><span>3</span><strong>Enter and confirm</strong><small>Approve from your wallet</small></div>
+        </div>
+        <div className="staking-network-jump">
+          <span>GO TO MARKETS</span>
+          <a href="#base-markets"><img src="/baselogo.png" alt="" /> Base</a>
+          <a href="#bnb-markets"><img src="/smartchainlogo.png" alt="" /> BNB Chain</a>
+        </div>
+      </section>
+
       <section className="staking-market-hub">
-        <div className="staking-network-block staking-network-base">
+        <div id="base-markets" className="staking-network-block staking-network-base">
           <div className="staking-network-header">
             <div className="staking-network-title">
               <img src="/baselogo.png" alt="Base" />
@@ -1458,7 +1471,7 @@ const ethProgressPct = useMemo(() => {
           </div>
         </div>
 
-        <div className="staking-network-block staking-network-bnb">
+        <div id="bnb-markets" className="staking-network-block staking-network-bnb">
           <div className="staking-network-header">
             <div className="staking-network-title">
               <img src="/smartchainlogo.png" alt="BNB Chain" />

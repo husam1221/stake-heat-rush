@@ -854,3 +854,9 @@
     justify-self: flex-end;
   }
 }
+.referral-share-row { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; margin-top: 12px; }
+.referral-share-row button { border: 1px solid rgba(255,98,0,.35); background: rgba(255,98,0,.08); color: #fff; border-radius: 10px; padding: 11px 8px; cursor: pointer; font-weight: 700; }
+.referral-share-row button:hover { background: rgba(255,98,0,.18); }
+.referral-qualify-box { display: grid; gap: 6px; margin-top: 14px; padding: 14px; border-radius: 12px; background: rgba(255,255,255,.035); border: 1px solid rgba(255,255,255,.08); }
+.referral-qualify-box span { color: rgba(255,255,255,.66); font-size: 13px; line-height: 1.55; }
+@media (max-width: 560px) { .referral-share-row { grid-template-columns: 1fr; } }

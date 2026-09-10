@@ -1304,3 +1304,35 @@
   }
 }
 
+.dash-action-center {
+  display: grid;
+  gap: 22px;
+  margin-bottom: 28px;
+}
+
+.dash-action-intro h1 { margin: 6px 0; font-size: clamp(2rem, 5vw, 4.5rem); }
+.dash-action-intro p { margin: 0; color: rgba(255,255,255,.66); }
+.dash-primary-actions { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 14px; }
+.dash-primary-action { padding: 22px; border: 1px solid rgba(255,255,255,.1); border-radius: 18px; background: rgba(255,255,255,.035); color: #fff; text-decoration: none; transition: .2s ease; }
+.dash-primary-action:hover { transform: translateY(-3px); border-color: rgba(255,98,0,.65); }
+.dash-primary-action.featured { background: linear-gradient(145deg,rgba(255,98,0,.22),rgba(255,255,255,.035)); border-color: rgba(255,98,0,.42); }
+.dash-primary-action > span { color: #ff6200; font-size: 12px; font-weight: 800; }
+.dash-primary-action strong { display: block; margin-top: 18px; font-size: 21px; }
+.dash-primary-action p { min-height: 42px; color: rgba(255,255,255,.62); }
+.dash-primary-action b { color: #ff7a1a; font-size: 13px; }
+.dash-next-action { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 22px 24px; border-radius: 18px; border: 1px solid rgba(255,98,0,.32); background: rgba(255,98,0,.08); }
+.dash-next-action span { color: #ff7a1a; font-size: 11px; font-weight: 800; letter-spacing: .12em; }
+.dash-next-action h2 { margin: 5px 0; }
+.dash-next-action p { margin: 0; color: rgba(255,255,255,.62); }
+.dash-next-action > a, .dash-next-disabled { flex: 0 0 auto; padding: 12px 17px; border-radius: 12px; background: #ff6200; color: #fff !important; text-decoration: none; font-weight: 800; letter-spacing: 0 !important; }
+.dash-next-disabled { opacity: .7; }
+
+/* Replaced by the focused action center above. Kept out of view without touching data logic. */
+.dash-reignition-card, .dash-multichain-staking, .dash-hero-card { display: none; }
+
+@media (max-width: 800px) {
+  .dash-primary-actions { grid-template-columns: 1fr; }
+  .dash-primary-action p { min-height: 0; }
+  .dash-next-action { align-items: flex-start; flex-direction: column; }
+  .dash-next-action > a, .dash-next-disabled { width: 100%; text-align: center; }
+}

@@ -338,3 +338,5 @@
     color: #e5e7eb;
   }
 }
+.nodes-title small { display: inline-flex; vertical-align: middle; margin-left: 8px; padding: 5px 8px; border: 1px solid rgba(255,138,38,.4); border-radius: 999px; color: #ff9c32; font-size: 9px; letter-spacing: .12em; }
+.nodes-grid .node-cta-btn:disabled { pointer-events: none; opacity: .52; }
