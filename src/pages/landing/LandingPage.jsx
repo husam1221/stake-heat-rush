@@ -172,12 +172,7 @@ const LandingPage = () => {
             <span className="landing-network-node node-four" />
           </div>
 
-          <motion.div
-            className="landing-hero-content"
-            initial="hidden"
-            animate="visible"
-            variants={reveal}
-          >
+          <div className="landing-hero-content">
             <div className="landing-eyebrow">
               <span className="landing-eyebrow-line" />
 
@@ -227,7 +222,7 @@ const LandingPage = () => {
                 <strong>HR</strong>
               </div>
             </div>
-          </motion.div>
+          </div>
 
           <div className="landing-scroll-hint" aria-hidden="true">
             <span>SCROLL TO ENTER THE ECOSYSTEM</span>
