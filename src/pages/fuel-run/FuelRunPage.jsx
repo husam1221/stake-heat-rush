@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useAccount, useReadContract } from "wagmi";
+import { useAccount, useReadContract, useReadContracts } from "wagmi";
 import {
   ArrowLeft,
   ArrowRight,
@@ -17,8 +17,14 @@ import {
 
 import { ERC20_ABI } from "../../lib/erc20.js";
 import { STAKING_ABI } from "../../lib/staking.js";
+import { HR_STAKING_ABI } from "../../lib/hrStaking.js";
+import {
+  MULTICHAIN_STAKING_ASSETS,
+  MULTICHAIN_STAKING_READ_ABI,
+} from "../../lib/multichainStaking.js";
 import {
   BASE_CHAIN_ID,
+  HR_STAKING_CONTRACT_ADDRESS,
   HR_TOKEN_ADDRESS,
   STAKING_CONTRACT_ADDRESS,
 } from "../../lib/constants.js";
@@ -92,6 +98,26 @@ export default function FuelRunPage({ showToast }) {
     functionName: "balanceOf",
     args: [address || ZERO_ADDRESS],
     chainId: BASE_CHAIN_ID,
+    query: { enabled: Boolean(address) },
+  });
+
+  const { data: hrStakedRaw } = useReadContract({
+    abi: HR_STAKING_ABI,
+    address: HR_STAKING_CONTRACT_ADDRESS,
+    functionName: "deposited",
+    args: [address || ZERO_ADDRESS],
+    chainId: BASE_CHAIN_ID,
+    query: { enabled: Boolean(address) },
+  });
+
+  const { data: multichainStakeResults } = useReadContracts({
+    contracts: MULTICHAIN_STAKING_ASSETS.map((asset) => ({
+      abi: MULTICHAIN_STAKING_READ_ABI,
+      address: asset.stakingAddress,
+      functionName: "userStaked",
+      args: [address || ZERO_ADDRESS],
+      chainId: asset.chainId,
+    })),
     query: { enabled: Boolean(address) },
   });
 
@@ -297,7 +323,16 @@ export default function FuelRunPage({ showToast }) {
       };
     }
 
-    if (!stakedRaw || stakedRaw === 0n) {
+    const hasAnyStake =
+      (stakedRaw ?? 0n) > 0n ||
+      (hrStakedRaw ?? 0n) > 0n ||
+      Boolean(
+        multichainStakeResults?.some(
+          (result) => result.status === "success" && (result.result ?? 0n) > 0n
+        )
+      );
+
+    if (!hasAnyStake) {
       return {
         eyebrow: "NEXT BEST ACTION",
         title: "Build XP by staking",
@@ -336,7 +371,14 @@ export default function FuelRunPage({ showToast }) {
       kind: "share",
       label: "Challenge a Friend",
     };
-  }, [hrBalanceRaw, isConnected, qualifiedReferrals, stakedRaw]);
+  }, [
+    hrBalanceRaw,
+    hrStakedRaw,
+    isConnected,
+    multichainStakeResults,
+    qualifiedReferrals,
+    stakedRaw,
+  ]);
 
   const comboMultiplier = combo >= 10 ? 3 : combo >= 5 ? 2 : 1;
   const beatChallenge = challengeScore > 0 && score > challengeScore;
