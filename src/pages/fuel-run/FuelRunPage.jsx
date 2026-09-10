@@ -160,27 +160,28 @@ export default function FuelRunPage({ showToast }) {
       const now = Date.now();
       const elapsed = now - startTimeRef.current;
       const remainingMs = Math.max(0, RUN_DURATION_MS - elapsed);
+      let spawnedItem = null;
+
+      // Keep ref mutations outside React's state updater. In StrictMode React may
+      // call an updater more than once to verify that it is pure.
+      if (now - lastSpawnRef.current >= 620) {
+        spawnedItem = {
+          id: nextItemId.current,
+          lane: LANES[Math.floor(Math.random() * LANES.length)],
+          y: -10,
+          type: pickItemType(),
+        };
+        nextItemId.current += 1;
+        lastSpawnRef.current = now;
+      }
 
       setGame((current) => {
-        let workingItems = current.items;
+        const workingItems = spawnedItem
+          ? [...current.items, spawnedItem]
+          : current.items;
         let nextFuel = Math.max(0, current.fuel - 0.085);
         let nextCombo = current.combo;
         let nextScore = current.score;
-
-        if (now - lastSpawnRef.current >= 620) {
-          const lane = LANES[Math.floor(Math.random() * LANES.length)];
-          workingItems = [
-            ...workingItems,
-            {
-              id: nextItemId.current,
-              lane,
-              y: -10,
-              type: pickItemType(),
-            },
-          ];
-          nextItemId.current += 1;
-          lastSpawnRef.current = now;
-        }
 
         const survivors = [];
         workingItems.forEach((item) => {
