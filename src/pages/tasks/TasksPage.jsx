@@ -110,6 +110,9 @@ const TasksPage = ({ showToast }) => {
   // 👇 XP تبع البروفايل من /xp/profile (off-chain)
   const [profileXp, setProfileXp] = useState(0);
 
+  // 👇 حالة Daily Tank القادمة من /xp/profile
+  const [dailyTank, setDailyTank] = useState(null);
+
   const storageKey = useMemo(() => {
     if (!address) return null;
     return `hr_tasks_${address.toLowerCase()}`;
@@ -193,7 +196,8 @@ const TasksPage = ({ showToast }) => {
     }
   };
 
-  // 🔄 مزامنة حالة المهام مع الباكند (xp/profile → completedTasks + profileXp)
+  // 🔄 مزامنة حالة المهام مع الباكند
+  // xp/profile → completedTasks + profileXp + dailyTank
   useEffect(() => {
     if (!address) return;
 
@@ -204,11 +208,15 @@ const TasksPage = ({ showToast }) => {
         const data = await fetchXpOverview(address.toLowerCase());
         const serverCompleted = data?.completedTasks || [];
         const xpOffchain = data?.totals?.xp_offchain ?? 0; // 👈 XP من البروفايل (off-chain)
+        const serverDailyTank = data?.dailyTank || null;
 
         if (cancelled) return;
 
         // نخزن XP البروفايل في state
         setProfileXp(xpOffchain);
+
+        // نخزن حالة Daily Tank القادمة من السيرفر
+        setDailyTank(serverDailyTank);
 
         // ندمج اللي من السيرفر مع اللي في localStorage
         setCompleted((prev) => {
@@ -256,7 +264,12 @@ const TasksPage = ({ showToast }) => {
     return { totalPoints: points, totalXP: xp };
   }, [completed]);
 
-  const completedCount = completed.size;
+  // نحسب فقط المهام الحالية الموجودة في TASKS
+  // بدون حذف أو تعديل أي مهام تاريخية محفوظة
+  const completedCount = TASKS.filter((task) =>
+    completed.has(task.id)
+  ).length;
+
   const totalTasks = TASKS.length;
 
   // ====== حساب حالة المهمة (مقفلة / جاهزة / مكتملة) ======
@@ -566,6 +579,7 @@ const TasksPage = ({ showToast }) => {
       {/* ====== DAILY FUEL TANK ====== */}
       <DailyTankCard
         showToast={showToast}
+        dailyTank={dailyTank}
         onClaim={(earnedToday, newTotalFromTank, gainedXpToday) => {
           showToast?.(
             "success",
