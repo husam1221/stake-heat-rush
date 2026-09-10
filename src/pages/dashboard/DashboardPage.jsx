@@ -321,7 +321,7 @@ const DashboardPage = () => {
 
       <Link to="/staking" className="dash-multichain-market">
         <div className="dash-multichain-market-main">
-          <img src="/bitcoinLogo.png" alt="USDT" />
+          <img src="/usdtlogo.png" alt="USDT" />
           <div>
             <strong>USDT</strong>
             <span>Stake USDT</span>

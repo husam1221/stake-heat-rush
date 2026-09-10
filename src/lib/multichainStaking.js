@@ -337,7 +337,7 @@ export const MULTICHAIN_STAKING_ASSETS = [
     tokenAddress: USDT_BSC_TOKEN_ADDRESS,
     decimals: 18,
     native: false,
-    assetLogo: "/bitcoinLogo.png",
+assetLogo: "/usdtlogo.png",
     networkLogo: "/smartchainlogo.png",
     rewardHeadline: "STAKE & EARN HR",
     rewardText:

@@ -1,12 +1,14 @@
-// src/App.jsx
 import React, { useState } from "react";
-import "./App.css";
-import "./styles/layout.css";
-
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Outlet,
+} from "react-router-dom";
 
 import AppShell from "./components/layout/AppShell.jsx";
 
+import LandingPage from "./pages/landing/LandingPage.jsx";
 import DashboardPage from "./pages/dashboard/DashboardPage.jsx";
 import ProfilePage from "./pages/profile/ProfilePage.jsx";
 import ReferralPage from "./pages/referral/ReferralPage.jsx";
@@ -18,8 +20,15 @@ import NodesPage from "./pages/nodes/NodesPage.jsx";
 import FaqPage from "./pages/faq/FaqPage.jsx";
 import Season2Page from "./pages/season2/Season2Page.jsx";
 
-
 import { useReferralListener } from "./hooks/useReferralListener.js";
+
+const PlatformLayout = ({ toast }) => {
+  return (
+    <AppShell toast={toast}>
+      <Outlet />
+    </AppShell>
+  );
+};
 
 function App() {
   const [toast, setToast] = useState(null);
@@ -33,58 +42,84 @@ function App() {
 
   return (
     <BrowserRouter>
-      <AppShell toast={toast}>
-        <Routes>
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Routes>
+        {/* Landing page خارج AppShell */}
+        <Route path="/" element={<LandingPage />} />
 
-          <Route path="/dashboard" element={<DashboardPage />} />
+        {/* كل صفحات المنصة الحالية تبقى داخل AppShell */}
+        <Route element={<PlatformLayout toast={toast} />}>
+          <Route
+            path="/dashboard"
+            element={<DashboardPage />}
+          />
 
-          <Route path="/profile" element={<ProfilePage />} />
+          <Route
+            path="/profile"
+            element={<ProfilePage />}
+          />
 
           <Route
             path="/referral"
-            element={<ReferralPage showToast={showToast} />}
+            element={
+              <ReferralPage showToast={showToast} />
+            }
           />
 
           <Route
             path="/tasks"
-            element={<TasksPage showToast={showToast} />}
+            element={
+              <TasksPage showToast={showToast} />
+            }
           />
 
           <Route
             path="/staking"
-            element={<StakingPage showToast={showToast} />}
+            element={
+              <StakingPage showToast={showToast} />
+            }
           />
 
-<Route
-  path="/airdrop"
-  element={<AirdropPage showToast={showToast} />}
-/>
+          <Route
+            path="/airdrop"
+            element={
+              <AirdropPage showToast={showToast} />
+            }
+          />
 
-<Route
-  path="/season2"
-  element={<Season2Page showToast={showToast} />}
-/>
-
+          <Route
+            path="/season2"
+            element={
+              <Season2Page showToast={showToast} />
+            }
+          />
 
           <Route
             path="/presale"
-            element={<PresalePage showToast={showToast} />}
+            element={
+              <PresalePage showToast={showToast} />
+            }
           />
 
           <Route
             path="/nodes"
-            element={<NodesPage showToast={showToast} />}
+            element={
+              <NodesPage showToast={showToast} />
+            }
           />
 
           <Route
             path="/faq"
-            element={<FaqPage showToast={showToast} />}
+            element={
+              <FaqPage showToast={showToast} />
+            }
           />
-        
-          <Route path="*" element={<h2>404 - Page not found</h2>} />
-        </Routes>
-      </AppShell>
+
+          <Route
+            path="*"
+            element={<h2>404 - Page not found</h2>}
+          />
+        </Route>
+      </Routes>
     </BrowserRouter>
   );
 }

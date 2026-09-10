@@ -12,7 +12,7 @@ import { WagmiProvider } from "wagmi";
 import { base, bsc } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-// 👇 بدل styles.css بهذه الاستايلات الموجودة فعليًا عندك
+// ًں‘‡ ط¨ط¯ظ„ styles.css ط¨ظ‡ط°ظ‡ ط§ظ„ط§ط³طھط§ظٹظ„ط§طھ ط§ظ„ظ…ظˆط¬ظˆط¯ط© ظپط¹ظ„ظٹظ‹ط§ ط¹ظ†ط¯ظƒ
 // Global styles
 import "./index.css";
 import "./App.css";
@@ -28,8 +28,7 @@ import "./styles/referral.css";
 import "./styles/tasks.css";
 import "./styles/nodes.css";
 import "./styles/faq.css";
-
-
+import "./styles/landing.css";
 
 const config = getDefaultConfig({
   appName: "HeatRush",
@@ -40,7 +39,7 @@ const config = getDefaultConfig({
     name: "HeatRush Staking",
     description: "Stake ETH on Base",
     url: "https://heatrush.xyz",
-  icons: ["https://heatrush.xyz/favicon.ico"],
+    icons: ["https://heatrush.xyz/favicon.ico"],
   }
 });
 
