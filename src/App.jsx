@@ -63,6 +63,10 @@ const Season2Page = lazy(() =>
   import("./pages/season2/Season2Page.jsx")
 );
 
+const FuelRunPage = lazy(() =>
+  import("./pages/fuel-run/FuelRunPage.jsx")
+);
+
 const PlatformLoading = () => {
   return (
     <div
@@ -145,6 +149,15 @@ function App() {
             path="/tasks"
             element={
               <TasksPage
+                showToast={showToast}
+              />
+            }
+          />
+
+          <Route
+            path="/fuel-run"
+            element={
+              <FuelRunPage
                 showToast={showToast}
               />
             }
