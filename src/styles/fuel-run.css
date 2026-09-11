@@ -536,6 +536,21 @@
   font-size: 0.86rem;
 }
 
+.fuel-next-action-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+
+.fuel-next-action-buttons .secondary {
+  color: #f2eae5;
+  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: none;
+}
+
 .fuel-next-action button,
 .fuel-next-action a {
   flex: 0 0 auto;
@@ -773,6 +788,12 @@
     align-items: stretch;
     flex-direction: column;
     padding: 18px;
+  }
+
+  .fuel-next-action-buttons {
+    width: 100%;
+    align-items: stretch;
+    flex-direction: column;
   }
 
   .fuel-next-action button,
