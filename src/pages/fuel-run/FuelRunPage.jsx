@@ -874,21 +874,25 @@ export default function FuelRunPage({ showToast }) {
               <p>{nextAction.text}</p>
             </div>
 
-            {nextAction.kind === "connect" && (
-              <ConnectButton.Custom>
-                {({ openConnectModal }) => (
-                  <button type="button" onClick={openConnectModal}>CONNECT WALLET</button>
-                )}
-              </ConnectButton.Custom>
-            )}
+            <div className="fuel-next-action-buttons">
+              <Link to="/presale" className="fuel-buy-hr-button">Buy HR →</Link>
 
-            {nextAction.kind === "link" && (
-              <Link to={nextAction.to}>{nextAction.label} →</Link>
-            )}
+              {nextAction.kind === "connect" && (
+                <ConnectButton.Custom>
+                  {({ openConnectModal }) => (
+                    <button type="button" className="secondary" onClick={openConnectModal}>CONNECT WALLET</button>
+                  )}
+                </ConnectButton.Custom>
+              )}
 
-            {nextAction.kind === "share" && (
-              <button type="button" onClick={shareChallenge}>{nextAction.label} <Share2 size={17} /></button>
-            )}
+              {nextAction.kind === "link" && nextAction.to !== "/presale" && (
+                <Link to={nextAction.to} className="secondary">{nextAction.label} →</Link>
+              )}
+
+              {nextAction.kind === "share" && (
+                <button type="button" className="secondary" onClick={shareChallenge}>{nextAction.label} <Share2 size={17} /></button>
+              )}
+            </div>
           </section>
         )}
 
