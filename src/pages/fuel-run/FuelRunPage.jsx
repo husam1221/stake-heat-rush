@@ -10,6 +10,8 @@ import {
   RotateCcw,
   Share2,
   ShieldCheck,
+  Volume2,
+  VolumeX,
   Sparkles,
   Trophy,
   Zap,
@@ -29,12 +31,25 @@ import {
   STAKING_CONTRACT_ADDRESS,
 } from "../../lib/constants.js";
 import { fetchReferralStats } from "../../lib/referralApi.js";
+import {
+  fetchFuelRunLeaderboard,
+  fetchFuelRunPlayer,
+  registerFuelRunPlayer,
+  startFuelRun,
+  submitFuelRunScore,
+} from "../../lib/fuelRunApi.js";
 import "../../styles/fuel-run.css";
 
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 const RUN_DURATION_MS = 30_000;
 const TICK_MS = 50;
 const LANES = [0, 1, 2];
+const COUNTRY_CODES = `AF AL DZ AS AD AO AI AQ AG AR AM AW AU AT AZ BS BH BD BB BY BE BZ BJ BM BT BO BQ BA BW BV BR IO BN BG BF BI CV KH CM CA KY CF TD CL CN CX CC CO KM CG CD CK CR CI HR CU CW CY CZ DK DJ DM DO EC EG SV GQ ER EE SZ ET FK FO FJ FI FR GF PF TF GA GM GE DE GH GI GR GL GD GP GU GT GG GN GW GY HT HM VA HN HK HU IS IN ID IR IQ IE IM IL IT JM JP JE JO KZ KE KI KP KR KW KG LA LV LB LS LR LY LI LT LU MO MG MW MY MV ML MT MH MQ MR MU YT MX FM MD MC MN ME MS MA MZ MM NA NR NP NL NC NZ NI NE NG NU NF MK MP NO OM PK PW PS PA PG PY PE PH PN PL PT PR QA RE RO RU RW BL SH KN LC MF PM VC WS SM ST SA SN RS SC SL SG SX SK SI SB SO ZA GS SS ES LK SD SR SJ SE CH SY TW TJ TZ TH TL TG TK TO TT TN TR TM TC TV UG UA AE GB US UM UY UZ VU VE VN VG VI WF EH YE ZM ZW`.split(" ");
+const regionNames = new Intl.DisplayNames(["en"], { type: "region" });
+const COUNTRY_OPTIONS = COUNTRY_CODES.map((code) => ({
+  code,
+  name: regionNames.of(code) || code,
+})).sort((a, b) => a.name.localeCompare(b.name));
 
 const ITEM_CONFIG = {
   flame: { label: "Flame", score: 10, fuel: 8, icon: Flame },
@@ -54,6 +69,15 @@ function pickItemType() {
 function shortWallet(address) {
   if (!address) return "A HeatRush player";
   return `${address.slice(0, 6)}...${address.slice(-4)}`;
+}
+
+function countryFlag(code) {
+  if (!code) return "🌍";
+  return code
+    .toUpperCase()
+    .split("")
+    .map((letter) => String.fromCodePoint(127397 + letter.charCodeAt(0)))
+    .join("");
 }
 
 export default function FuelRunPage({ showToast }) {
@@ -79,11 +103,34 @@ export default function FuelRunPage({ showToast }) {
     }
   });
   const [referralStats, setReferralStats] = useState(null);
+  const [playerProfile, setPlayerProfile] = useState(null);
+  const [playerLoading, setPlayerLoading] = useState(false);
+  const [playerError, setPlayerError] = useState("");
+  const [playerName, setPlayerName] = useState("");
+  const [countryCode, setCountryCode] = useState("");
+  const [registering, setRegistering] = useState(false);
+  const [startingRun, setStartingRun] = useState(false);
+  const [scoreStatus, setScoreStatus] = useState("idle");
+  const [weeklyBoard, setWeeklyBoard] = useState([]);
+  const [currentRank, setCurrentRank] = useState(null);
+  const [leaderboardWeek, setLeaderboardWeek] = useState(null);
+  const [leaderboardLoading, setLeaderboardLoading] = useState(true);
+  const [soundEnabled, setSoundEnabled] = useState(() => {
+    try {
+      return window.localStorage.getItem("hr_fuel_run_sound") !== "off";
+    } catch {
+      return true;
+    }
+  });
   const nextItemId = useRef(1);
   const startTimeRef = useRef(0);
   const lastSpawnRef = useRef(0);
   const pointerStartRef = useRef(null);
   const statusRef = useRef(status);
+  const runIdRef = useRef(null);
+  const submittedRunRef = useRef(null);
+  const audioContextRef = useRef(null);
+  const previousGameRef = useRef(game);
   const { items, score, fuel, timeLeft, combo } = game;
 
   const { data: stakedRaw } = useReadContract({
@@ -128,6 +175,114 @@ export default function FuelRunPage({ showToast }) {
     statusRef.current = status;
   }, [status]);
 
+  const playSound = useCallback((type) => {
+    if (!soundEnabled) return;
+
+    try {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContext) return;
+      const context = audioContextRef.current || new AudioContext();
+      audioContextRef.current = context;
+      if (context.state === "suspended") context.resume();
+
+      const settings = {
+        start: [260, 0.12, "square"],
+        collect: [520, 0.08, "sine"],
+        golden: [880, 0.18, "sine"],
+        obstacle: [115, 0.22, "sawtooth"],
+        complete: [660, 0.3, "triangle"],
+      };
+      const [frequency, duration, wave] = settings[type] || settings.collect;
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+      const now = context.currentTime;
+
+      oscillator.type = wave;
+      oscillator.frequency.setValueAtTime(frequency, now);
+      if (type === "golden" || type === "complete") {
+        oscillator.frequency.exponentialRampToValueAtTime(frequency * 1.45, now + duration);
+      }
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(0.12, now + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+      oscillator.connect(gain);
+      gain.connect(context.destination);
+      oscillator.start(now);
+      oscillator.stop(now + duration + 0.02);
+    } catch {
+      // Sound is optional; gameplay continues if the browser blocks audio.
+    }
+  }, [soundEnabled]);
+
+  const loadLeaderboard = useCallback(async () => {
+    setLeaderboardLoading(true);
+    try {
+      const data = await fetchFuelRunLeaderboard(address);
+      setWeeklyBoard(data.leaderboard || []);
+      setCurrentRank(data.currentPlayer || null);
+      setLeaderboardWeek(data.week || null);
+    } catch {
+      setWeeklyBoard([]);
+      setCurrentRank(null);
+    } finally {
+      setLeaderboardLoading(false);
+    }
+  }, [address]);
+
+  useEffect(() => {
+    loadLeaderboard();
+  }, [loadLeaderboard]);
+
+  useEffect(() => {
+    let active = true;
+    setPlayerError("");
+    setPlayerProfile(null);
+
+    if (!address) {
+      setPlayerLoading(false);
+      return undefined;
+    }
+
+    setPlayerLoading(true);
+    fetchFuelRunPlayer(address)
+      .then((data) => {
+        if (active) setPlayerProfile(data.player || null);
+      })
+      .catch(() => {
+        if (active) setPlayerError("Could not load your player profile.");
+      })
+      .finally(() => {
+        if (active) setPlayerLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [address]);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(
+        "hr_fuel_run_sound",
+        soundEnabled ? "on" : "off"
+      );
+    } catch {
+      // Sound preference remains active for the current session.
+    }
+  }, [soundEnabled]);
+
+  useEffect(() => {
+    const previous = previousGameRef.current;
+    if (status === "running") {
+      if (game.score > previous.score) {
+        playSound(game.score - previous.score >= 100 ? "golden" : "collect");
+      } else if (previous.fuel - game.fuel > 5) {
+        playSound("obstacle");
+      }
+    }
+    previousGameRef.current = game;
+  }, [game, playSound, status]);
+
   useEffect(() => {
     let active = true;
     if (!address) {
@@ -147,6 +302,33 @@ export default function FuelRunPage({ showToast }) {
       active = false;
     };
   }, [address]);
+
+  const handleRegisterPlayer = async (event) => {
+    event.preventDefault();
+    if (!address || registering) return;
+
+    setRegistering(true);
+    setPlayerError("");
+    try {
+      const data = await registerFuelRunPlayer({
+        wallet: address,
+        name: playerName,
+        countryCode,
+      });
+      setPlayerProfile(data.player);
+      showToast?.("success", "Player profile locked. Welcome to Fuel Run!");
+      loadLeaderboard();
+    } catch (error) {
+      const messages = {
+        INVALID_NAME: "Use 2–24 letters or numbers for your player name.",
+        INVALID_COUNTRY: "Choose your country.",
+        PROFILE_ALREADY_LOCKED: "This wallet already has a locked player profile.",
+      };
+      setPlayerError(messages[error.code] || "Could not save your player profile.");
+    } finally {
+      setRegistering(false);
+    }
+  };
 
   const finishRun = useCallback(() => {
     setStatus("complete");
@@ -243,6 +425,36 @@ export default function FuelRunPage({ showToast }) {
   }, [address, bestScore, score, status]);
 
   useEffect(() => {
+    if (
+      status !== "complete" ||
+      !address ||
+      !runIdRef.current ||
+      submittedRunRef.current === runIdRef.current
+    ) {
+      return;
+    }
+
+    const completedRunId = runIdRef.current;
+    submittedRunRef.current = completedRunId;
+    setScoreStatus("saving");
+    playSound("complete");
+
+    submitFuelRunScore({
+      wallet: address,
+      runId: completedRunId,
+      score,
+    })
+      .then(() => {
+        setScoreStatus("saved");
+        loadLeaderboard();
+      })
+      .catch(() => {
+        setScoreStatus("error");
+        submittedRunRef.current = null;
+      });
+  }, [address, loadLeaderboard, playSound, score, status]);
+
+  useEffect(() => {
     const handleKeyDown = (event) => {
       if (statusRef.current !== "running") return;
       if (event.key === "ArrowLeft" || event.key.toLowerCase() === "a") {
@@ -259,18 +471,34 @@ export default function FuelRunPage({ showToast }) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  const startRun = () => {
-    setStatus("running");
-    setPlayerLane(1);
-    setGame({
-      items: [],
-      score: 0,
-      fuel: 100,
-      timeLeft: 30,
-      combo: 0,
-    });
-    startTimeRef.current = Date.now();
-    lastSpawnRef.current = Date.now() - 400;
+  const startRun = async () => {
+    if (!address || !playerProfile || startingRun) return;
+
+    setStartingRun(true);
+    setScoreStatus("idle");
+    try {
+      const data = await startFuelRun(address);
+      runIdRef.current = data.runId;
+      submittedRunRef.current = null;
+      setStatus("running");
+      setPlayerLane(1);
+      const freshGame = {
+        items: [],
+        score: 0,
+        fuel: 100,
+        timeLeft: 30,
+        combo: 0,
+      };
+      setGame(freshGame);
+      previousGameRef.current = freshGame;
+      startTimeRef.current = Date.now();
+      lastSpawnRef.current = Date.now() - 400;
+      playSound("start");
+    } catch {
+      showToast?.("error", "Could not start this run. Please try again.");
+    } finally {
+      setStartingRun(false);
+    }
   };
 
   const moveLeft = () => {
@@ -389,6 +617,15 @@ export default function FuelRunPage({ showToast }) {
 
   const comboMultiplier = combo >= 10 ? 3 : combo >= 5 ? 2 : 1;
   const beatChallenge = challengeScore > 0 && score > challengeScore;
+  const weekEndsLabel = leaderboardWeek?.endsAt
+    ? new Intl.DateTimeFormat("en", {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }).format(new Date(leaderboardWeek.endsAt))
+    : "Loading…";
 
   return (
     <main className="fuel-run-page">
@@ -398,7 +635,22 @@ export default function FuelRunPage({ showToast }) {
             <span className="fuel-run-kicker"><Gamepad2 size={15} /> HEATRUSH ARCADE</span>
             <h1>FUEL RUN</h1>
           </div>
-          <span className="fuel-run-motto">KEEP THE HEAT ALIVE.</span>
+          <div className="fuel-run-header-actions">
+            {playerProfile && (
+              <span className="fuel-player-chip">
+                {countryFlag(playerProfile.countryCode)} {playerProfile.name}
+              </span>
+            )}
+            <button
+              type="button"
+              className="fuel-sound-toggle"
+              onClick={() => setSoundEnabled((enabled) => !enabled)}
+              aria-label={soundEnabled ? "Mute game sounds" : "Enable game sounds"}
+              title={soundEnabled ? "Sound on" : "Sound off"}
+            >
+              {soundEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
+            </button>
+          </div>
         </header>
 
         {challengeScore > 0 && status !== "complete" && (
@@ -454,12 +706,74 @@ export default function FuelRunPage({ showToast }) {
               <Flame size={38} fill="currentColor" />
             </div>
 
-            {status === "idle" && (
+            {status === "idle" && !isConnected && (
               <div className="fuel-start-panel">
                 <span className="fuel-start-icon"><Flame size={42} fill="currentColor" /></span>
-                <h2>Keep the flame alive for 30 seconds.</h2>
+                <h2>Connect to enter Fuel Run.</h2>
+                <p>Your wallet keeps your player profile and weekly score together.</p>
+                <ConnectButton.Custom>
+                  {({ openConnectModal }) => (
+                    <button type="button" onClick={openConnectModal}>CONNECT WALLET</button>
+                  )}
+                </ConnectButton.Custom>
+              </div>
+            )}
+
+            {status === "idle" && isConnected && playerLoading && (
+              <div className="fuel-start-panel">
+                <span className="fuel-start-icon"><Flame size={42} fill="currentColor" /></span>
+                <h2>Loading your player…</h2>
+                <p>Checking your Fuel Run profile.</p>
+              </div>
+            )}
+
+            {status === "idle" && isConnected && !playerLoading && !playerProfile && (
+              <form className="fuel-start-panel fuel-register-panel" onSubmit={handleRegisterPlayer}>
+                <span className="fuel-result-label">ONE-TIME PLAYER SETUP</span>
+                <h2>Choose your player identity.</h2>
+                <p>Your name and country lock after saving and cannot be changed.</p>
+                <label>
+                  <span>PLAYER NAME</span>
+                  <input
+                    value={playerName}
+                    onChange={(event) => setPlayerName(event.target.value)}
+                    minLength={2}
+                    maxLength={24}
+                    placeholder="Enter your name"
+                    autoComplete="nickname"
+                    required
+                  />
+                </label>
+                <label>
+                  <span>COUNTRY</span>
+                  <select
+                    value={countryCode}
+                    onChange={(event) => setCountryCode(event.target.value)}
+                    required
+                  >
+                    <option value="">Choose your country</option>
+                    {COUNTRY_OPTIONS.map((country) => (
+                      <option key={country.code} value={country.code}>
+                        {countryFlag(country.code)} {country.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                {playerError && <span className="fuel-form-error">{playerError}</span>}
+                <button type="submit" disabled={registering || !playerName.trim() || !countryCode}>
+                  {registering ? "SAVING…" : "LOCK & CONTINUE"}
+                </button>
+              </form>
+            )}
+
+            {status === "idle" && isConnected && !playerLoading && playerProfile && (
+              <div className="fuel-start-panel">
+                <span className="fuel-start-icon"><Flame size={42} fill="currentColor" /></span>
+                <h2>Ready, {playerProfile.name}?</h2>
                 <p>Swipe or use the arrows. Collect heat. Dodge the barriers.</p>
-                <button type="button" onClick={startRun}>PLAY NOW <Flame size={18} /></button>
+                <button type="button" onClick={startRun} disabled={startingRun}>
+                  {startingRun ? "STARTING…" : "PLAY NOW"} <Flame size={18} />
+                </button>
               </div>
             )}
 
@@ -468,6 +782,11 @@ export default function FuelRunPage({ showToast }) {
                 <span className="fuel-result-label">{fuel <= 0 ? "RUN OVER" : "RUN COMPLETE"}</span>
                 <h2>{score.toLocaleString("en-US")}</h2>
                 <p>SCORE</p>
+                <span className={`fuel-score-status fuel-score-status-${scoreStatus}`}>
+                  {scoreStatus === "saving" && "Saving weekly score…"}
+                  {scoreStatus === "saved" && "Weekly score saved"}
+                  {scoreStatus === "error" && "Score was not saved. Play again to retry."}
+                </span>
                 <div className="fuel-result-stats">
                   <div><span>DEVICE BEST</span><strong>{Math.max(bestScore, score).toLocaleString("en-US")}</strong></div>
                   {challengeScore > 0 && (
@@ -492,6 +811,60 @@ export default function FuelRunPage({ showToast }) {
             </button>
           </div>
         </div>
+
+        <section className="fuel-weekly-board">
+          <div className="fuel-weekly-heading">
+            <div>
+              <span>WEEKLY COMPETITION</span>
+              <h2>Fuel Run Leaderboard</h2>
+            </div>
+            <div className="fuel-week-reset">
+              <span>RESETS</span>
+              <strong>{weekEndsLabel}</strong>
+            </div>
+          </div>
+
+          {currentRank && (
+            <div className="fuel-current-rank">
+              <span>YOUR WEEKLY RANK</span>
+              <strong>#{currentRank.rank}</strong>
+              <span>{currentRank.score.toLocaleString("en-US")} pts</span>
+            </div>
+          )}
+
+          {leaderboardLoading && (
+            <p className="fuel-board-message">Loading this week’s players…</p>
+          )}
+
+          {!leaderboardLoading && weeklyBoard.length === 0 && (
+            <p className="fuel-board-message">No scores yet. Be the first player this week.</p>
+          )}
+
+          {!leaderboardLoading && weeklyBoard.length > 0 && (
+            <div className="fuel-board-list">
+              {weeklyBoard.map((player) => {
+                const isCurrentPlayer =
+                  address && player.wallet.toLowerCase() === address.toLowerCase();
+                return (
+                  <div
+                    className={`fuel-board-row ${isCurrentPlayer ? "is-current" : ""}`}
+                    key={player.wallet}
+                  >
+                    <strong className="fuel-board-position">#{player.rank}</strong>
+                    <span className="fuel-board-flag">{countryFlag(player.countryCode)}</span>
+                    <div className="fuel-board-player">
+                      <strong>{player.name}</strong>
+                      <span>{shortWallet(player.wallet)}{isCurrentPlayer ? " · YOU" : ""}</span>
+                    </div>
+                    <strong className="fuel-board-score">
+                      {player.score.toLocaleString("en-US")}
+                    </strong>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </section>
 
         {status === "complete" && (
           <section className="fuel-next-action">
